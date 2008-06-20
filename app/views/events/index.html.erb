@@ -1,0 +1,12 @@
+<%= render :partial => 'layouts/nav' %>
+
+<h1>Events for next 6 months</h1>
+<% @events.each do |event| %>
+	<div style="border-bottom: solid 1px rgb(100,100,100); padding: 10px">
+		<i><%= event.calendar.category.to_s.capitalize %> > <%= event.calendar.to_s.capitalize %></i><br />
+		<strong><%= event.title %></strong><br />
+		<%= event.start_date %> - <%= event.end_date %> <%= if event.allday then "(All Day Event)" end  %><br />
+		<%= event.location %><br />
+		<%= event.description %><br />
+	</div>
+<% end %> 

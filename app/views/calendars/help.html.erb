@@ -1,0 +1,22 @@
+<%= render :partial => 'layouts/nav' %>
+
+<h2>Help!</h2>
+<ol>
+  <li>Click "Add a subscription"</li>
+  <li>Now in the "New iCal Subscription" form fill-in the name, *group and *name and iCal subscription URL</li>
+</ol>
+<p>
+* The extension currently overrides the handling of all paths below the node where the Event Calendar Page type gets applied looking for a calendar "group" and then a "name". So if you create a page under Root > Calendar and apply the EventCalendar page type to it, then through admin create a calendar with the group of "master" and a name of "youth" you'll be able to access your calendar at http://yoursite.com/calendar/master/youth. You'll also be able to see events for all calendars with a group of "master" by navigating to http://yoursite.com/calendar/master/all.
+
+press refresh
+3. Study the tags and display on page
+4. Setup cron job for "script/runner 'refresh_events.rb'"
+5. Monitor refreshing in Admin panel
+
++ rake task to create "public/assets/calendars/Test.ics"
++ add Radiant::Config params for ical_paths and event_calendar_root_node
++ make grouping optional
++ ical file link tag
++ tests for: ical calendar receive, parsing, reoccurance parsing confirmation
++ script/runner task and cron job instructions
+</p>

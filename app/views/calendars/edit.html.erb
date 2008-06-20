@@ -1,0 +1,33 @@
+<%= render :partial => 'layouts/nav' %>
+
+<h2>Editing iCal Subscription</h2>
+
+<h3><%=@calendar.name%> (calendars/<%=@calendar.category.downcase%>/<%=@calendar.name.downcase%>)</h3>
+
+<% form_for :calendar, @calendar, :url => calendar_path(@calendar), :html => {:method => :put} do |f| -%>
+  <%= error_messages_for :calendar %>
+  <%= error_messages_for :ical %>
+
+  <p><label for="calendar_name">Name</label><br/>
+  <%= f.text_field :name, :class => "text"  %>
+  </p>
+  <div>
+    <div style="float:left;margin-right:10px;">
+      <label for="calendar_group">Category</label><br/>
+      <%= f.text_field :category, :class => "text" %>
+    </div>
+    <div style="float:left;">
+      <label for="calendar_name">Slug</label><br/>
+      <%= f.text_field :slug, :class => "text" %>
+    </div>
+  </div>
+
+  <br style="clear:both;" />
+
+  <%= render :partial => 'icals/edit', :locals => { :ical => @calendar.ical }  %>
+
+  <p><label for="calendar_description">Description</label><br/>
+  <%= text_area 'calendar', 'description', :style => "height:50px; width:600px;"  %></p>
+
+  <%= submit_tag 'Save' %>
+<% end -%>
