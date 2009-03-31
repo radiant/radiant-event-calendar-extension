@@ -41,7 +41,7 @@ I've only tested this with Darwin Calendar Server (on Ubuntu). It should be exac
 * Some readymade month-box and week-box displays would also be nice
 * Integration with our reader-group extension will mean that each group can have its own calendar. You'll still have to set up the caldav server separately, though.
 
-It's not worth trying to turn this into a proper CalDav client - there are plenty of good desktop clients already, and if you don't like those there's google calendar - but it might well be worth thinking about simple CalDav administration. There's nothing out there at the moment that will let you administer DCS in a sensible way, and if you're aiming at small teams then this decent calendaring integration is a very common requirement.
+It's not worth trying to turn this into a proper CalDav client - there are plenty of good desktop clients already, and if you don't like those there's google calendar - but it might well be worth thinking about simple CalDav administration. There's nothing out there at the moment that will let you administer DCS in a sensible way.
 
 Back to the original readme:
 
