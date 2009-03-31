@@ -1,5 +1,5 @@
 class EventCalendarExtension < Radiant::Extension
-  version "0.7"
+  version "0.8"
   description "An event calendar extension which draws events from any ical publishers (Google Calendar, .Mac, etc.)"
   url "http://www.hellovenado.com"
 

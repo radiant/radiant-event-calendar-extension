@@ -17,7 +17,7 @@ class EventSearch
     if slugs.to_s == "all" or slugs.nil?
       events = Event.find(:all, :conditions => ["start_date BETWEEN ? AND ?", @period.begin_date, @period.end_date], :include => :calendar, :order => "start_date ASC")
     else
-      events = Event.find(:all, :conditions => ["start_date BETWEEN ? AND ? AND slug IN(?)", @period.begin_date, @period.end_date, slugs], :include => :calendar, :order => "start_date ASC")
+      events = Event.find(:all, :conditions => ["start_date BETWEEN ? AND ? AND calendars.slug IN(?)", @period.begin_date, @period.end_date, slugs], :include => :calendar, :order => "start_date ASC")
     end
     events.find_all { |e| e.calendar.category == @category } unless @category.nil?
     return events
