@@ -15,13 +15,21 @@ class Ical < ActiveRecord::Base
 
     # Retrieve calendar specified by URL and Name attributes
     begin
-      response = Net::HTTP.get_response(URI.parse(ical_url)) 
-
+      uri = URI.parse(ical_url)
+      if authenticated?
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = secured?
+        req = Net::HTTP::Get.new(uri.path)
+        req.basic_auth ical_username, ical_password
+        response = http.request(req)
+      else
+        response = Net::HTTP.get_response(uri)
+      end
     	File.open(ical_filename, "w") { |file|
         file << response.body
       }
     rescue 
-      logger.error "iCal url or file error with: #{self.calendar.name} - #{ical_url} (#{ical_filename}) -- error."
+      logger.error "iCal url or file error with: #{self.calendar.name} - #{ical_url} -> (#{ical_filename}) -- error."
       return false
     end 
     
@@ -33,10 +41,10 @@ class Ical < ActiveRecord::Base
       File.open(ical_filename, "r") do |file|
         cal = Vpim::Icalendar.decode(file).first
         event_count = 0
-        cal.components.each do |parsed_event|
+        cal.events.each do |parsed_event|
           # 24 below is a setting which is telling VPIM to only parse up to that many # of months for reoccurences,
           # Could be moved to a Radiant::Config['event_calendar.ical_months']   
-          parsed_event.occurences.each((Date.today >> 24).to_time) do |o|
+          parsed_event.occurences.each do |o|
             new_event = Event.new
             new_event.start_date = o
             new_event.end_date = Time.local(o.year, o.month, o.day, parsed_event.dtend.hour, parsed_event.dtend.min)
@@ -62,4 +70,14 @@ class Ical < ActiveRecord::Base
   	return true
 	end
 	
+	protected
+	
+  	def authenticated?
+  	  not ical_username.blank?
+    end
+		
+		def secured?
+  	  ical_use_https?
+    end
+  	
 end
