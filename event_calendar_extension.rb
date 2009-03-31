@@ -15,7 +15,7 @@ class EventCalendarExtension < Radiant::Extension
   
   def activate
     EventCalendarPage
-    admin.tabs.add "Event Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]
+    admin.tabs.add "Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]
     unless Radiant::Config["event_calendar.icals_path"]
       Radiant::Config["event_calendar.icals_path"] = "icals"
     end

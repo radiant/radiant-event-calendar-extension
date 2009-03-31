@@ -1,8 +1,6 @@
 <p><label for="calendar_ical_url">iCal URL</label><br/>
 <%=text_field :ical, :ical_url, :value => ical.ical_url, :class => "text", :style => "width:590px; font-size: 10px; background-color:rgb(240,240,240); padding:5px;"%><br />
-<small class="info">Include the http:// or https:// part. A caldav address will probably look like <code>https://my.calendar.com:8443/calendars/me/calendar/</code> and must include the trailing slash. An ical path looks like any other web address but with the suffix .ics.</small></p>
-
-
+<small class="info">Include the http:// or https:// part. A caldav address will probably look like <code>https://my.calendar.com:8443/calendars/me/calendar/</code> and must include the trailing slash. An ical path looks like any other web address but with the suffix .ics</small></p>
 
 <p><label for="calendar_ical_url">Username</label><br/>
 <%=text_field :ical, :ical_username, :value => ical.ical_username, :class => "text", :style => "width:590px; font-size: 10px; background-color:rgb(240,240,240); padding:5px;"%></p>

@@ -4,6 +4,37 @@ Created by: Loren Johnson - www.hellovenado.com
    Version: 0.7
    Contact: loren@hellovenado.com
 
+== FORK IT
+
+This fork has been updated to handle CalDav servers. This mostly just meant adding simple http auth and the correct handling of https addresses. A plain get to a caldav address like this:
+
+  https://calendar.server.com:8443/calendars/users/someone/calendar/
+  
+will give you an ics file that vpim can read in the usual way.
+
+Please note that we are not doing proper CalDav here, but taking advantage of a compatibility with the simpler iCal standard. It does work very nicely, though: your users can all enter and edit events into a shared calendar using Apple iCal or Sunbird, or similar, and the same data will be displayed on your site.
+
+=== Quirks
+
+If you set up subcalendars in iCal they will have their own guid-based urls. The first calendar in the list will be at
+
+  https://calendar.server.com:8443/calendars/users/someone/calendar/
+  
+but the others will have addresses like
+
+  https://calendar.server.com:8443/calendars/users/someone/1D09F977-2F27-4E87-954D-FFED95A70BC0/
+
+The best way to discover those addresses is to point your normal web browser at https://calendar.server.com:8443/calendars/users/someone/.
+
+=== Plans
+
+* The calendar tags need to be refactored. Nesting doesn't seem to work any more (?) and it would be much nicer to have <r:calendar...> and <r:event ...> spaces.
+* Some readymade month-box and week-box displays would also be nice
+* Integration with our reader-group extension will mean that each group can have its own calendar. You'll still have to set up the caldav server separately, though.
+
+It is theoretically possible to develop this into a proper CalDav client but it's a huge job and almost certainly a waste of time given that plenty of good desktop clients already exist. It might make sense to extract a few key functions and enable them here, though. Perhaps just your basic adding, moving and deleting events.
+
+Back to the original readme:
 
 == INSTALLATION == 
 * Req'd Radiant Version: 0.6.4+ (not tested with earlier versions, may work with all 0.6+)

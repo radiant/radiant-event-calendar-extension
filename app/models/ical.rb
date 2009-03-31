@@ -42,8 +42,6 @@ class Ical < ActiveRecord::Base
         cal = Vpim::Icalendar.decode(file).first
         event_count = 0
         cal.events.each do |parsed_event|
-          # 24 below is a setting which is telling VPIM to only parse up to that many # of months for reoccurences,
-          # Could be moved to a Radiant::Config['event_calendar.ical_months']   
           parsed_event.occurences.each do |o|
             new_event = Event.new
             new_event.start_date = o
