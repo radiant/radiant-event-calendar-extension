@@ -6,13 +6,13 @@ Created by: Loren Johnson - www.hellovenado.com
 
 == FORK IT
 
-This fork has been updated to handle CalDav servers. This mostly just meant adding simple http auth and the correct handling of https addresses. A plain get to a caldav address like this:
+This fork has been updated to handle CalDav servers. This mostly just meant adding basic http auth and the correct handling of https addresses. It works because a plain get to a caldav address like this:
 
   https://calendar.server.com:8443/calendars/users/someone/calendar/
   
-will give you an ics file that vpim can read in the usual way.
+will give you an ics file that vpim can read in the usual way. Please note that we are not doing proper CalDav here, but taking advantage of a compatibility with the simpler ical standard. It works with addresses under /calendar, using UIDs or GUIDs, but not at all with principals or groups or anything more advanced.
 
-Please note that we are not doing proper CalDav here, but taking advantage of a compatibility with the simpler iCal standard. It does work very nicely, though: your users can all enter and edit events into a shared calendar using Apple iCal or Sunbird, or similar, and the same data will be displayed on your site.
+It does work very nicely, though: your users can all enter and edit events into a shared calendar using Apple iCal or Sunbird or similar, and the same data will be displayed on your site.
 
 === Quirks
 
@@ -26,13 +26,22 @@ but the others will have addresses like
 
 The best way to discover those addresses is to point your normal web browser at https://calendar.server.com:8443/calendars/users/someone/.
 
+=== Compatibility
+
+I've only tested this with Darwin Calendar Server (on Ubuntu). It should be exactly the same with iCal server on OS X, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities. It should also work very nicely with Google Calendar but I haven't tried that yet either.
+
+=== Other changes
+
+* Calendars now self-refresh on the next request after a specified (or default) period has passed. Set the refresh period to zero if you don't fancy that.
+* The slug criterion in EventSearch.execute had to be changed to calendar.slugzxd
+
 === Plans
 
 * The calendar tags need to be refactored. Nesting doesn't seem to work any more (?) and it would be much nicer to have <r:calendar...> and <r:event ...> spaces.
 * Some readymade month-box and week-box displays would also be nice
 * Integration with our reader-group extension will mean that each group can have its own calendar. You'll still have to set up the caldav server separately, though.
 
-It is theoretically possible to develop this into a proper CalDav client but it's a huge job and almost certainly a waste of time given that plenty of good desktop clients already exist. It might make sense to extract a few key functions and enable them here, though. Perhaps just your basic adding, moving and deleting events.
+It's not worth trying to turn this into a proper CalDav client - there are plenty of good desktop clients already, and if you don't like those there's google calendar - but it might well be worth thinking about simple CalDav administration. There's nothing out there at the moment that will let you administer DCS in a sensible way, and if you're aiming at small teams then this decent calendaring integration is a very common requirement.
 
 Back to the original readme:
 
