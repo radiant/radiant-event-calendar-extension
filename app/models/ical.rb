@@ -18,7 +18,7 @@ class Ical < ActiveRecord::Base
       uri = URI.parse(ical_url)
       if authenticated?
         http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = secured?
+        http.use_ssl = uri.scheme == 'https'
         req = Net::HTTP::Get.new(uri.path)
         req.basic_auth ical_username, ical_password
         response = http.request(req)
@@ -77,7 +77,7 @@ class Ical < ActiveRecord::Base
     end
 		
 		def secured?
-  	  ical_use_https?
+  	  ical_url.match(/^https/)
     end
   	
 end
