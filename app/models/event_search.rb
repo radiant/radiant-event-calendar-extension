@@ -2,6 +2,7 @@ class EventSearch
   attr_accessor :category, :calendars, :slugs, :period
 
   def initialize
+    Ical.check_refreshments
     @period = Period.new
     @slugs = ["all"]
   end

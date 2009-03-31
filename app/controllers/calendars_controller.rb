@@ -1,6 +1,7 @@
 class CalendarsController < ApplicationController
 
   def index
+    Ical.check_refreshments
     @calendars = Calendar.find(:all)
     respond_to do |format|
       format.html # index.rhtml

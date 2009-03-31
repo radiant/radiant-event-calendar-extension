@@ -7,3 +7,7 @@
 
 <p><label for="calendar_ical_url">Password</label><br/>
 <%=text_field :ical, :ical_password, :value => ical.ical_password, :class => "text", :style => "width:590px; font-size: 10px; background-color:rgb(240,240,240); padding:5px;"%></p>
+
+<p><label for="calendar_ical_refresh_interval">Refresh Interval</label><br/>
+<%=text_field :ical, :ical_refresh_interval, :value => ical.ical_refresh_interval, :class => "text", :style => "width:50px; font-size: 10px; background-color:rgb(240,240,240); padding:5px;"%><br />
+<small class="info">Leave blank for the default, which is currently <%= distance_of_time_in_words((Radiant::Config['event_calendar.default_refresh_interval'] || 3600).to_i.seconds) %>, or enter zero for manual refreshment only.</p>

@@ -55,15 +55,34 @@ class Ical < ActiveRecord::Base
           end
         end  
         self.last_refresh_count = event_count
-        self.last_refresh_date = Time.now
+        self.last_refresh_date = Time.now.utc
         self.save
         logger.info self.calendar.category + "/" + self.calendar.name + " - iCalendar subscription refreshed on " + Time.now.strftime("%m/%d at %H:%M")
       end 
 	end
 	
+	def refresh_automatically?
+	  ical_refresh_interval.nil? || ical_refresh_interval.to_i != 0
+  end
+	
+	def refresh_interval_or_default
+	  (ical_refresh_interval || Radiant::Config['event_calendar.default_refresh_interval'] || 3600).to_i.seconds
+  end
+  
+  def needs_refreshment?
+    logger.warn ">>> #{self} .needs_refreshment: #{Time.now > (last_refresh_date + refresh_interval_or_default.to_i.seconds)} because #{Time.now - (last_refresh_date + refresh_interval_or_default.to_i.seconds)}. "
+    Time.now > last_refresh_date + refresh_interval_or_default.to_i.seconds
+  end
+	
+	def self.check_refreshments
+  	find(:all).each do |i|
+  	  i.refresh if i.refresh_automatically? && i.needs_refreshment?
+  	end
+  end
+	
 	def self.refresh_all
   	find(:all).each do |i|
-  	  i.refresh
+  	  i.refresh 
   	end
   	return true
 	end

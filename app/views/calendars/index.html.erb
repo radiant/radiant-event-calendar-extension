@@ -7,6 +7,7 @@
 	  <th width="250px">Name (# of events)</th>
 	  <th width="200px">URL (category/slug)</th>
 	  <th width="150px">Last Refresh</th>
+	  <th width="150px">Refresh automatically?</th>
 	  <th></th>
   </tr>
 <% for calendar in @calendars %>
@@ -14,6 +15,7 @@
     <td width="250px"><strong><%=h calendar.name %></strong> (<%=h calendar.ical.last_refresh_count unless calendar.ical.last_refresh_count.blank? %>)</td>
     <td width="200px"><%=h calendar.category.to_s.downcase %>/<%=h calendar.slug.downcase %></td>
     <td width="150px"><%=h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank? %></td>
+    <td width="150px"><%= calendar.ical.refresh_automatically? ? "after #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no" %></td>
     <td style="text-align:right;">
     <%= link_to 'Refresh', refresh_ical_url(calendar.ical.id), :method => :put %> | <%= link_to 'Edit', edit_calendar_path(calendar) %> | <%= link_to 'Delete', calendar_path(calendar), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
