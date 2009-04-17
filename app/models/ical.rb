@@ -70,8 +70,7 @@ class Ical < ActiveRecord::Base
   end
   
   def needs_refreshment?
-    logger.warn ">>> #{self} .needs_refreshment: #{Time.now > (last_refresh_date + refresh_interval_or_default.to_i.seconds)} because #{Time.now - (last_refresh_date + refresh_interval_or_default.to_i.seconds)}. "
-    Time.now > last_refresh_date + refresh_interval_or_default.to_i.seconds
+    Time.now > (last_refresh_date || 0) + refresh_interval_or_default.to_i.seconds
   end
 	
 	def self.check_refreshments
