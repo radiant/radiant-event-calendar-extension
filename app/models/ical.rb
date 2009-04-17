@@ -70,7 +70,7 @@ class Ical < ActiveRecord::Base
   end
   
   def needs_refreshment?
-    Time.now > (last_refresh_date || 0) + refresh_interval_or_default.to_i.seconds
+    last_refresh_date.nil? || Time.now > last_refresh_date + refresh_interval_or_default.to_i.seconds
   end
 	
 	def self.check_refreshments
