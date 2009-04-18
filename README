@@ -43,6 +43,7 @@ I've only tested this with Darwin Calendar Server (on Ubuntu). It should be exac
 * The calendar tags need to be redone. It would be much nicer to have <r:calendar...> and <r:event ...> spaces.
 * Tags to show tabulated calendar on published pages with inline navigation between months (and appropriate cache-handling)
 * Integration with our reader-group extension will mean that each group can have its own calendar. You'll still have to set up the caldav server separately, though.
+* admin styles extracted into an admin/calendar stylesheet, so you need to run rake radiant:extensions:event_calendar:update.
 
 It's not worth trying to turn this into a proper CalDav client - there whole point is that there are plenty of nearly-good desktop clients already, and if you don't like those there's google calendar - but it might well be worth thinking about simple CalDav administration. There's nothing out there at the moment that will let you administer DCS in a sensible way, and I'm still trying to work out how to build in a 'create calendar' button.
 

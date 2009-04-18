@@ -186,7 +186,7 @@ module CalendarHelper
         end
         
         def today?(date)
-          date == (Time.respond_to?(:zone) ? Time.zone.now.to_date : Date.today)
+          date == (Time.respond_to?(:zone) && Time.zone ? Time.zone.now.to_date : Date.today)
         end
         
     end
