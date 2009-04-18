@@ -1,3 +1,0 @@
-[submodule "vendor/plugins/later_dude"]
-	path = vendor/plugins/later_dude
-	url = git://github.com/clemens/later_dude.git
