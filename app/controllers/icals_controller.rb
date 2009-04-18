@@ -20,7 +20,7 @@ class IcalsController < ApplicationController
     else
       flash[:notice] = "Error parsing " + ical.calendar.name + " calendar from iCal subscription, check the iCal URL."
     end
-    redirect_to calendars_path
+    redirect_to :back
   end
   
   def index

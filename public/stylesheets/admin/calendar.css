@@ -1,0 +1,120 @@
+/**** calendar/index ****/
+
+div#calendar_help {
+  position: absolute;
+  left: 820px;
+  width: 180px;
+  margin: 0 10px;
+}
+
+div#calendar_help h3 {
+  margin-top: 0;
+}
+
+div#calendar_help ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 75%;
+}
+
+
+/**** calendar/index ****/
+
+table.index td.subscription-title {
+  font-size: 115%;
+  font-weight: bold;
+}
+
+/**** calendar/show ****/
+
+table.calendar {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+table.calendar th, table.calendar td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  vertical-align: top;
+}
+
+table.calendar td {
+}
+
+table.calendar tr.monthName th {
+  font-weight: normal;
+  text-align: right;
+  padding-top: 1em;
+  padding-bottom: 0.7em;
+  color: black;
+}
+
+table.calendar tr.dayName th {
+  font-size: 0.7em;
+  padding-top: 0.6em;
+  padding-bottom: 0.3em;
+}
+
+table.calendar td div {
+  width: 90px;
+  height: 90px;
+  overflow: hidden;
+}
+
+table.calendar td.eventful {
+	background-color: #fee;
+}
+
+table.calendar td.eventful_weekend {
+	background-color: #edd;
+}
+
+table.calendar td.other_month {
+  color: #ccc;
+  background-color: white;
+}
+
+table.calendar td.today {
+	background-color: #eef;
+  font-weight: bold;
+	color: #00c;
+}
+
+table.calendar td.weekend_day {
+  background-color: #eee;
+}
+
+table.calendar td.weekend_today {
+	background-color: #dde;
+}
+
+table.calendar th a {
+  display: block;
+  color: #ccc;
+  font-weight: lighter;
+}
+
+table.calendar th a:hover {
+  color: #c00;
+}
+
+table.calendar td a {
+  display: block;
+  color: #c00;
+  text-decoration: none;
+  margin: 0 0 4px 0;
+  font-weight: bold;
+}
+
+table.calendar td.other_month a {
+  color: #ccc;
+}
+
+table.calendar td ul {
+  font-size: 75%;
+  margin: 0;
+  padding: 0 0 0 12px;
+  list-style: square;
+}

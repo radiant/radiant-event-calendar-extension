@@ -11,12 +11,15 @@ class CalendarsController < ApplicationController
 
   def show
     @calendar = Calendar.find(params[:id])
+    @year = params[:year] ? params[:year].to_i : Date.today.year
+    @month = params[:month] ? params[:month].to_i : Date.today.month
     respond_to do |format|
       format.html # show.rhtml
       format.xml  { render :xml => @calendar.to_xml }
+      format.js  { render :partial => 'month' }
     end
   end
-
+  
   def new
     @calendar = Calendar.new(params[:calendar])
     @calendar.ical = Ical.new

@@ -1,0 +1,32 @@
+- include_stylesheet 'admin/calendar'
+
+%h1
+  = @calendar.name
+  calendar
+
+%p
+  = link_to 'Edit', edit_calendar_path(@calendar)
+  |
+  = link_to 'Refresh', refresh_ical_url(@calendar.ical.id), :method => :put 
+
+%div#calendar_help
+  %h3
+    subscribe to this calendar
+  %ul
+    %li
+      %strong
+        address:
+      = link_to @calendar.ical.ical_url
+    %li
+      %strong
+        username:
+      = link_to @calendar.ical.ical_username
+    %li
+      %strong
+        password:
+      = link_to @calendar.ical.ical_password
+  %p
+    This may be part of a master calendar with several individual calendars. In that case there will be a different address that lets you access all the calendars at once. Consult your site administrator if unsure.
+
+%div#calendar_holder
+  = render :partial => 'month'

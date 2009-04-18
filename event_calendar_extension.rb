@@ -15,10 +15,13 @@ class EventCalendarExtension < Radiant::Extension
   
   def activate
     EventCalendarPage
+    Page.send :include, EventCalendarTags
+    ApplicationHelper.send :include, CalendarHelper
+    
     admin.tabs.add "Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]
-    unless Radiant::Config["event_calendar.icals_path"]
+    if Radiant::Config.table_exists? && !Radiant::Config["event_calendar.icals_path"]
       Radiant::Config["event_calendar.icals_path"] = "icals"
     end
-    Page.send :include, EventCalendarTags
+
   end
 end
