@@ -67,7 +67,7 @@ module CalendarHelper
       #
       # For consistency with the themes provided in the calendar_styles generator, use "specialDay" as the CSS class for marked days.
 
-      def calendar(options = {}, &block)
+      def calendar_month(options = {}, &block)
         raise(ArgumentError, "No year given")  unless options.has_key?(:year)
         raise(ArgumentError, "No month given") unless options.has_key?(:month)
 
@@ -140,7 +140,7 @@ module CalendarHelper
         today = events.select{ |e| e.start_date <= day + 1.day && e.end_date >= day } # i'm assuming day has time zero, as is the default
         if today.any?
           text = [%{<div class="events">}]
-          text << link_to(day.mday, "##{day.month}_#{day.mday}")
+          text << day.mday
           text << "<ul>"
           today.each do |e|
             text << today.collect{|e| "<li>#{e.title}</li>" }
@@ -153,6 +153,9 @@ module CalendarHelper
           [text, {}]
         end
       end
+
+
+
 
       private
 

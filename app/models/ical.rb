@@ -49,6 +49,7 @@ class Ical < ActiveRecord::Base
             new_event.title = parsed_event.summary
             new_event.description = parsed_event.description
             new_event.location = parsed_event.location
+            new_event.url = parsed_event.url
             new_event.calendar = self.calendar
             new_event.save
             event_count = event_count + 1

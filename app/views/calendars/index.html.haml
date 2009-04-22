@@ -24,7 +24,7 @@
           = "(#{calendar.ical.last_refresh_count || '0'} events)"
         %td.url
           =h calendar.category.to_s.downcase 
-          /
+          \/
           =h calendar.slug.downcase
         %td.refreshed
           =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
