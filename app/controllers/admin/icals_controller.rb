@@ -10,7 +10,7 @@ class Admin::IcalsController < Admin::ResourceController
       ical.refresh
     end
     flash[:notice] = "iCal subscription refresh complete."
-    redirect_to calendars_path
+    redirect_to admin_calendars_path
   end 
   
   def refresh
