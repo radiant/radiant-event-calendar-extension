@@ -3,11 +3,6 @@
 %h1
   Calendar subscriptions
 
-%p
-  = link_to "Refresh All", refresh_all_icals_path, :method => :put
-  |
-  = link_to 'Add a calendar', new_calendar_url
-
 %table.index
   %thead
     %tr
@@ -20,7 +15,7 @@
     - @calendars.each do |calendar|
       %tr{:class => "node level-1"}
         %td.subscription-title
-          = link_to calendar.name, calendar_url(calendar)
+          = link_to calendar.name, admin_calendar_url(calendar)
           = "(#{calendar.ical.last_refresh_count || '0'} events)"
         %td.url
           =h calendar.category.to_s.downcase 
@@ -31,15 +26,15 @@
         %td.autorefresh
           = calendar.ical.refresh_automatically? ? "after #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no"
         %td
-          = link_to 'Refresh', refresh_ical_url(calendar.ical.id), :method => :put 
+          = link_to 'Refresh', refresh_admin_ical_url(calendar.ical.id), :method => :put 
           | 
-          = link_to 'Edit', edit_calendar_path(calendar) 
+          = link_to 'Edit', edit_admin_calendar_path(calendar) 
           |
-          = link_to 'Delete', calendar_path(calendar), :confirm => 'Are you sure?', :method => :delete
+          = link_to 'Delete', admin_calendar_path(calendar), :confirm => 'Are you sure?', :method => :delete
 
 .footnote
   %p
-    = link_to "Refresh All", refresh_all_icals_path, :method => :put
+    = link_to "Refresh All", refresh_all_admin_icals_path, :method => :put
     |
-    = link_to 'Add a calendar', new_calendar_url
+    = link_to 'Add a calendar', new_admin_calendar_url
   

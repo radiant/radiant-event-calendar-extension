@@ -57,5 +57,5 @@ class Event < ActiveRecord::Base
   def allday?
     start_date.hour == 0 && end_date.hour == 0
   end
-    
+
 end

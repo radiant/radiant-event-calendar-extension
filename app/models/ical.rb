@@ -62,6 +62,14 @@ class Ical < ActiveRecord::Base
       end 
 	end
 	
+	def ics_path
+	  File.join @@calendars_path, self.calendar.category
+  end
+  
+  def ics_file
+	  "#{self.calendar.name}.ics"
+  end
+	
 	def refresh_automatically?
 	  ical_refresh_interval.nil? || ical_refresh_interval.to_i != 0
   end

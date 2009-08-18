@@ -1,4 +1,4 @@
-module CalendarHelper
+module Admin::CalendarHelper
   def self.included(base)
 
     base.module_eval do
@@ -106,9 +106,9 @@ module CalendarHelper
         # TODO Use some kind of builder instead of straight HTML
         cal = %(<table class="#{options[:table_class]}" border="0" cellspacing="0" cellpadding="0">)
         cal << %(<thead><tr>)
-        cal << %(<th colspan="2">#{link_to  "&lt; " + Date::MONTHNAMES[previous.month], calendar_url(:year => previous.year, :month => previous.month) }</th>)
+        cal << %(<th colspan="2">#{link_to  "&lt; " + Date::MONTHNAMES[previous.month], admin_calendar_url(:year => previous.year, :month => previous.month) }</th>)
         cal << %(<th colspan="3" class="#{options[:month_name_class]}">#{Date::MONTHNAMES[options[:month]]} #{options[:year]}</th>)
-        cal << %(<th colspan="2">#{link_to Date::MONTHNAMES[following.month] + " &gt;", calendar_url(:year => following.year, :month => following.month) }</th>)
+        cal << %(<th colspan="2">#{link_to Date::MONTHNAMES[following.month] + " &gt;", admin_calendar_url(:year => following.year, :month => following.month) }</th>)
         cal << %(</tr><tr class="#{options[:day_name_class]}">)
         day_names.each do |d|
           unless d[options[:abbrev]].eql? d
