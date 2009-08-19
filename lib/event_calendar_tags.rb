@@ -606,7 +606,7 @@ module EventCalendarTags
     def set_period(tag)
       attr = tag.attr.symbolize_keys
       date_parts = [:year, :month, :week, :day]
-      interval_parts = [:months, :days, :since, :until, :from, :to]
+      interval_parts = [:months, :calendar_months, :days, :since, :until, :from, :to]
       relatives = {'previous' => -1, 'now' => 0, 'next' => 1}
 
       logger.warn "~~  set_period: attr is #{attr.inspect}"
@@ -663,11 +663,20 @@ module EventCalendarTags
       #    parameters specified in the tag can be overridden by input (on an EventCalendar page). Others are ignored.
       
       specified_interval_parts = interval_parts.select {|p| !attr[p].blank?}
+
+      logger.warn "~~  set_period: specified_interval_parts is #{specified_interval_parts.inspect}"
+
       if specified_interval_parts.any?
-        parts = attr.slice(specified_interval_parts)
+        parts = attr.slice(*specified_interval_parts)
+
+        logger.warn "~~  set_period: parts sliced is #{parts.inspect}"
+
         if self.class == EventCalendarPage
           params = @request.parameters.symbolize_keys
-          parts.merge(params.slice(interval_parts))
+          parts.merge!(params.slice(*interval_parts))
+          
+          logger.warn "~~  set_period: parts merged is #{parts.inspect}"
+          
         end
         return period_from_interval(parts)
       end
@@ -702,7 +711,7 @@ module EventCalendarTags
       logger.warn "~~  period_from_interval(#{parts.inspect})"
       
       # starting point defaults to now
-      parts[:from] ||= Date.today
+      parts[:from] = Date.today if parts[:from].nil? || parts[:from] == 'now'
  
       # from and to fully specified (including since and until as they are always relative to the present)
       return CalendarPeriod.between(Time.now, parts[:until].to_date) if parts[:until]
@@ -716,7 +725,10 @@ module EventCalendarTags
       return CalendarPeriod.new(parts[:from], parts[:years].to_i.years) if parts[:years]
       return CalendarPeriod.new(parts[:from], parts[:months].to_i.months) if parts[:months]
       return CalendarPeriod.new(parts[:from], parts[:weeks].to_i.weeks) if parts[:weeks]
-      return CalendarPeriod.new(parts[:from], parts[:days].to_i.days) if parts[:days]  
+      return CalendarPeriod.new(parts[:from], parts[:days].to_i.days) if parts[:days]
+      
+      # by default we get one month of future events
+      return CalendarPeriod.new(parts[:from], 1.month)
     end
 
 

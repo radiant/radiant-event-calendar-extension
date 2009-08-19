@@ -42,10 +42,14 @@ Each calendar subscription will have its own address and authentication settings
 2. Find the subscription address of your calendar.
 3. Choose 'new calendar' in the radiant admin menu and enter the address and any authentication information you need to get at it. See below for notes about connecting to CalDAV. In the case of an ical file you should only need an address. Give the calendar a slug, just as you would for a page, and optionally a category. Let's say you call it 'test'.
 4. Your calendar should appear in the subscription list. Click through to browse its events and make sure everything is as it should be.
-5. Set up a new page at /calendar/ with the type 'EventCalendar' and fill it with something this:
+5. Set up a new page at /calendar/ with the type 'EventCalendar'. To show a normal calendar view of the current month, all you need is this:
+
+	<r:events:month month="now" month_links="true" />
+	
+Or to show a list of all events in the next six months:
 
 	<div class="event_list">
-	  <r:events:each year="now">
+	  <r:events:each from="now" calendar_months="6">
 	    <r:event:header name="date">
 	      <h2 id="<r:event:year />_<r:event:month />"><r:event:month /> <r:event:year /></h2>
 	    </r:event:header>
@@ -65,8 +69,6 @@ Each calendar subscription will have its own address and authentication settings
 	  </r:events:each>
 	</div>	
 
-Point your browser at /calendar/test and you should see a list of this year's events in that calendar.
-
 Note that the `event:header` tag only shows when it changes, which in this case gives you a non-repeating date slip. For more about the available radius tags, see the extension wiki or the 'available tags' documentation.
 
 If you have another column in your layout, try adding this:
@@ -82,6 +84,12 @@ This is developing quite quickly at the moment but it's in production use on a c
 ### Compatibility
 
 I've tested this with Darwin Calendar Server (on Ubuntu), with Google Calendar and with feeds published from iCal on a mac. It work just as well with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities.
+
+### Connecting to Google Calendar
+
+Create a calendar in your Google Calendar account. Call it 'public', or whatever you like, and tick the box marked 'make this calendar public'.
+
+Click on 'calendar settings' from the drop-down menu next to the name of the public calendar, and look towards the bottom for the 'Calendar Address' section. Click on 'ical' and the address that pops up is your subscription address. You shouldn't need anything else.
 
 ### Connecting to CalDAV
 
