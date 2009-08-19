@@ -5,31 +5,31 @@ require 'date'
 
 class Ical < ActiveRecord::Base
   belongs_to :calendar
-  validates_presence_of :ical_url
+  validates_presence_of :url
 
   @@calendars_path = Radiant::Config["event_calendar.icals_path"]
   
 	# Download and save the .ics calendar file, parse and save events to database
 	def refresh
-    ical_filename = RAILS_ROOT + "/public/" + @@calendars_path + "/" + self.calendar.slug + ".ics"
+    filename = RAILS_ROOT + "/public/" + @@calendars_path + "/" + self.calendar.slug + ".ics"
 
     # Retrieve calendar specified by URL and Name attributes
     begin
-      uri = URI.parse(ical_url)
+      uri = URI.parse(url)
       if authenticated?
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
         req = Net::HTTP::Get.new(uri.path)
-        req.basic_auth ical_username, ical_password
+        req.basic_auth username, password
         response = http.request(req)
       else
         response = Net::HTTP.get_response(uri)
       end
-    	File.open(ical_filename, "w") { |file|
+    	File.open(filename, "w") { |file|
         file << response.body
       }
     rescue 
-      logger.error "iCal url or file error with: #{self.calendar.name} - #{ical_url} -> (#{ical_filename}) -- error."
+      logger.error "iCal url or file error with: #{self.calendar.name} - #{url} -> (#{filename}) -- error."
       return false
     end 
     
@@ -38,7 +38,7 @@ class Ical < ActiveRecord::Base
     self.calendar.events.delete_all
 
     # Open file for reading, parse and store to DB
-      File.open(ical_filename, "r") do |file|
+      File.open(filename, "r") do |file|
         cal = Vpim::Icalendar.decode(file).first
         event_count = 0
         cal.events.each do |parsed_event|
@@ -71,11 +71,11 @@ class Ical < ActiveRecord::Base
   end
 	
 	def refresh_automatically?
-	  ical_refresh_interval.nil? || ical_refresh_interval.to_i != 0
+	  refresh_interval.nil? || refresh_interval.to_i != 0
   end
 	
 	def refresh_interval_or_default
-	  (ical_refresh_interval || Radiant::Config['event_calendar.default_refresh_interval'] || 3600).to_i.seconds
+	  (refresh_interval || Radiant::Config['event_calendar.default_refresh_interval'] || 3600).to_i.seconds
   end
   
   def needs_refreshment?
@@ -98,11 +98,11 @@ class Ical < ActiveRecord::Base
 	protected
 	
   	def authenticated?
-  	  not ical_username.blank?
+  	  !username.blank?
     end
 		
 		def secured?
-  	  ical_url.match(/^https/)
+  	  url.match(/^https/)
     end
   	
 end

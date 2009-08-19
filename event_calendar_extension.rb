@@ -23,8 +23,16 @@ class EventCalendarExtension < Radiant::Extension
       Radiant::Config["event_calendar.icals_path"] = "icals"
     end
 
+    unless defined? admin.calendar
+      Radiant::AdminUI.send :include, EventCalendarAdminUI
+      admin.calendar = Radiant::AdminUI.load_default_calendar_regions
+      if defined? admin.sites
+        admin.calendar.index.add :top, "admin/shared/site_jumper"
+      end
+    end
+    
     admin.tabs.add "Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]
-    if admin.tabs["Calendars"].respond_to?(:add_link)
+    if admin.tabs["Calendars"].respond_to?(:add_link)   # that is, if the submenu extension is installed
       admin.tabs["Calendars"].add_link "calendar list", EXT_ROOT + "/calendars"
       admin.tabs["Calendars"].add_link "new subscription", EXT_ROOT + "/calendars/new"
       admin.tabs["Calendars"].add_link "refresh all", EXT_ROOT + "/icals/refresh_all"

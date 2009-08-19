@@ -1,0 +1,10 @@
+- include_stylesheet('admin/downloads')
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1 
+      Edit Calendar Subscription
+
+  - main.edit_form do
+    - form_for :calendar, @calendar, :url => admin_calendar_path(@calendar), :html => { :method => "put", :multipart => true } do |f|
+      = render :partial => 'form', :locals => { :f => f }

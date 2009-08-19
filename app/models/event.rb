@@ -57,5 +57,13 @@ class Event < ActiveRecord::Base
   def allday?
     start_date.hour == 0 && end_date.hour == 0
   end
+  
+  def nice_start_time
+    if start_date.min == 0
+      start_date.to_datetime.strftime("%-1I%p").downcase
+    else
+      start_date.to_datetime.strftime("%-1I:%M%p").downcase
+    end
+  end
 
 end

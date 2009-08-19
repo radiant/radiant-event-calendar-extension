@@ -1,0 +1,57 @@
+.form-area
+  = render_region :form_top
+  = error_messages_for :calendar
+
+  - render_region :form do |form|
+    - form.edit_name do
+      %p.title
+        = f.label :name
+        = f.text_field :name, :class => "textbox"
+
+    - form.edit_url do
+      %p.halfwidth
+        = f.label :category
+        = f.text_field :category, :class => "textbox"
+      %p.halfwidth
+        = f.label :slug
+        = f.text_field :slug, :class => "textbox"
+            
+    - form.edit_description do
+      %p.description
+        = f.label :description, "Description"
+        = f.text_area 'description', :size => '40x6', :class => "textarea"
+
+    - @calendar.build_ical unless @calendar.ical
+    - form.edit_ical do
+      - f.fields_for :ical do |ical_f| 
+        %p.fullwidth
+          = ical_f.label :url, "Subscription url"
+          = ical_f.text_field :url, :class => "textbox"
+          %span.info
+            Include the http:// or https:// part. A caldav address will probably look like 
+            %code
+              https://my.calendar.com:8443/calendars/me/calendar/
+            and must include the trailing slash. An ical path looks like any other web address but with the suffix .ics.
+
+        %p.thirdwidth
+          = ical_f.label :username
+          = ical_f.text_field :username, :class => "textbox"
+
+        %p.thirdwidth
+          = ical_f.label :password
+          = ical_f.text_field :password, :class => "textbox"
+
+        %p.thirdwidth
+          = ical_f.label :refresh_interval
+          = ical_f.text_field :refresh_interval, :class => "textbox"
+
+  - render_region :form_bottom do |form_bottom|
+    - form_bottom.edit_timestamp do
+      = updated_stamp @calendar  
+
+    - form_bottom.edit_buttons do
+      %p.buttons
+        = save_model_button @calendar
+        = save_model_and_continue_editing_button @calendar
+        or
+        = link_to "Cancel", admin_calendars_url

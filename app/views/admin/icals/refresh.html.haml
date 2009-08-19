@@ -1,0 +1,11 @@
+%h1
+  Refresh Subscriptions
+  - @calendars.each do |calendar|
+    %div{:style => "border-bottom: dotted 1px rgb(100,100,100); padding: 10px;"}
+	 	  %strong
+	 	    = calendar.category.to_s.capitalize
+	 	    > 
+	 	    = calendar.name.to_s.capitalize
+		  %br
+		  = calendar.events.count
+		  events parsed and brought into database.

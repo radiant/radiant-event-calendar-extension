@@ -15,4 +15,6 @@ class EventCalendarPage < Page
     end
   end
   
+  # something to munch date input into a Date object ?
+  
 end

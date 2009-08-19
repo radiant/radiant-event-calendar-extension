@@ -8,6 +8,8 @@ We can take feeds either from an ical file (which is your normal .ics calendar s
 
 The radius tag structure has changed. Those few people who have old event_calendar pages will need to tweak them to use the new `r:calendar` and `r:event` namespaces, of which more below.
 
+Next job is to add some proper tests.
+
 ## Requirements
 
 You need the `vpim` gem to handle event data:
@@ -41,7 +43,7 @@ Each calendar subscription will have its own address and authentication settings
 2. Find the subscription address of your calendar.
 3. Choose 'new calendar' in the radiant admin menu and enter the address and any authentication information you need to get at it. See below for notes about connecting to CalDAV. In the case of an ical file you should only need an address. Give the calendar a slug, just as you would for a page, and optionally a category. Let's say you call it 'test'.
 4. Your calendar should appear in the subscription list. Click through to browse its events and make sure everything is as it should be.
-5. Set up a new page at /calendar/ with the type 'Calendar' and fill it with something this:
+5. Set up a new page at /calendar/ with the type 'EventCalendar' and fill it with something this:
 
 	<div class="event_list">
 	  <r:events:each year="now">
@@ -67,6 +69,12 @@ Each calendar subscription will have its own address and authentication settings
 Point your browser at /calendar/test and you should see a list of this year's events in that calendar.
 
 Note that the `event:header` tag only shows when it changes, which in this case gives you a non-repeating date slip. For more about the available radius tags, see the extension wiki or the 'available tags' documentation.
+
+If you have another column in your layout, try adding this:
+
+	<r:events:as_calendar calendar_months="6" date_links="true" month_links="false" />
+
+For clickable thumbnails of coming months.
 
 ## Notes
 

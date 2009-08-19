@@ -1,4 +1,5 @@
 - include_stylesheet 'admin/calendar'
+= render_region :top 
 
 %h1
   Calendar subscriptions
@@ -6,35 +7,54 @@
 %table.index
   %thead
     %tr
-      %th Name
-      %th URL (category/slug)
-      %th Last Refresh
-      %th Refresh automatically?
-      %th 
+      - render_region :thead do |thead|
+        - thead.name_header do
+          %th Name
+
+        - thead.url_header do
+          %th URL (category/slug)
+
+        - thead.refresh_header do
+          %th Last Refresh
+          %th Refresh automatically?
+
+        - thead.action_header do
+          %th 
   %tbody
     - @calendars.each do |calendar|
       %tr{:class => "node level-1"}
-        %td.subscription-title
-          = link_to calendar.name, admin_calendar_url(calendar)
-          = "(#{calendar.ical.last_refresh_count || '0'} events)"
-        %td.url
-          =h calendar.category.to_s.downcase 
-          \/
-          =h calendar.slug.downcase
-        %td.refreshed
-          =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
-        %td.autorefresh
-          = calendar.ical.refresh_automatically? ? "after #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no"
-        %td
-          = link_to 'Refresh', refresh_admin_ical_url(calendar.ical.id), :method => :put 
-          | 
-          = link_to 'Edit', edit_admin_calendar_path(calendar) 
-          |
-          = link_to 'Delete', admin_calendar_path(calendar), :confirm => 'Are you sure?', :method => :delete
 
-.footnote
-  %p
-    = link_to "Refresh All", refresh_all_admin_icals_path, :method => :put
-    |
-    = link_to 'Add a calendar', new_admin_calendar_url
+        - render_region :tbody do |tbody|
+          - tbody.name_cell do          
+            %td.subscription-title
+              = link_to calendar.name, admin_calendar_url(calendar)
+              = "(#{calendar.ical.last_refresh_count || '0'} events)"
+
+          - tbody.url_cell do
+            %td.url
+              =h calendar.category.to_s.downcase 
+              \/
+              =h calendar.slug.downcase
+
+          - tbody.refresh_cell do
+            %td.refreshed
+              =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
+            %td.autorefresh
+              = calendar.ical.refresh_automatically? ? "after #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no"
+
+          - tbody.action_cell do
+            %td
+              = link_to 'Refresh', refresh_admin_ical_url(calendar.ical.id), :method => :put 
+              | 
+              = link_to 'Edit', edit_admin_calendar_path(calendar) 
+              |
+              = link_to 'Delete', admin_calendar_path(calendar), :confirm => 'Are you sure?', :method => :delete
+
+- render_region :bottom do |bottom|
+  - bottom.buttons do
+    .footnote
+      %p
+        = link_to "Refresh All", refresh_all_admin_icals_path, :method => :put
+        |
+        = link_to 'Add a calendar', new_admin_calendar_url
   

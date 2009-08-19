@@ -5,6 +5,7 @@ class Calendar < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_uniqueness_of :slug, :scope => :category
+  accepts_nested_attributes_for :ical
   
   named_scope :in_category, lambda { |category| # string. needs to match exactly
     { :conditions => [ "calendars.category = ?", category ] }
