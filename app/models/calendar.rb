@@ -1,11 +1,12 @@
 class Calendar < ActiveRecord::Base
   has_one :ical, :dependent => :destroy
   has_many :events, :dependent => :destroy
-  validates_associated :ical
+
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_uniqueness_of :slug, :scope => :category
   accepts_nested_attributes_for :ical
+  validates_associated :ical
   
   named_scope :in_category, lambda { |category| # string. needs to match exactly
     { :conditions => [ "calendars.category = ?", category ] }

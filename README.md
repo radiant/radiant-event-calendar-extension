@@ -1,14 +1,13 @@
 # Event Calendar (iCal) Extension for Radiant
 
-This extension lets your radiant site present calendar data. It doesn't administer calendars or let you enter events: you have a perfectly good desktop calendar application for that. All we do here is subscribe to a calendar feed and publish the contents nicely.
-
-We can take feeds either from an ical file (which is your normal .ics calendar subscription file) or a CalDAV server. The latter is much more powerful and allows for proper team calendars but is also much nastier to set up. There are some notes below.
+This extension lets your radiant site present calendar data. It doesn't administer calendars or let you enter events: you have a perfectly good desktop calendar application for that. All we do here is subscribe to a calendar feed and publish the contents nicely. The feed can come from Google Calendar, from a published ical file or from any CalDAV-compatible calendar server.
 
 ## Recent changes
 
-The radius tag structure has changed. Those few people who have old event_calendar pages will need to tweak them to use the new `r:calendar` and `r:event` namespaces, of which more below.
-
-Next job is to add some proper tests.
+* The radius tag structure has changed. Those few people who have old event_calendar pages will need to tweak them to use the new `r:calendar` and `r:event` namespaces, of which more below.
+* column names have been simplified now that the ical can be dealt with as a nested model
+* standard ownership columns have been added to calendar 
+* tested with google calendar
 
 ## Requirements
 
@@ -82,7 +81,7 @@ This is developing quite quickly at the moment but it's in production use on a c
 
 ### Compatibility
 
-I've only tested this with Darwin Calendar Server (on Ubuntu). It should be exactly the same with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities. It should also work very nicely with Google Calendar but I haven't tried that yet either.
+I've tested this with Darwin Calendar Server (on Ubuntu), with Google Calendar and with feeds published from iCal on a mac. It work just as well with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities.
 
 ### Connecting to CalDAV
 
