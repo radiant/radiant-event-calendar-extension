@@ -44,11 +44,7 @@
 
           - tbody.action_cell do
             %td
-              = link_to 'Refresh', refresh_admin_ical_url(calendar.ical.id), :method => :put 
-              | 
-              = link_to 'Edit', edit_admin_calendar_path(calendar) 
-              |
-              = link_to 'Delete', admin_calendar_path(calendar), :confirm => "Are you sure you want to delete the #{calendar.name} calendar ?", :method => :delete
+              = render :partial => 'actions', :locals => {:calendar => calendar}
 
 - render_region :bottom do |bottom|
   - bottom.buttons do

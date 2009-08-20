@@ -26,6 +26,14 @@ table.index td.subscription-title {
   font-weight: bold;
 }
 
+span.calendar_actions img {
+  opacity: 0.5;
+}
+
+span.calendar_actions a img {
+  opacity: 1;
+}
+
 /**** calendar/show ****/
 
 table.calendar {
@@ -63,6 +71,15 @@ table.calendar td div {
   overflow: hidden;
 }
 
+table.calendar td.other_month {
+  color: #ccc;
+  background-color: white;
+}
+
+table.calendar td.weekend_day {
+  background-color: #eee;
+}
+
 table.calendar td.eventful {
 	background-color: #fee;
 }
@@ -71,19 +88,10 @@ table.calendar td.eventful_weekend {
 	background-color: #edd;
 }
 
-table.calendar td.other_month {
-  color: #ccc;
-  background-color: white;
-}
-
 table.calendar td.today {
 	background-color: #eef;
   font-weight: bold;
 	color: #00c;
-}
-
-table.calendar td.weekend_day {
-  background-color: #eee;
 }
 
 table.calendar td.weekend_today {
@@ -117,4 +125,54 @@ table.calendar td ul {
   margin: 0;
   padding: 0 0 0 12px;
   list-style: square;
+}
+
+/**** calendar/new ****/
+
+#content .form-area p, #content .form-area p.title {
+  margin-bottom: 10px;
+}
+
+#content .form-area p label {
+  display: block;
+}
+
+#content .form-area p.thirdwidth {
+  float: left;
+  width: 31%;
+  margin-right: 2%;
+}
+
+#content .form-area p.halfwidth {
+  float: left;
+  width: 48%;
+  margin-right: 2%;
+}
+
+#content .form-area p.fullwidth {
+  clear: both;
+  width: 100%;
+  margin-right: 2%;
+}
+
+#content .form-area p input.textbox {
+  width: 100%;
+  border:1px solid #CDC295;
+  font-family:Monaco,"Courier New",Courier,monospace;
+  font-size:95%;
+  padding: 4px;
+}
+
+#content .form-area p textarea {
+  width: 100%;
+  height: 60px;
+  border:1px solid #CDC295;
+  font-family:Monaco,"Courier New",Courier,monospace;
+  font-size:95%;
+  padding: 4px;
+}
+
+#content .form-area span.info {
+  font-size: 80%;
+  color: #7D796C;
 }

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'net/http'
 require 'vpim'
 require 'date'
+require 'ftools'
 
 class Ical < ActiveRecord::Base
   belongs_to :calendar
@@ -12,7 +13,9 @@ class Ical < ActiveRecord::Base
   
 	# Download and save the .ics calendar file, parse and save events to database
 	def refresh
-    filename = RAILS_ROOT + "/public/" + @@calendars_path + "/" + self.calendar.slug + ".ics"
+    filepath = File.join RAILS_ROOT, "public", ics_path
+    filename = File.join filepath, ics_file
+    File.makedirs filepath
 
     # Retrieve calendar specified by URL and Name attributes
     begin
@@ -69,9 +72,9 @@ class Ical < ActiveRecord::Base
   end
   
   def ics_file
-	  "#{self.calendar.name}.ics"
+	  "#{self.calendar.slug}.ics"
   end
-	
+  	
 	def refresh_automatically?
 	  refresh_interval.nil? || refresh_interval.to_i != 0
   end

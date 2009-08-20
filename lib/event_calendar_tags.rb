@@ -138,13 +138,14 @@ module EventCalendarTags
 
   desc %{
     Renders a sensible description of the currently displayed calendars, with links to each separate calendar.
+    Pass with_subscription="true" to append a little ical subscription icon to each link.
     
     *Usage:* 
     <pre><code><r:calendars:summary /></code></pre>
   }
   tag 'calendars:summary' do |tag|
     result = "Showing events from the "
-    result << tag.render('calendars:list')
+    result << tag.render('calendars:list', tag.attr.dup)
     result << ' '
     result << pluralize(tag.locals.calendars.length, 'calendar')
     result << %{ <a href="#{tag.render('url')}" class="note">(show all)</a>} if calendar_category
@@ -154,15 +155,19 @@ module EventCalendarTags
 
   desc %{
     Renders a plain list (in sentence form) of the currently displayed calendars, with links to each separate calendar.
+    Pass with_subscription="true" to append a little ical subscription icon to each link.
     
     *Usage:* 
     <pre><code><r:calendars:list /></code></pre>
   }
   tag 'calendars:list' do |tag|
     links = []
+    with_subscription = (tag.attr['with_subscription'] == 'true')
     tag.locals.calendars.each do |calendar|
       tag.locals.calendar = calendar
-      links << tag.render("calendar:link")
+      link = tag.render("calendar:link")
+      link << tag.render("calendar:ical_icon") if with_subscription
+      links << link
     end
     links.to_sentence
   end
@@ -284,6 +289,42 @@ module EventCalendarTags
     attributes = " #{attributes}" unless attributes.empty?
     text = tag.double? ? tag.expand : tag.render('calendar:name')
     %{<a href="#{tag.render('calendar:url')}#{anchor}"#{attributes}>#{text}</a>}
+  end
+
+  desc %{
+    Renders the path to the local .ics file for this calendar, suitable for read-only subscription in iCal or other calendar programs.
+    
+    Usage:
+    <pre><code><r:calendar:ical_url /></code></pre> 
+  }
+  tag "calendar:ical_url" do |tag|
+    tag.locals.calendar.to_ics
+  end
+
+  desc %{
+    Renders a link to the local .ics file for this calendar, suitable for read-only subscription in iCal or other calendar programs.
+    Link attributes are passed through as usual.
+    
+    Usage:
+    <pre><code><r:calendar:ical_link /></code></pre> 
+  }
+  tag "calendar:ical_link" do |tag|
+    options = tag.attr.dup
+    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    attributes = " #{attributes}" unless attributes.empty?
+    text = tag.double? ? tag.expand : tag.render('calendar:name')
+    %{<a href="#{tag.render('calendar:ical_url')}#{anchor}"#{attributes}>#{text}</a>}
+  end
+
+  desc %{
+    Renders a small graphical link to the local .ics file for this calendar.
+    
+    Usage:
+    <pre><code><r:calendar:ical_icon /></code></pre> 
+  }
+  tag "calendar:ical_icon" do |tag|
+    %{<a href="#{tag.render('calendar:ical_url')}" class="ical"><img src="/images/event_calendar/ical16.png" alt="subscribe to #{tag.render('calendar:name')}" width="16" height="16" /></a>}
   end
 
   # Event:* tags

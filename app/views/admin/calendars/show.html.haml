@@ -3,11 +3,7 @@
 %h1
   = @calendar.name
   calendar
-
-%p
-  = link_to 'Edit', edit_admin_calendar_path(@calendar)
-  |
-  = link_to 'Refresh', refresh_admin_ical_url(@calendar.ical.id), :method => :put 
+  = render :partial => 'actions'
 
 %div#calendar_help
   %h3
