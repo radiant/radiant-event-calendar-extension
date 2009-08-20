@@ -14,6 +14,5 @@ class Ownership < ActiveRecord::Migration
     remove_column :calendars, :created_at
     remove_column :calendars, :updated_at
     remove_column :calendars, :lock_version
-    remove_column :calendars, :site_id
   end                                      
 end                                        

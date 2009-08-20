@@ -1,6 +1,7 @@
 class Calendar < ActiveRecord::Base
   has_one :ical, :dependent => :destroy
   has_many :events, :dependent => :destroy
+  is_site_scoped if defined? ActiveRecord::SiteNotFound
 
   validates_presence_of :name
   validates_uniqueness_of :name

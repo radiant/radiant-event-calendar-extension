@@ -1,5 +1,6 @@
 class Event < ActiveRecord::Base
   belongs_to :calendar
+  is_site_scoped if defined? ActiveRecord::SiteNotFound
 
   named_scope :in_calendars, lambda { |calendars| # list of calendar objects
     ids = calendars.map{ |c| c.id }

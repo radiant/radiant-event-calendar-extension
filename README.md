@@ -38,18 +38,20 @@ Each calendar subscription will have its own address and authentication settings
 
 ## Usage
 
-1. Create a calendar source, either by publishing a feed from your desktop calendar application or by setting up a CalDAV calendar and persuading all the right people to subscribe to it.
-2. Find the subscription address of your calendar.
-3. Choose 'new calendar' in the radiant admin menu and enter the address and any authentication information you need to get at it. See below for notes about connecting to CalDAV. In the case of an ical file you should only need an address. Give the calendar a slug, just as you would for a page, and optionally a category. Let's say you call it 'test'.
+1. Create a calendar source. You can do that by publishing a feed from your desktop calendar application, by making a google calendar public or by setting up a CalDAV calendar and persuading all the right people to subscribe to it.
+2. Find the ical subscription address of your calendar.
+3. Choose 'new calendar' in the radiant admin menu and enter the address and any authentication information you need to get at it. See below for notes about connecting to CalDAV. In the case of an ical file or google calendar you should only need an address. Give the calendar a slug, just as you would for a page, and optionally a category. Let's say you call it 'test'.
 4. Your calendar should appear in the subscription list. Click through to browse its events and make sure everything is as it should be.
-5. Set up a new page at /calendar/ with the type 'EventCalendar'. To show a normal calendar view of the current month, all you need is this:
+5. Set up a new page at /calendar/ with the type 'EventCalendar'. To show a pageable calendar view of the current month, all you need is this:
 
-	<r:events:month month="now" month_links="true" />
+	<r:events:as_calendar month="now" month_links="true" />
 	
 Or to show a list of all events in the next six months:
 
+	<p><r:calendars:summary /></p>
+	
 	<div class="event_list">
-	  <r:events:each from="now" calendar_months="6">
+	  <r:events:each calendar_months="6">
 	    <r:event:header name="date">
 	      <h2 id="<r:event:year />_<r:event:month />"><r:event:month /> <r:event:year /></h2>
 	    </r:event:header>
@@ -73,7 +75,7 @@ Note that the `event:header` tag only shows when it changes, which in this case 
 
 If you have another column in your layout, try adding this:
 
-	<r:events:as_calendar calendar_months="6" date_links="true" month_links="false" />
+	<r:events:as_calendar calendar_months="6" date_links="true" compact="true" />
 
 For clickable thumbnails of coming months.
 
@@ -93,7 +95,7 @@ Click on 'calendar settings' from the drop-down menu next to the name of the pub
 
 ### Connecting to CalDAV
 
-We aren't really doing CalDAV properly here, but taking advantage of a compatibility with the simpler ical standard. A simple GET to addresses under /calendar will return a file in ical format, which is what we get and parse. As a passive display client, that's all we need, but it does mean that so far we can't display groups properly, or interact principals, or take proper advantage of the more collaborative functions of CalDAV.
+We aren't really doing CalDAV properly here, but taking advantage of a compatibility with the simpler ical standard. A simple GET to addresses under /calendar will return a file in ical format, which is what we get and parse. As a passive display client, that's all we need, but it does mean that so far we can't display groups properly, or interact with principals, or take proper advantage of the more collaborative functions of CalDAV.
 
 The address for your calendar will either look like this:
 
@@ -117,7 +119,7 @@ It's not nice. There are three main options:
 
 * OS X Server has an excellent built-in ICal server
 * [Darwin Calendar Server](https://trac.calendarserver.org/wiki) is the open-source version of that. It's written mostly in Python and distinctly quirky, but once set up it works very well.
-* Get a Google calendar instead.
+* Use a Google calendar and endure a bit of sync bother to get it on the desktop.
 * er
 * That's it unless you speak Java, in which case there are [several](http://caldav.calconnect.org/implementations/servers.html) other [good options](http://www.bedework.org/bedework/).
 
@@ -125,7 +127,7 @@ See [http://caldav.calconnect.org/](http://caldav.calconnect.org/) for news and 
 
 ### Quirks
 
-Calendars are only refreshed if they're accessed. The `event_calendar.default_refresh_interval` setting is really a cache-duration setting: on the next request after that interval, we go back to the original source. If that gets too slow for the end user who triggers the refresh then I'll need to add a calendar-refresh rake task that can be crontabbed, but so far it seems to work well enough.
+Calendars are only refreshed if they're accessed. The `event_calendar.default_refresh_interval` setting is really a cache duration: on the next request after that interval, we go back to the original source. If that gets too slow for the end user who triggers the refresh then I'll need to add a calendar-refresh rake task that can be crontabbed, but so far it seems to work well enough.
 
 If you're administering your calendars in iCal, the first calendar you set up will be accessible at the simple /users/uid/calendar address but after that you'll have to get the GUIDs. You can get-info on a calendar to get a subscription address but if it's long it may be truncated.
 

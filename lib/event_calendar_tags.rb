@@ -112,15 +112,6 @@ module EventCalendarTags
     result
   end
   
-  
-  [:from, :to, :duration, :description].each do |attribute|
-
-  end
-
-  tag "events:period" do |tag|
-
-  end
-
 
   # Calendars:* tags
   # iterate over the set of calendars
@@ -132,7 +123,7 @@ module EventCalendarTags
     <pre><code><r:calendars:each>...</r:calendars:each></code></pre>
   }
   tag 'calendars' do |tag|
-    tag.locals.calendars = Calendar.find(:all, calendars_find_options(tag))
+    tag.locals.calendars ||= set_calendars(tag)
     tag.expand
   end
   
@@ -145,7 +136,36 @@ module EventCalendarTags
     result
   end
 
+  desc %{
+    Renders a sensible description of the currently displayed calendars, with links to each separate calendar.
+    
+    *Usage:* 
+    <pre><code><r:calendars:summary /></code></pre>
+  }
+  tag 'calendars:summary' do |tag|
+    result = "Showing events from the "
+    result << tag.render('calendars:list')
+    result << ' '
+    result << pluralize(tag.locals.calendars.length, 'calendar')
+    result << %{ <a href="#{tag.render('url')}" class="note">(show all)</a>} if calendar_category
+    result << '.'
+    result
+  end
 
+  desc %{
+    Renders a plain list (in sentence form) of the currently displayed calendars, with links to each separate calendar.
+    
+    *Usage:* 
+    <pre><code><r:calendars:list /></code></pre>
+  }
+  tag 'calendars:list' do |tag|
+    links = []
+    tag.locals.calendars.each do |calendar|
+      tag.locals.calendar = calendar
+      links << tag.render("calendar:link")
+    end
+    links.to_sentence
+  end
 
   # Calendar:* tags
   # select and display attributes of a single calendar
@@ -234,6 +254,36 @@ module EventCalendarTags
   tag "calendar:year" do |tag|
     tag.locals.period = period_from_parts(:year => tag.attr['year'])
     tag.render("events:year")
+  end
+
+
+  desc %{ 
+    Renders the address that would be used to display the current calendar by itself on the current page.
+    If the page isn't an EventCalendar page, this will still work but the destination probably won't.
+    
+    Usage:
+    <pre><code><r:calendar:url /></code></pre> 
+  }
+  tag "calendar:url" do |tag|
+    clean_url([tag.locals.page.url, tag.locals.calendar.category, tag.locals.calendar.slug].join('/'))
+  end
+
+  desc %{ 
+    Renders a link to the address that would be used to display the current calendar by itself on the current page.
+    Attributes and contained text are passed through exactly as for other links.
+    
+    If the page isn't an EventCalendar page, this will still work but the destination probably won't.
+    
+    Usage:
+    <pre><code><r:calendar:link /></code></pre> 
+  }
+  tag "calendar:link" do |tag|
+    options = tag.attr.dup
+    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    attributes = " #{attributes}" unless attributes.empty?
+    text = tag.double? ? tag.expand : tag.render('calendar:name')
+    %{<a href="#{tag.render('calendar:url')}#{anchor}"#{attributes}>#{text}</a>}
   end
 
   # Event:* tags
@@ -595,7 +645,7 @@ module EventCalendarTags
     
     def parse_boolean_attributes(tag)
       attr = tag.attr.symbolize_keys
-      [:month_links, :event_links, :compact].each do |param|
+      [:month_links, :date_links, :event_links, :compact].each do |param|
         attr[param] = false unless attr[param] == 'true'
       end
       attr
@@ -609,8 +659,6 @@ module EventCalendarTags
       interval_parts = [:months, :calendar_months, :days, :since, :until, :from, :to]
       relatives = {'previous' => -1, 'now' => 0, 'next' => 1}
 
-      logger.warn "~~  set_period: attr is #{attr.inspect}"
-      
       # 1. fully specified period: any numeric date part found
       #    not overridable
 
@@ -622,9 +670,6 @@ module EventCalendarTags
       #    this ought to be the most common case
       
       relative_date_parts = date_parts.select {|p| relatives.keys.include? attr[p]}
-      
-      logger.warn "~~  set_period: date_parts is #{date_parts.inspect} and relatives.keys is #{relatives.keys.inspect} and relative_date_parts is #{relative_date_parts.inspect}"
-      
       if p = relative_date_parts.last    # if more than one - which there shouldn't be - we take the finest.
         
         # read date parts from tag and request
@@ -632,30 +677,18 @@ module EventCalendarTags
         
         if self.class == EventCalendarPage
           params = @request.parameters.symbolize_keys
-        
-          logger.warn "~~  set_period: params are #{params.inspect} and params sliced by #{date_parts.inspect} are #{params.slice(*date_parts).inspect}"
-        
           parts.merge!( params.slice(*date_parts) )
         end
-
-        logger.warn "~~  set_period: parts paramified are #{parts.inspect}"
 
         # replace any remaining magic words with the present date part
         parts.each {|k,v| parts[k] = Date.today.send(k) unless parts[k].to_i.to_s == parts[k]}
         
-        logger.warn "~~  set_period: parts demagicated are #{parts.inspect}"
-        
         # params now holds an up to date mixture of tag attributes and input parameters
         period = period_from_parts(parts)
-
-        logger.warn "~~  set_period: period before shift is #{period}"
 
         # but the magic words are still in attr and are used to shift the period:
         period += 1.send(p) if attr[p] == 'next'
         period -= 1.send(p) if attr[p] == 'previous'
-
-        logger.warn "~~  set_period: period after shift is #{period}"
-
         return period
       end
 
@@ -663,20 +696,11 @@ module EventCalendarTags
       #    parameters specified in the tag can be overridden by input (on an EventCalendar page). Others are ignored.
       
       specified_interval_parts = interval_parts.select {|p| !attr[p].blank?}
-
-      logger.warn "~~  set_period: specified_interval_parts is #{specified_interval_parts.inspect}"
-
       if specified_interval_parts.any?
         parts = attr.slice(*specified_interval_parts)
-
-        logger.warn "~~  set_period: parts sliced is #{parts.inspect}"
-
         if self.class == EventCalendarPage
           params = @request.parameters.symbolize_keys
           parts.merge!(params.slice(*interval_parts))
-          
-          logger.warn "~~  set_period: parts merged is #{parts.inspect}"
-          
         end
         return period_from_interval(parts)
       end
@@ -684,18 +708,9 @@ module EventCalendarTags
       # default is the present month
       period_from_parts
     end
-    
-    def date_from_input
-      return unless self.class == EventCalendarPage
-      params = @request.parameters.symbolize_keys
-      Date.civil(params[:year], params[:month], params[:day])
-    end
-    
-    
+        
     def period_from_parts(parts={})
       parts.each {|k,v| parts[k] = parts[k].to_i}
-      
-      logger.warn "~~  period_from_parts(#{parts.inspect})"
       return CalendarPeriod.new(Date.civil(parts[:year], 1, 1), 1.year) if parts[:year] and not parts[:month]
       parts[:year] ||= Date.today.year
       return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], 1), 1.month) if parts[:month] && !parts[:week] && !parts[:day]
@@ -707,9 +722,6 @@ module EventCalendarTags
     end
     
     def period_from_interval(parts={})
-      
-      logger.warn "~~  period_from_interval(#{parts.inspect})"
-      
       # starting point defaults to now
       parts[:from] = Date.today if parts[:from].nil? || parts[:from] == 'now'
  
@@ -731,13 +743,6 @@ module EventCalendarTags
       return CalendarPeriod.new(parts[:from], 1.month)
     end
 
-
-
-
-
-
-
-        
     def set_calendars(tag)
       attr = tag.attr.symbolize_keys
       if tag.locals.calendar  # either we're in a calendar:* shortcut or we're eaching calendars. either way, it's set for us and parameters have no effect
@@ -746,25 +751,16 @@ module EventCalendarTags
         return Calendar.with_slugs(attr[:slugs])
       elsif attr[:calendars]
         return Calendar.with_names_like(attr[:calendars])
-      elsif self.class == EventCalendarPage && category = @request.path_parameters[:url][1]
-        finder = Calendar.in_category(category)
-        if slug = @request.path_parameters[:url][2]
-          finder = finder.with_slugs(slug) unless slug.blank? || slug == 'all'
-        end
-        return finder.find(:all)
+      elsif self.class == EventCalendarPage 
+        get_calendars
+      else
+        Calendar.find(:all)
       end
-      Calendar.find(:all)
     end
     
     def get_events(tag)
-      
-      logger.warn "~~ get_events: attr will be #{tag.attr.inspect}"
-      
       Ical.check_refreshments
       tag.locals.period ||= set_period(tag)
-      
-      logger.warn "~~ get_events: tag.locals.period is #{tag.locals.period.inspect}"
-      
       tag.locals.calendars ||= set_calendars(tag)
       event_finder = Event.between(tag.locals.period.start, tag.locals.period.finish)
       event_finder = event_finder.in_calendars(tag.locals.calendars) if tag.locals.calendars
@@ -799,6 +795,9 @@ module EventCalendarTags
       date == ::Date.current
     end
 
+    def pluralize(count, singular, plural = nil)
+      (count == 1 || count == '1') ? singular : (plural || singular.pluralize)
+    end
 
 
 

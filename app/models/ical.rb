@@ -5,6 +5,7 @@ require 'date'
 
 class Ical < ActiveRecord::Base
   belongs_to :calendar
+  is_site_scoped if defined? ActiveRecord::SiteNotFound
   validates_presence_of :url
 
   @@calendars_path = Radiant::Config["event_calendar.icals_path"]
@@ -38,28 +39,29 @@ class Ical < ActiveRecord::Base
     self.calendar.events.delete_all
 
     # Open file for reading, parse and store to DB
-      File.open(filename, "r") do |file|
-        cal = Vpim::Icalendar.decode(file).first
-        event_count = 0
-        cal.events.each do |parsed_event|
-          parsed_event.occurences.each do |o|
-            new_event = Event.new
-            new_event.start_date = o
-            new_event.end_date = Time.local(o.year, o.month, o.day, parsed_event.dtend.hour, parsed_event.dtend.min)
-            new_event.title = parsed_event.summary
-            new_event.description = parsed_event.description
-            new_event.location = parsed_event.location
-            new_event.url = parsed_event.url
-            new_event.calendar = self.calendar
-            new_event.save
-            event_count = event_count + 1
-          end
-        end  
-        self.last_refresh_count = event_count
-        self.last_refresh_date = Time.now.utc
-        self.save
-        logger.info self.calendar.category + "/" + self.calendar.name + " - iCalendar subscription refreshed on " + Time.now.strftime("%m/%d at %H:%M")
-      end 
+    File.open(filename, "r") do |file|
+      cal = Vpim::Icalendar.decode(file).first
+      event_count = 0
+      cal.events.each do |parsed_event|
+        parsed_event.occurences.each do |o|
+          new_event = Event.new
+          new_event.start_date = o
+          new_event.end_date = Time.local(o.year, o.month, o.day, parsed_event.dtend.hour, parsed_event.dtend.min)
+          new_event.title = parsed_event.summary
+          new_event.description = parsed_event.description
+          new_event.location = parsed_event.location
+          new_event.url = parsed_event.url
+          new_event.calendar = self.calendar
+          new_event.site = self.calendar.site if Event.reflect_on_association :site
+          new_event.save
+          event_count = event_count + 1
+        end
+      end  
+      self.last_refresh_count = event_count
+      self.last_refresh_date = Time.now.utc
+      self.save
+      logger.info self.calendar.category + "/" + self.calendar.name + " - iCalendar subscription refreshed on " + Time.now.strftime("%m/%d at %H:%M")
+    end 
 	end
 	
 	def ics_path
