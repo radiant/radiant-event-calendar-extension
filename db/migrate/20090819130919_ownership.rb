@@ -5,7 +5,6 @@ class Ownership < ActiveRecord::Migration
     add_column :calendars, :created_at, :datetime
     add_column :calendars, :updated_at, :datetime
     add_column :calendars, :lock_version, :integer
-    add_column :calendars, :site_id, :integer
   end
 
   def self.down
