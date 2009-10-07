@@ -51,7 +51,7 @@ module EventCalendarTags
     <pre><code><r:events:month /></code></pre>
   }
   
-  # I really want to the put the retrieval logic in the root 'events' tag, but the attributes don't seem to be available there
+  # I really want to the put the retrieval logic in the root 'events' tag, but the attributes aren't available there
   
   tag "events" do |tag|
     tag.expand
@@ -754,7 +754,7 @@ module EventCalendarTags
       parts.each {|k,v| parts[k] = parts[k].to_i}
       return CalendarPeriod.new(Date.civil(parts[:year], 1, 1), 1.year) if parts[:year] and not parts[:month]
       parts[:year] ||= Date.today.year
-      return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], 1), 1.month) if parts[:month] && !parts[:week] && !parts[:day]
+      return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], 1), 1.month - 1.day) if parts[:month] && !parts[:week] && !parts[:day]
       parts[:month] ||= Date.today.month
       return CalendarPeriod.new(Date.commercial(parts[:year], parts[:week], 1), 1.week ) if parts[:week]
       return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], parts[:day]), 1.day) if parts[:day]
@@ -772,7 +772,7 @@ module EventCalendarTags
       return CalendarPeriod.between(parts[:from].to_date, parts[:to].to_date) if parts[:from] && parts[:to]
 
       # start moves to the first of the month if we're displaying calendar months
-      return CalendarPeriod.new(parts[:from].beginning_of_month, parts[:calendar_months].to_i.months) if parts[:calendar_months]
+      return CalendarPeriod.new(parts[:from].beginning_of_month, parts[:calendar_months].to_i.months - 1.day) if parts[:calendar_months]
       
       # and in the end it's just a question of how much of the future to show
       return CalendarPeriod.new(parts[:from], parts[:years].to_i.years) if parts[:years]
