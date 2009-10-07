@@ -70,7 +70,8 @@ module EventCalendarTags
   end
   
   desc %{ 
-    This is a shortcut that returns a set of tabulated months covering the period defined. It works in the same way as r:events:each but presents the results in a familiar calendar format.
+    This is a shortcut that returns a set of tabulated months covering the period defined. 
+    It works in the same way as r:events:each but presents the results in a familiar calendar format.
     
     See r:events for attributes that specify the period, or try the examples.
     
@@ -94,7 +95,6 @@ module EventCalendarTags
     <pre><code><r:events:as_calendar until="12-12" /></code></pre>
     
     For more control and different views, see tags like r:events:year, r:events:month and r:events:week.
-    
   }
   tag "events:as_calendar" do |tag|
     attr = parse_boolean_attributes(tag)
@@ -104,14 +104,12 @@ module EventCalendarTags
     tag.locals.period.start.upto(tag.locals.period.finish) do |day|
       if day.month != this_month
         tag.locals.calendar_start = day
-        display = attr[:compact] ? 'events:minimonth' : 'events:month'
-        result << tag.render(display, attr.dup)
+        result << tag.render(attr[:compact] ? 'events:minimonth' : 'events:month', attr.dup)
         this_month = day.month
       end
     end
     result
   end
-  
 
   # Calendars:* tags
   # iterate over the set of calendars
@@ -179,7 +177,6 @@ module EventCalendarTags
   tag 'calendar' do |tag|
     tag.locals.calendar ||= get_calendar(tag)
     raise TagError, "No calendar" unless tag.locals.calendar
-    tag.attr['calendar'] = tag.locals.calendar.slug
     tag.expand
   end
 
@@ -215,10 +212,11 @@ module EventCalendarTags
     <pre><code><r:calendar:events:each>...</r:calendar:events:each></code></pre>
   }
   tag 'calendar:events' do |tag|
-    tag.locals.events = get_events(tag)
+    tag.expand
   end
 
   tag 'calendar:events:each' do |tag|
+    tag.locals.events ||= get_events(tag)
     result = []
     tag.locals.events.each do |event|
       tag.locals.event = event
@@ -546,7 +544,7 @@ module EventCalendarTags
     If a period is specified longer than a month, we just render the first month: in that case you might want to use r:events:months to get several displayed at once.
     
     Usage:
-    <pre><code><r:event:minimonth [year=""] [month=""] /></code></pre> 
+    <pre><code><r:events:minimonth [year=""] [month=""] /></code></pre> 
     
   }
   tag "events:minimonth" do |tag|
@@ -703,8 +701,8 @@ module EventCalendarTags
       # 1. fully specified period: any numeric date part found
       #    not overridable
 
-      specific_date_parts = date_parts.select {|p| attr[p] && attr[p] == attr[p].to_i.to_s}
-      return period_from_parts(attr.slice(*specific_date_parts)) if specific_date_parts.any?
+      specified_date_parts = date_parts.select {|p| attr[p] && attr[p] == attr[p].to_i.to_s}
+      return period_from_parts(attr.slice(*specified_date_parts)) if specified_date_parts.any?
       
       # 2. relative period: any relative date part specified and no numeric date part
       #    overridable on an EventCalendarPage: input date parts have the effect of shifting now but leave the rest of the period calculation the same
@@ -786,7 +784,7 @@ module EventCalendarTags
 
     def set_calendars(tag)
       attr = tag.attr.symbolize_keys
-      if tag.locals.calendar  # either we're in a calendar:* shortcut or we're eaching calendars. either way, it's set for us and parameters have no effect
+      if tag.locals.calendar  # either we're inside an r:calendar tag or we're eaching calendars. either way, it's set for us and parameters have no effect
         return [tag.locals.calendar]
       elsif attr[:slugs] && attr[:slugs] != 'all'
         return Calendar.with_slugs(attr[:slugs])
@@ -813,8 +811,8 @@ module EventCalendarTags
     end
 
     def get_calendar(tag)
-      raise TagError, "'title' or 'id' attribute required" unless tag.attr['title'] or tag.attr['id']
-      tag.locals.calendar || Calendar.find_by_title(tag.attr['title']) || Calendar.find_by_id(tag.attr['id'])
+      raise TagError, "'title' or 'id' attribute required" unless tag.locals.calendar || tag.attr['title'] || tag.attr['id']
+      tag.locals.calendar || Calendar.find_by_name(tag.attr['name']) || Calendar.find_by_id(tag.attr['id'])
     end
 
     def standard_find_options(tag)
