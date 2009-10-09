@@ -322,7 +322,8 @@ module EventCalendarTags
     <pre><code><r:calendar:ical_icon /></code></pre> 
   }
   tag "calendar:ical_icon" do |tag|
-    %{<a href="#{tag.render('calendar:ical_url')}" class="ical"><img src="/images/event_calendar/ical16.png" alt="subscribe to #{tag.render('calendar:name')}" width="16" height="16" /></a>}
+    text = tag.attr['text'] || ''
+    %{<a href="#{tag.render('calendar:ical_url')}" class="ical"><img src="/images/event_calendar/ical16.png" alt="subscribe to #{tag.render('calendar:name')}" width="16" height="16" /> #{text}</a>}
   end
 
   # Event:* tags
@@ -406,6 +407,37 @@ module EventCalendarTags
     else
       %{<span #{attributes}>#{text}</span>}
     end
+  end
+  
+  desc %{ 
+    Renders a standard block listing the event and adding whatever links and descriptions are available.
+    
+    Supply with_month="true" or with_year="true" to show more date information. Supply with_time="false" if you don't want to show the start time.
+    
+    This may well be all you need:
+    <pre><code>
+      <r:events:each year="now" />
+        <r:events:header name="month"><r:event:month /></r:events:header>
+        <r:event:summary />
+      </r:events:each />
+    </code></pre> 
+  }
+  tag "event:summary" do |tag|
+    options = tag.attr.dup
+    result = %{
+      <li class="event" id ="event_#{tag.render('event:id')}">
+        <span class="date">#{tag.render('event:day_ordinal')}}
+    result << %{ #{tag.render('event:month')}} if options['with_month'] == 'true'
+    result << %{ #{tag.render('event:year')}} if options['with_year'] == 'true'
+    result << %{ at #{tag.render('event:start')}} unless options['with_time'] == 'false'
+    result << %{
+        </span>
+        #{tag.render('event:link', options.merge({'class' => 'title'}))}
+    }
+    result << %{<span class="location">#{tag.render('event:location')}</span>} if tag.locals.event.location
+    result << %{<br /><span class="description">#{tag.render('event:description')}</span>} if tag.locals.event.description
+    result << %{</li>}
+    result
   end
 
   [:start, :end].each do |attribute|
@@ -561,11 +593,14 @@ module EventCalendarTags
     month_names = Date::ABBR_MONTHNAMES.dup
     day_names = Date::DAYNAMES.dup
     day_names.push(day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. we've gone for the rails standard.
+    with_paging = attr[:month_links] == 'true'
+    with_list = attr[:event_list] == 'true'
+    with_subscription = attr[:subscription_link] == 'true'
     
     cal = %(<table class="minimonth"><thead><tr>)
-    cal << %(<th colspan="2" class="month_link"><a href="?year=#{previous.year}&amp;month=#{previous.month}">&lt; #{month_names[previous.month]}</a></th>) if attr[:month_links]
-    cal << %(<th colspan="#{attr[:month_links] ? 3 : 7}" class="month_name">#{month_names[first_day.month]} #{first_day.year}</th>)
-    cal << %(<th colspan="2" class="month_link"><a href="?year=#{following.year}&amp;month=#{following.month}">#{month_names[following.month]} &gt;</a></th>) if attr[:month_links]
+    cal << %(<th colspan="2" class="month_link"><a href="?year=#{previous.year}&amp;month=#{previous.month}">&lt; #{month_names[previous.month]}</a></th>) if with_paging
+    cal << %(<th colspan="#{with_paging ? 3 : 7}" class="month_name">#{month_names[first_day.month]} #{first_day.year}</th>)
+    cal << %(<th colspan="2" class="month_link"><a href="?year=#{following.year}&amp;month=#{following.month}">#{month_names[following.month]} &gt;</a></th>) if with_paging
     cal << %(</tr><tr class="day_name">)
     cal << day_names.map { |d| "<th scope='col'>#{d.first}</th>" }.join
     cal << "</tr></thead><tbody>"
@@ -595,10 +630,20 @@ module EventCalendarTags
       cal << %{<td class="#{cell_class}">#{cell_text}</td>}
       cal << "</tr>" if day == day.end_of_week
     end
+    if with_list
+      cal << %{<tr><td colspan="7" class="event_list"><ul>}
+        tag.locals.events.each do |event|
+          tag.locals.event = event
+          cal << tag.render('event:summary')
+        end
+      cal << "</ul>"
+      cal << %{<p>#{tag.render('calendar:ical_icon', tag.attr.merge("text" => "Subscribe to calendar"))}} if with_subscription
+      cal << "</td></tr>"
+    end
     cal << %{</tbody></table>}
     cal
   end
-  
+    
   desc %{ 
     Renders a full calendar table for a single month. Like all events: tags, if no period is specified, it defaults to the present month. 
     Usually you'll want to specify month and year attributes. An EventCalendar page will also obey month and year request parameters 
