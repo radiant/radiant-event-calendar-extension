@@ -1,7 +1,7 @@
 class EventCalendarExtension < Radiant::Extension
   version "0.8"
   description "An event calendar extension which draws events from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
-  url "http://www.hellovenado.com"
+  url "http://radiant.spanner.org/event_calendar"
 
   EXT_ROOT = '/admin/event_calendar'
 
@@ -11,6 +11,10 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
       cal.resources :events
     end
+  end
+  
+  extension_config do |config|
+    config.gem 'vpim'
   end
   
   def activate
