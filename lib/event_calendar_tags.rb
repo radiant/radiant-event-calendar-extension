@@ -430,11 +430,10 @@ module EventCalendarTags
     result << %{ #{tag.render('event:month')}} if options['with_month'] == 'true'
     result << %{ #{tag.render('event:year')}} if options['with_year'] == 'true'
     result << %{ at #{tag.render('event:start')}} unless options['with_time'] == 'false'
-    result << %{
-        </span>
-        #{tag.render('event:link', options.merge({'class' => 'title'}))}
+    result << %{</span>
+        <span class="title">#{tag.render('event:link', options.merge({'class' => 'title'}))}</span>
     }
-    result << %{<span class="location">#{tag.render('event:location')}</span>} if tag.locals.event.location
+    result << %{<br /><span class="location">#{tag.render('event:location')}</span>} if tag.locals.event.location
     result << %{<br /><span class="description">#{tag.render('event:description')}</span>} if tag.locals.event.description
     result << %{</li>}
     result
