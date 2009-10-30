@@ -5,7 +5,6 @@
     %h1 
       Edit Calendar Subscription
       = render :partial => 'actions'
-      
 
   - main.edit_form do
     - form_for :calendar, @calendar, :url => admin_calendar_path(@calendar), :html => { :method => "put", :multipart => true } do |f|

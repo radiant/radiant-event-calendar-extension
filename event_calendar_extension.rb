@@ -22,6 +22,7 @@ class EventCalendarExtension < Radiant::Extension
     EventCalendarPage
     ApplicationHelper.send :include, Admin::CalendarHelper
     Page.send :include, EventCalendarTags
+    UserActionObserver.instance.send :add_observer!, Calendar
     
     if Radiant::Config.table_exists? && !Radiant::Config["event_calendar.icals_path"]
       Radiant::Config["event_calendar.icals_path"] = "icals"
@@ -30,9 +31,6 @@ class EventCalendarExtension < Radiant::Extension
     unless defined? admin.calendar
       Radiant::AdminUI.send :include, EventCalendarAdminUI
       admin.calendar = Radiant::AdminUI.load_default_calendar_regions
-      if defined? admin.sites
-        admin.calendar.index.add :top, "admin/shared/site_jumper"
-      end
     end
     
     admin.tabs.add "Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]

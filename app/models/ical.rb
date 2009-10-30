@@ -6,8 +6,8 @@ require 'ftools'
 
 class Ical < ActiveRecord::Base
   belongs_to :calendar
-  is_site_scoped if defined? ActiveRecord::SiteNotFound
   validates_presence_of :url
+  is_site_scoped if respond_to? :is_site_scoped
 
   @@calendars_path = Radiant::Config["event_calendar.icals_path"]
   

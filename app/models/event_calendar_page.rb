@@ -4,6 +4,10 @@ class EventCalendarPage < Page
 
   description %{ Create a series of calendar pages. }
 
+  def self.sphinx_indexes
+    []
+  end
+
   def cache?
     true
   end
