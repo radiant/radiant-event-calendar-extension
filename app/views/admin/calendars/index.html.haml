@@ -40,7 +40,7 @@
             %td.refreshed
               =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
             %td.autorefresh
-              = calendar.ical.refresh_automatically? ? "after #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no"
+              = calendar.ical.refresh_automatically? ? "every #{distance_of_time_in_words(calendar.ical.refresh_interval_or_default.to_i.seconds)}" : "no"
 
           - tbody.action_cell do
             %td

@@ -472,6 +472,18 @@ module EventCalendarTags
   end
 
   desc %{ 
+    Prints the day-of-week of the start date of the current event.
+    Equivalent to calling <r:event:date format="%A" /> but a bit clearer.
+    For the short form, set short="true"
+
+    Usage:
+    <pre><code><r:event:weekday [short="true"] /></code></pre> 
+  }
+  tag "event:weekday" do |tag|
+    tag.attr['short'] == 'true' ? Date::ABBR_DAYNAMES[tag.locals.event.start_date.wday] : Date::DAYNAMES[tag.locals.event.start_date.wday]
+  end
+
+  desc %{ 
     Prints the day-of-month of the start date of the current event.
     Equivalent to calling <r:event:date format="%d" /> but a bit clearer.
 
