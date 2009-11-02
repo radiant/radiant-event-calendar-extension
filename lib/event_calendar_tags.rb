@@ -218,6 +218,7 @@ module EventCalendarTags
   tag 'calendar:events:each' do |tag|
     tag.locals.events ||= get_events(tag)
     result = []
+    tag.locals.previous_headers = {}
     tag.locals.events.each do |event|
       tag.locals.event = event
       result << tag.expand
@@ -340,7 +341,7 @@ module EventCalendarTags
     You will want to pass a corresponding order parameter to r:events or r:calendar:events.
   }
   tag 'event:header' do |tag|
-    previous_headers = tag.locals.previous_headers
+    previous_headers = tag.locals.previous_headers || {}
     name = tag.attr['name'] || :unnamed
     restart = (tag.attr['restart'] || '').split(';')
     header = tag.expand
