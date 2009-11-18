@@ -4,6 +4,9 @@ This extension lets your radiant site present calendar data. It doesn't administ
 
 ## Recent changes
 
+* We now use `ri_cal` instead of `vpim` so you need to check your gems. Only tested with `ri_cal` version 0.85
+* Tests added for timezone support and all-day events to make sure they import correctly
+* There is support for event status, in the same way as radiant pages have status (and using the same mechanism), so it should be much easier to add events or allow them to be submitted
 * The radius tag structure has changed. Those few people who have old event_calendar pages will need to tweak them to use the new `r:calendar` and `r:event` namespaces, of which more below.
 * column names have been simplified now that the ical can be dealt with as a nested model
 * standard ownership columns have been added to calendar 
@@ -11,11 +14,9 @@ This extension lets your radiant site present calendar data. It doesn't administ
 
 ## Requirements
 
-You need the `vpim` gem to handle event data:
+Radiant 0.8.1 and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
 
-	gem install vpim
-
-and while any radiant version from 0.6 onwards ought to work, I've only tested this release properly with radiant 0.8.0.
+	sudo rake gems:install
 
 ## Installation
 
