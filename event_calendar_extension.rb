@@ -1,5 +1,5 @@
 class EventCalendarExtension < Radiant::Extension
-  version "0.8"
+  version "0.81"
   description "An event calendar extension which draws events from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
   url "http://radiant.spanner.org/event_calendar"
 
