@@ -18,7 +18,7 @@ class Admin::IcalsController < Admin::ResourceController
     if ical.refresh
       flash[:notice] = ical.calendar.name + " calendar refreshed from iCal subscription ."
     else
-      flash[:notice] = "Error parsing " + ical.calendar.name + " calendar from iCal subscription, check the iCal URL."
+      flash[:notice] = "Error parsing " + ical.calendar.name + " calendar from iCal subscription."
     end
     redirect_to :back
   end

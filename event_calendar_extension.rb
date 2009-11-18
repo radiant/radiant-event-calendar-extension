@@ -14,12 +14,15 @@ class EventCalendarExtension < Radiant::Extension
   end
   
   extension_config do |config|
-    config.gem 'vpim'
+    config.extension 'submenu'
+    config.gem 'tzinfo'
+    config.gem 'ri_cal', :source => 'http://gemcutter.org'
   end
   
   def activate
     CalendarPeriod
     EventCalendarPage
+    Status.send :include, EventStatuses
     ApplicationHelper.send :include, Admin::CalendarHelper
     Page.send :include, EventCalendarTags
     UserActionObserver.instance.send :add_observer!, Calendar

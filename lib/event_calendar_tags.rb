@@ -440,6 +440,22 @@ module EventCalendarTags
     result
   end
 
+  desc %{ 
+    Renders a sensible presentation of the time of the event. This is usually all you need, as it will do the right thing with all-day events.
+      
+    The presentation is minimal: 10:00am will be shorted to 10am.
+
+    Usage:
+    <pre><code><r:event:time />: <r:event:title /></code></pre> 
+  }
+  tag "event:time" do |tag|
+    if tag.locals.event.allday?
+      "All day"
+    else
+      tag.locals.event.nice_start_time
+    end
+  end
+
   [:start, :end].each do |attribute|
     desc %{ 
       Renders the #{attribute} time of the current event with the specified strftime format. Default is 24 hour hh:mm.

@@ -2,6 +2,10 @@ class Event < ActiveRecord::Base
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped
 
+  named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
+  named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
+  named_scope :approved, { :conditions => ["status_id >= (?)", Status[:reviewed].to_s] }
+
   named_scope :in_calendars, lambda { |calendars| # list of calendar objects
     ids = calendars.map{ |c| c.id }
     { :conditions => [ ids.map{"calendar_id = ?"}.join(" OR "), *ids] }
@@ -66,5 +70,14 @@ class Event < ActiveRecord::Base
       start_date.to_datetime.strftime("%-1I:%M%p").downcase
     end
   end
+  
+  def status
+    Status.find(self.status_id)
+  end
+  def status=(value)
+    self.status_id = value.id
+  end
+  
+
 
 end
