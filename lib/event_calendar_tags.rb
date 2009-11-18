@@ -875,7 +875,9 @@ module EventCalendarTags
       tag.locals.period ||= set_period(tag)
       tag.locals.calendars ||= set_calendars(tag)
       event_finder = Event.between(tag.locals.period.start, tag.locals.period.finish)
+      event_finder = event_finder.approved if Radiant::Config['event_calendar.require_approval']
       event_finder = event_finder.in_calendars(tag.locals.calendars) if tag.locals.calendars
+
 
       tag.attr[:by] ||= 'start_date'
       tag.attr[:order] ||= 'asc'
