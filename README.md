@@ -136,13 +136,13 @@ OS X 10.6 promises to handle all this a lot better. On Windows you're pretty muc
 
 ## Bugs and features
 
-Reports and requests in [lighthouse](http://spanner.lighthouseapp.com/projects/26912-radiant-extensions), please, or for little things an email or github message is fine.
+[Github issues](http://github.com/radiant/radiant-event-calendar-extension/issues) please, or for little things an email or github message is fine.
 
 ## Author & Copyright
 
 Originally created by Loren Johnson: see www.hellovenado.com
 
-Currently maintained by spanner. Contact William Ross <will at spanner.org>.
+Currently maintained by spanner. Contact Will on [will at spanner.org](mailto:&#x77;&#x69;&#x6C;&#x6C;&#x40;&#x73;&#x70;&#x61;&#x6E;&#x6E;&#x65;&#x72;&#x2E;&#x6F;&#x72;&#x67;) or through github.
 
 Released under the same terms as Radiant and/or Rails.
 
