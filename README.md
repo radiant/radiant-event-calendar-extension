@@ -1,6 +1,8 @@
 # Event Calendar (iCal) Extension for Radiant
 
-This extension lets your radiant site present calendar data. It doesn't administer calendars or let you enter events: you have a perfectly good desktop calendar application for that. All we do here is subscribe to a calendar feed and publish the contents nicely. The feed can come from Google Calendar, from a published ical file or from any CalDAV-compatible calendar server.
+This extension lets your radiant site present calendar data. At the moment it is designed to work with calendar feeds but I'm adding administrative event-input and editing. A reader_events glue extension will soon let your readers submit events too. For most purposes you're better off with a CalDAV subscription (so you can use your desktop client to add and edit events), but lots of people have asked for more direct control.
+
+Event feeds can come from a Google calendar, from a published ical file or from any CalDAV-compatible calendar server.
 
 ## Recent changes
 
