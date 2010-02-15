@@ -10,6 +10,7 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :calendars
       cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
       cal.resources :events
+      cal.calendars_home '/', :controller => 'calendars', :action => 'index'
     end
   end
   
@@ -37,12 +38,12 @@ class EventCalendarExtension < Radiant::Extension
     
     if respond_to?(:tab)
       tab("Content") do
-        add_item("Calendars", EXT_ROOT + "/calendars")
+        add_item("Calendars", EXT_ROOT)
       end
     else
-      admin.tabs.add "Calendars", EXT_ROOT + "/calendars", :after => "Snippets", :visibility => [:all]
+      admin.tabs.add "Calendars", EXT_ROOT, :after => "Snippets", :visibility => [:all]
       if admin.tabs["Calendars"].respond_to?(:add_link)   # that is, if the submenu extension is installed
-        admin.tabs["Calendars"].add_link "calendar list", EXT_ROOT + "/calendars"
+        admin.tabs["Calendars"].add_link "calendar list", EXT_ROOT
         admin.tabs["Calendars"].add_link "new subscription", EXT_ROOT + "/calendars/new"
         admin.tabs["Calendars"].add_link "refresh all", EXT_ROOT + "/icals/refresh_all"
       end
