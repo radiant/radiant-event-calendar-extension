@@ -1,0 +1,26 @@
+%tr.node.level-1
+  - render_region :tbody do |tbody|
+    - tbody.title_cell do
+      %td.event
+        %h4.title
+          = image('event', :alt => 'event-icon')
+          = link_to event.name, edit_admin_event_url(event)
+        %p.description
+          = truncate(event.description, 64)
+      %td.date
+        - if event.allday?
+          all day 
+        - else
+          = event.nice_start_time
+        on
+        = event.nice_date
+      %td.location
+        = event.location
+      %td.keywords
+        = event.keywords
+      %td.recurrence
+        = event.recurrence
+    - tbody.modify_cell do
+      %td.remove
+        - if event.editable?
+          = link_to image('remove', :alt => 'Remove event'), remove_admin_event_url(event)

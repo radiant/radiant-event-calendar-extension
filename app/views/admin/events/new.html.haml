@@ -1,0 +1,16 @@
+- clear_javascripts
+
+- include_javascript "mootools"
+- include_javascript "datepicker"
+- include_javascript "platform/core"
+- include_javascript "platform/calendar"
+
+- include_stylesheet "datepicker"
+- include_stylesheet "admin/calendar"
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1 
+      Add an event to the calendar
+  - main.edit_form do
+    = render :partial => 'form'

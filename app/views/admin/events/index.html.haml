@@ -1,0 +1,41 @@
+- include_stylesheet "admin/calendar"
+
+%h1 
+  Calendar events
+
+- render_region :top do |top|
+  - top.help_text do
+    %p 
+      Calendar events can be entered directly or pulled in by subscription to 
+      = link_to("calendar feeds", admin_calendars_url) + '.'
+      
+%table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
+  %thead
+    %tr
+      - render_region :thead do |thead|
+        - thead.title_header do
+          %th.event 
+            %strong Event
+        - thead.date_header do
+          %th.date Date &amp; time
+        - thead.location_header do
+          %th.location Location
+        - thead.keywords_header do
+          %th.keywords Keywords
+        - thead.recurrence_header do
+          %th.recurrence Recurrence
+        - thead.modify_header do
+          %th.modify Modify
+  %tbody
+    - if @events.any?
+      - @events.each do |event|
+        = render :partial => 'event', :object => event
+    - else
+      %tr
+        %td.note{:colspan => admin.event.index.tbody.length} 
+          No Events
+
+- render_region :bottom do |bottom|
+  - bottom.buttons do
+    %p
+      = link_to image('new-event', :alt => 'New Event'), new_admin_event_url

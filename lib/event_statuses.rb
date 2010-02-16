@@ -7,7 +7,7 @@ module EventStatuses
     }
     
     base.add_status(:id => 5, :name => 'Submitted')
-    base.add_status(:id => 51, :name => 'Imported')
+    base.add_status(:id => 200, :name => 'Imported')
   end
   
   module ClassMethods

@@ -1,0 +1,8 @@
+- include_stylesheet "admin/calendar"
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1 
+      Edit Event
+  - main.edit_form do
+    = render :partial => 'form'

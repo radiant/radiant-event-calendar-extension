@@ -1,0 +1,61 @@
+- form_for [:admin, @event] do |f|
+  = f.hidden_field :lock_version
+  = render_region :form_top
+  .form-area
+    - render_region :form do |form|
+      - form.edit_title do
+        #title
+          %p.title
+            = f.label :title, "Event title"
+            = f.text_field :title, :class => 'textbox'
+          %p.keywords
+            = f.label :keywords, "Keywords"
+            = f.text_field :title, :class => 'textbox'
+
+      - form.edit_date do
+        #date
+          %p.start_date
+            = f.label :start_date, "Start date"
+            = f.text_field :start_date, :class => 'date'
+            = check_box_tag :all_day
+            %label{:for => "all_day", :class => 'minor'}
+              All-day event?
+          %p.end_date
+            = f.label :end_date, "end date"
+            = f.text_field :end_date, :class => 'date'
+          %p.note
+            Some date strings are understood but for consistency please use the date-chooser.
+
+      - form.edit_location do
+        #location
+          %p.location
+            = f.label :location, "Location"
+            = f.text_field :location, :class => 'place'
+          %p.postcode
+            = f.label :postcode, "Postcode or gridref"
+            = f.text_field :postcode, :class => 'place'
+
+      - form.edit_description do
+        #description
+          %p.description
+            = f.label :description, "Location"
+            = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
+
+      - form.edit_recurrence do
+        #recurrence
+          %p.recurrence
+            = f.label :recurrence_period, "Repeats"
+            = f.select :recurrence_period, options_for_select(['never', 'daily', 'weekly', 'monthly', 'yearly'], 'never')
+            %span#recurrence_detail
+              = f.select :recurrence_basis, options_for_select(['until', 'for'], 'until')
+              = f.text_field :recurrence_limit, :class => 'date'
+
+  - render_region :form_bottom do |form_bottom|
+    - form_bottom.edit_timestamp do
+      = updated_stamp @event
+    - form_bottom.edit_buttons do
+      %p.buttons
+        = save_model_button(@event)
+        = save_model_and_continue_editing_button(@event)
+        or
+        = link_to 'Cancel', admin_events_url

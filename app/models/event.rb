@@ -1,10 +1,18 @@
+require 'uuidtools'
+
 class Event < ActiveRecord::Base
+  attr_accessor :start_time, :end_time, :recurrence_period, :recurrence_basis, :recurrence_limit
+  
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped
+  
+  before_validation_on_create :get_uuid
+  validates_presence_of :uuid, :title, :start_date, :status_id
+  validates_uniqueness_of :uuid
 
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
-  named_scope :approved, { :conditions => ["status_id >= (?)", Status[:reviewed].to_s] }
+  named_scope :approved, { :conditions => ["status_id >= (?)", Status[:published].to_s] }
 
   named_scope :in_calendars, lambda { |calendars| # list of calendar objects
     ids = calendars.map{ |c| c.id }
@@ -15,7 +23,7 @@ class Event < ActiveRecord::Base
     { :conditions => ['start_date > ?', datetime] }
   }
   
-  named_scope :before, lambda { |datetime| # seconds. eg calendar.events.within(6.months)
+  named_scope :before, lambda { |datetime| # datetime. eg calendar.events.before(Time.now)
     { :conditions => ['start_date < ?', datetime] }
   }
   
@@ -41,7 +49,7 @@ class Event < ActiveRecord::Base
     { :conditions => ['start_date BETWEEN ? AND ?', start, finish] }
   }
 
-  named_scope :in_month, lambda { |year, month| # just numbers. eg calendar.events.in_month(2010, 12)
+  named_scope :in_month, lambda { |year, month| # numbers. eg calendar.events.in_month(2010, 12)
     start = DateTime.civil(year, month, 1)
     finish = start + 1.month
     { :conditions => ['start_date BETWEEN ? AND ?', start, finish] }
@@ -63,12 +71,20 @@ class Event < ActiveRecord::Base
     start_date.hour == 0 && end_date.hour == 0
   end
   
+  def nice_date
+    start_date.to_datetime.strftime("%d %M %Y")
+  end
+  
   def nice_start_time
     if start_date.min == 0
       start_date.to_datetime.strftime("%-1I%p").downcase
     else
       start_date.to_datetime.strftime("%-1I:%M%p").downcase
     end
+  end
+  
+  def editable?
+    status != Status[:imported]
   end
   
   def status
@@ -78,6 +94,10 @@ class Event < ActiveRecord::Base
     self.status_id = value.id
   end
   
+protected
 
+  def get_uuid
+    self.uuid ||= UUID.timestamp_create().to_s
+  end
 
 end
