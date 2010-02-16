@@ -1,8 +1,8 @@
 .datepicker {
 	position: absolute;
 	font-size: 10px;
-	font-family: "Lucida Grande", LucidaGrande, "Lucida Sans", Geneva, Verdana, sans-serif;
-	color: #fff;
+	font-family: Tahoma, sans-serif;
+	color: #000;
 	line-height: normal;
 	width: 172px;
 	height: 135px;
@@ -21,11 +21,10 @@
 
 .datepicker .header .title {
 	text-align: center;
-	margin: 2px 18px 0 18px;
+	margin: 0 18px 0 18px;
 }
 
 .datepicker .header .titleText {
-	color: #ccff00;
 }
 
 .datepicker .header .previous,
@@ -88,11 +87,10 @@
 .datepicker .time .hour,
 .datepicker .time .separator,
 .datepicker .time .minutes {
-	background: #333;
-	border: 0px;
+	border: 1px solid #ccc;
+	background: #fff;
 	width: 50px;
 	font-size: 32px;
-	color: #fff;
 	position: absolute;
 	top: 10px;
 	text-align: center;
@@ -104,6 +102,7 @@
 }
 .datepicker .time .separator {
 	background: transparent;
+	border: 0px;
 	width: 10px;
 	left: 76px;
 }
@@ -114,7 +113,6 @@
 .datepicker .time .ok {
 	position: absolute;
 	top: 65px;
-	height: 32px;
 	width: 136px;
 	left: 15px;
 	font-size: 20px;
@@ -127,15 +125,13 @@
 	text-align: center;
 	overflow: hidden;
 	width: 23px;
-	padding-top: 1px;
-	height: 14px;
+	height: 15px;
 	margin: 0 1px 1px 0;
 }
 .datepicker .days .titles {
 	height: 15px;
-	margin-bottom: 2px;
-	text-transform: uppercase;
-	color: #aaa;
+	border-bottom: 1px solid #e0e0e0;
+	margin-bottom: 1px;
 }
 .datepicker .days .day0 {
 	margin-right: 0;
@@ -151,15 +147,17 @@
 	cursor: pointer;
 }
 .datepicker .days .week .day:hover {
-	color: #ccff00;
+	background: url(/images/event_calendar/days.png) left top no-repeat;
+	color: #0084AA;
 }
 
 .datepicker .days .otherMonth {
-	color: #444444;
+	color: #aaa;
 }
 
 .datepicker .days .selected {
-	color: #ccff00;
+	background: url(/images/event_calendar/days.png) left bottom no-repeat;
+	color: #316879;
 }
 
 /* months-grid
@@ -191,11 +189,13 @@
 /* months-colors
 ********************************************************/
 .datepicker .months .month:hover {
-	color: #ccff00;
+	background: url(/images/event_calendar/months.png) left top no-repeat;
+	color: #0084AA;
 }
 
 .datepicker .months .selected {
-	color: #ccff00;
+	background: url(/images/event_calendar/months.png) left bottom no-repeat;
+	color: #316879;
 }
 
 /* years-grid
@@ -229,17 +229,19 @@
 /* years-colors
 ********************************************************/
 .datepicker .years .year:hover {
-	color: #ccff00;
+	background: url(/images/event_calendar/years.png) left top no-repeat;
+	color: #0084AA;
 }
 
 .datepicker .years .selected {
-	color: #ccff00
+	background: url(/images/event_calendar/years.png) left bottom no-repeat;
+	color: #316879;
 }
 
 /* global
 ********************************************************/
 .datepicker .unavailable {
-	color: #533 !important;
+	background: none !important;
+	color: #fbb !important;
 	cursor: default !important;
-	text-decoration: line-through;
 }

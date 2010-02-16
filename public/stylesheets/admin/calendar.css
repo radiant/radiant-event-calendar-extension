@@ -176,3 +176,90 @@ table.calendar td ul {
   font-size: 80%;
   color: #7D796C;
 }
+
+/**** event/index ****/
+
+div.event {
+  border-bottom: solid 1px rgb(100,100,100); 
+  padding: 10px;
+}
+
+/**** event/new ****/
+
+#content .form-area div {
+  position: relative;
+  overflow: visible;
+}
+
+#content .form-area div#title p.keywords input {
+  font-family:Georgia,Palatino,"Times New Roman",Times,serif;
+  font-size:200%;
+  width:100%;
+  color: #c00;
+}
+
+#content .form-area div#date p {
+  float: left;
+  margin-right: 2%;
+}
+
+#content .form-area div#date p.start_date, #content .form-area div#date p.end_date {
+  width: 35%;
+}
+
+#content .form-area div#date p.note {
+  padding-top: 1.7em;
+  width: 25%;
+  float: right;
+  margin: 0;
+}
+
+#content .form-area div#date input.date, #content .form-area div#date input.time, div#location input.place {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #CDC295;
+  font-family: Monaco,"Courier New",Courier,monospace;
+  font-size: 95%;
+}
+
+#content .form-area div#recurrence input.date {
+  width: 34%;
+  padding: 4px;
+  border: 1px solid #CDC295;
+  font-family: Monaco,"Courier New",Courier,monospace;
+  font-size: 95%;
+}
+
+#content .form-area div#location, #content .form-area div#date, #content .form-area div#description {
+  clear: both;
+}
+
+#content .form-area div#location p.location, #content .form-area div#title p.title {
+  position: relative;
+  width: 72%;
+  float: left;
+}
+
+#content .form-area div#location p.postcode, #content .form-area div#title p.keywords {
+  position: relative;
+  width: 25%;
+  float: right;
+}
+
+#content .form-area span#recurrence_detail {
+  display: none;
+}
+
+#content .form-area .note, #content .form-area label.minor {
+  font-family: helvetica, arial, sans-serif;
+  font-weight: lighter;
+  font-size: 80%;
+  color: #b2aaa4;
+  line-height: 1.2;
+  display: inline;
+}
+
+
+
+
+
