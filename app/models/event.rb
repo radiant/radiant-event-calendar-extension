@@ -1,7 +1,7 @@
 require 'uuidtools'
 
 class Event < ActiveRecord::Base
-  attr_accessor :start_time, :end_time, :recurrence_period, :recurrence_basis, :recurrence_limit
+  attr_accessor :start_time, :end_time, :recurrence_period, :recurrence_basis, :recurrence_limit, :recurrence_count
   
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped

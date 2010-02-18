@@ -1,7 +1,8 @@
 var dateset = null;
+var recurrence = null;
 var default_duration = 60 * 60 * 1000;
 
-var datePickerOptions = {
+var date_picker_options = {
   yearPicker: true,
   timePicker: true,
   dayShort: 3,
@@ -11,25 +12,30 @@ var datePickerOptions = {
   positionOffset: { x: 20, y: -10 }
 };
 
-activations.push(function (scope) {
-  if (scope.getElements('#event_start_date') && scope.getElements('#event_end_date')) {
-    dateset = new DatePair(scope.getElements('#event_start_date'), scope.getElements('#event_end_date'));
-  }
-  scope.getElements('.date').each(function (element) { 
-    // anything that already has a picker will be ignored
-    new DatePicker(element, datePickerOptions);
-  });
-});
+var no_time_options = {
+  timePicker: false,
+  format: 'D d M Y'
+};
 
-var DatePair = new Class({
-  initialize: function (starter, ender) {   
-    this.starter = starter;
-    this.ender = ender;
-    this.startpicker = new DatePicker(this.starter, $merge(datePickerOptions, { onSelect : this.onSetStart.bind(this) }));
-    this.endpicker = new DatePicker(this.ender, $merge(datePickerOptions, { onSelect : this.onSetEnd.bind(this) }));
-    this.alldayer = $('all_day');
-    this.alldayer.addEvent('click', this.toggleTimes.bind(this));
-    this.announcer = $('event_note');
+var period_labels = {
+  never : '',
+  daily : 'days',
+  weekly : 'weeks',
+  monthly : 'months',
+  yearly : 'years'
+};
+
+var DateControl = new Class({
+  initialize: function (starter, ender) {
+    if (starter && ender) { 
+      this.starter = starter;
+      this.ender = ender;
+      this.startpicker = new DatePicker(this.starter, $merge(date_picker_options, { onSelect : this.onSetStart.bind(this) }));
+      this.endpicker = new DatePicker(this.ender, $merge(date_picker_options, { onSelect : this.onSetEnd.bind(this) }));
+      this.alldayer = $('all_day');
+      this.alldayer.addEvent('click', this.toggleTimes.bind(this));
+      this.announcer = $('event_note');
+    }
   },
   toggleTimes: function (checkbox) {
     if ($('all_day').checked) {
@@ -99,4 +105,54 @@ var DatePair = new Class({
     if (this.endpicker.visual) this.endpicker.visual.removeClass('problematic');
     this.announcer.fade('out');
   }
+});
+
+var RecurrenceControl = new Class({
+  initialize: function (chooser, detail) {   
+    if (chooser && detail) {
+      this.chooser = chooser;
+      this.detail = detail;
+      this.basis_chooser = detail.getElement('select#event_recurrence_basis');
+      this.limiter = detail.getElement('span#recurrence_limit');
+      this.limit_field = this.limiter.getElement('input');
+      this.counter = detail.getElement('span#recurrence_count');
+      this.count_label = this.counter.getElement('label');
+
+      this.chooser.addEvent('change', this.showIfRelevant.bindWithEvent(this));
+      this.basis_chooser.addEvent('change', this.chooseBasis.bindWithEvent(this));
+      this.limitpicker = new DatePicker(this.limit_field, $merge(date_picker_options, no_time_options, { onSelect : this.checkLimit.bind(this) }));
+
+      this.chooseBasis();
+      this.showIfRelevant();
+    }
+  },
+  showIfRelevant: function () {
+    var selection = this.chooser.get('value');
+    this.count_label.set('text', period_labels[selection]);
+    if (selection == '' || selection == 'never') this.hide();
+    else this.show();
+  },
+  chooseBasis: function () {
+    if (this.basis_chooser.get('value') == 'until') {
+      this.limiter.showInline();
+      this.counter.hide();
+    } else {
+      this.limiter.hide();
+      this.counter.showInline();
+    }
+  },
+  checkLimit: function () {
+    
+  },
+  show: function () {
+    this.detail.fade('in');
+  },
+  hide: function () {
+    this.detail.fade('out');
+  }
+});
+
+activations.push(function (scope) {
+  dateset = new DateControl(scope.getElements('#event_start_date'), scope.getElements('#event_end_date'));
+  recurrence = new RecurrenceControl(scope.getElements('#event_recurrence_period'), scope.getElements('#recurrence_detail'));
 });

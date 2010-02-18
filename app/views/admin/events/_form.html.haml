@@ -24,16 +24,18 @@
             = f.label :end_date, "end date and time"
             = f.text_field :end_date, :class => 'date'
           %p#event_note.note
-            If you specify an (optional) end date then change the start date, the end will be updated to preserve the event's duration.
+            If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
 
       - form.edit_location do
         #location
           %p.location
             = f.label :location, "Location"
-            = f.text_field :location, :class => 'place'
+            = f.text_area :location, :class => 'textarea', :style => "width: 100%; height: 5em;"
           %p.postcode
             = f.label :postcode, "Postcode or gridref"
             = f.text_field :postcode, :class => 'place'
+            %span.note
+              This will not be displayed: it's used to place your event on the map and to let people know how far away it is.
 
       - form.edit_description do
         #description
@@ -44,11 +46,15 @@
       - form.edit_recurrence do
         #recurrence
           %p.recurrence
-            = f.label :recurrence_period, "Repeats"
+            = f.label :recurrence_period, "Repeats: "
             = f.select :recurrence_period, options_for_select(['never', 'daily', 'weekly', 'monthly', 'yearly'], 'never')
             %span#recurrence_detail
               = f.select :recurrence_basis, options_for_select(['until', 'for'], 'until')
-              = f.text_field :recurrence_limit, :class => 'date'
+              %span#recurrence_limit
+                = f.text_field :recurrence_limit
+              %span#recurrence_count
+                = f.text_field :recurrence_count
+                = f.label :recurrence_count, "times"
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do

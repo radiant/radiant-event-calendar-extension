@@ -218,7 +218,6 @@ div.event {
   color: #c00;
 }
 
-
 #content .form-area div#date input.date, #content .form-area div#date input.time, div#location input.place {
   width: 100%;
   padding: 6px;
@@ -227,13 +226,22 @@ div.event {
   font-size: 95%;
 }
 
-#content .form-area div#recurrence input.date {
+#content .form-area div#recurrence input {
   width: 34%;
   padding: 4px;
   border: 1px solid #CDC295;
   font-family: Monaco,"Courier New",Courier,monospace;
   font-size: 95%;
 }
+
+#content .form-area div#recurrence input.count {
+  width: 100px;
+}
+
+#content .form-area div#recurrence label {
+  display: inline;
+}
+
 
 #content .form-area div#location, #content .form-area div#date, #content .form-area div#description {
   clear: both;
@@ -251,8 +259,13 @@ div.event {
   float: right;
 }
 
+#content .form-area div#location p.postcode span.note {
+  display: block;
+  margin-top: 4px;
+}
+
 #content .form-area span#recurrence_detail {
-  display: none;
+
 }
 
 #content .form-area .note, #content .form-area label.minor {

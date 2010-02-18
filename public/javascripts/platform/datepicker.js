@@ -25,7 +25,7 @@ var DatePicker = new Class({
 	
 	// working date, which we will keep modifying to render the calendars
 	d: '',
-	
+		
 	// just so that we need not request it over and over
 	today: '',
 
@@ -181,9 +181,11 @@ var DatePicker = new Class({
 			}
 		}.bind(this));
 	},
+	
 	setDefault: function (date) {
 	  this.default_date = date;
 	},
+	
 	onFocus: function(original_input, visual_input) {
 		var init_visual_date, d = visual_input.getCoordinates();
     
@@ -363,7 +365,9 @@ var DatePicker = new Class({
 			})
 			.set('maxlength', 2)
 			.inject(container);
-			
+
+		new Element('div', { 'class': 'separator' }).set('text', ':').inject(container);
+  		
 		new Element('input', { type: 'text', 'class': 'minutes' })
 			.set('value', this.leadZero(this.d.getMinutes()))
 			.addEvents({
@@ -381,8 +385,6 @@ var DatePicker = new Class({
 			})
 			.set('maxlength', 2)
 			.inject(container);
-		
-		new Element('div', { 'class': 'separator' }).set('text', ':').inject(container);
 		
 		new Element('input', { type: 'submit', value: 'OK', 'class': 'ok' })
 			.addEvents({

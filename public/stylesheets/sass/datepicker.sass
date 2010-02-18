@@ -17,23 +17,22 @@
 
 !bodyfont = "Tahoma, sans-serif"
 !headfont = "Tahoma, sans-serif"
-!bodyfontsize = 15px
-!headfontsize = 20px
+!bodyfontsize = 13px
+!headfontsize = 16px
 !daysfontsize = 12px
 
-!pickerwidth = 250px
-!pickerheight = 236px
-!headerheight = 24px
+!daywidth = 25px
+!dayheight = 20px
+!monthwidth = 33%
+!monthheight = 25px
+!yearwidth = 24%
+!yearheight = 22px
 
 !borderradius = 9px
 !inset = 9px
-
-!daywidth = 34px
-!dayheight = 25px
-!monthwidth = 33%
-!monthheight = 32px
-!yearwidth = 48px
-!yearheight = 32px
+!headerheight = 24px
+!pickerwidth = (7 * !daywidth) + (2 * !inset) + 8px
+!pickerheight = (7 * !dayheight) + !headerheight + 60px
 
 !buttonwidth = 24px
 !buttonheight = 24px
@@ -41,7 +40,7 @@
 
 !mid = #CDC295
 !pale = #C1BCA4
-!bg = #F5F1E2
+!bg = #ffffff
 !fg = #000000
 !highlight = #c00
 
@@ -71,13 +70,17 @@
     :font-size = !headfontsize
     :font-family = !headfont
     :line-height 1
-    :margin-bottom 2px
+    :margin-bottom 0
     :padding-top 0
     .title 
       :text-align center
       :margin 3px 18px 3px 18px
+    .title:hover
+      :color = !highlight
     .titleText
       :font-weight bold
+      :display block
+      :padding-top 3px
     .previous,.next, .closeButton 
       :position absolute
       :cursor pointer
@@ -85,7 +88,7 @@
       :overflow hidden
       :width = !buttonwidth
       :height = !buttonheight
-      :top 2px
+      :top 0
       :background-image url(/images/event_calendar/buttons.png)
       :background-position left top
       :background-repeat no-repeat
@@ -111,7 +114,7 @@
     :top 0px
     :left 2px
     :width = !pickerwidth - 4px
-    :height = !pickerheight - !headerheight - 8px
+    :height = !pickerheight - !headerheight - 5px
     :overflow hidden
     .selected 
       :background-color = !highlight
@@ -125,11 +128,12 @@
       :width = !daywidth
       :height = !dayheight
       :margin 0 1px 1px 0
-      :padding 8px 0 1px
+      :line-height 1
+      :padding 6px 1px 1px 1px
     .titles 
       :height = !dayheight
-      :color = !mid
-      :margin-bottom 4px
+      :color = !pale
+      :margin-bottom 2px
       :font-size = !daysfontsize
     .day0 
       :margin-right 0
@@ -147,7 +151,7 @@
       :color = !pale
 
   .months
-    :margin-top 16px
+    :margin-top 10px
     :font-size = !headfontsize
     .month 
       :float left
@@ -158,7 +162,7 @@
       :height = !monthheight
       :overflow hidden
       :margin 0 1px 1px 0
-      :padding 12px 0 1px
+      :padding 16px 0 5px 0
     .month3, .month6, .month9, .month12 
       :margin-right 0
     .month10, .month11, .month12 
@@ -170,7 +174,7 @@
 
 
   .years
-    :margin-top 16px
+    :margin-top 10px
     .year
       :float left
       :cursor pointer
@@ -180,10 +184,10 @@
       :height = !yearheight
       :overflow hidden
       :margin 0 1px 1px 0
-      :padding 12px 0 1px
-    .year4, .year9, .year14, .year19 
+      :padding 10px 0 3px 0
+    .year3, .year7, .year11, .year15, .year19 
       :margin-right 0
-    .year15, .year16, .year17, .year18, .year19 
+    .year16, .year17, .year18, .year19 
       :margin-bottom 0
     .year:hover 
       :color = !bg
@@ -192,40 +196,32 @@
 
   .time 
     :position relative
-    :width 100%
-    :margin-top 32px
-    .hour, .separator, .minutes 
+    :width = 100%
+    :margin-top 20px
+    :text-align center
+    .hour, .minutes 
       :border 1px solid #ccc
       :background #fff
       :width 50px
       :font-size 32px
-      :position absolute
-      :top 10px
       :text-align center
       :padding 2px
     .hour 
-      :left = !time_offset + 5px
-    .separator 
-      :background transparent
-      :border 0px
-      :width 10px
-      :left = !time_offset + 60px
-      :padding-top 10px
+
+    .separator
+      :display inline
+      :font-size 32px
+      :width 16px
+      :padding 10px 2px 0 2px
     .minutes 
-      :left = !time_offset + 74px
+
     .ok 
-      :position absolute
-      :top 65px
-      :width 136px
-      :left = !time_offset
+      :margin-top 12px
       :font-size 20px
+      :width 120px
     .canceller
-      :position absolute
-      :top 132px
-      :width 136px
+      :margin-top 20px
       :text-align center
-      :left = !time_offset
-    
     
   .unavailable 
     :background none !important
@@ -235,4 +231,7 @@
     :color = !highlight
     :font-size = 12px
     :cursor pointer
-    
+
+.problematic 
+  :border-color = !highlight
+  :color = !highlight
