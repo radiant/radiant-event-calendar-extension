@@ -15,7 +15,6 @@ class EventCalendarExtension < Radiant::Extension
   end
   
   extension_config do |config|
-    # config.gem 'tzinfo'
     config.gem 'ri_cal', :source => 'http://gemcutter.org'
     config.gem 'uuidtools', :source => 'http://gemcutter.org'
   end

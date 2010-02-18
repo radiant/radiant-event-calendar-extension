@@ -15,16 +15,16 @@
       - form.edit_date do
         #date
           %p.start_date
-            = f.label :start_date, "Start date"
+            = f.label :start_date, "Start date and time"
             = f.text_field :start_date, :class => 'date'
             = check_box_tag :all_day
             %label{:for => "all_day", :class => 'minor'}
               All-day event?
           %p.end_date
-            = f.label :end_date, "end date"
+            = f.label :end_date, "end date and time"
             = f.text_field :end_date, :class => 'date'
-          %p.note
-            Some date strings are understood but for consistency please use the date-chooser.
+          %p#event_note.note
+            If you specify an (optional) end date then change the start date, the end will be updated to preserve the event's duration.
 
       - form.edit_location do
         #location
@@ -38,7 +38,7 @@
       - form.edit_description do
         #description
           %p.description
-            = f.label :description, "Location"
+            = f.label :description, "Description"
             = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
 
       - form.edit_recurrence do

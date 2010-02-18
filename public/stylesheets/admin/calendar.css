@@ -214,6 +214,11 @@ div.event {
   margin: 0;
 }
 
+#content .form-area div#date p.problematic {
+  color: #c00;
+}
+
+
 #content .form-area div#date input.date, #content .form-area div#date input.time, div#location input.place {
   width: 100%;
   padding: 6px;

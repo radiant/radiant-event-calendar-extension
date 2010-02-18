@@ -1,0 +1,238 @@
+//!bodyfont = "Tahoma, sans-serif"
+//!headfont = "Tahoma, sans-serif"
+//!bodyfontsize = 10px
+//!headfontsize = 10px
+//!pickerwidth = 172px
+//!pickerheight = 135px
+//!headerheight = 15px
+//!daywidth = 23px
+//!dayheight = 15px
+//!monthwidth = 55px
+//!monthheight = 21px
+//!yearwidth = 32px
+//!yearheight = 21px
+//!borderwidth = 14px
+//!buttonwidth = 12px
+//!buttonheight = 12px
+
+!bodyfont = "Tahoma, sans-serif"
+!headfont = "Tahoma, sans-serif"
+!bodyfontsize = 15px
+!headfontsize = 20px
+!daysfontsize = 12px
+
+!pickerwidth = 250px
+!pickerheight = 236px
+!headerheight = 24px
+
+!borderradius = 9px
+!inset = 9px
+
+!daywidth = 34px
+!dayheight = 25px
+!monthwidth = 33%
+!monthheight = 32px
+!yearwidth = 48px
+!yearheight = 32px
+
+!buttonwidth = 24px
+!buttonheight = 24px
+!time_offset = 55px
+
+!mid = #CDC295
+!pale = #C1BCA4
+!bg = #F5F1E2
+!fg = #000000
+!highlight = #c00
+
+.datepicker
+  :position absolute
+  :font-size = !bodyfontsize
+  :font-family = !bodyfont
+  :color = !fg
+  :line-height = !bodyfontsize
+  :width = !pickerwidth
+  :height = !pickerheight
+  :padding = !inset
+  //:background url(/images/event_calendar/frame277.png) no-repeat
+  :border
+    :width 4px 
+    :style solid 
+    :color = !mid
+  :background-color = !bg
+  :-moz-border-radius = !borderradius 
+  :-webkit-border-radius = !borderradius
+  :-webkit-box-shadow 2px 3px 5px #878786
+  :-moz-box-shadow #878786 2px 3px 5px
+  
+  .header 
+    :position relative
+    :height = !headerheight
+    :font-size = !headfontsize
+    :font-family = !headfont
+    :line-height 1
+    :margin-bottom 2px
+    :padding-top 0
+    .title 
+      :text-align center
+      :margin 3px 18px 3px 18px
+    .titleText
+      :font-weight bold
+    .previous,.next, .closeButton 
+      :position absolute
+      :cursor pointer
+      :text-indent -40px
+      :overflow hidden
+      :width = !buttonwidth
+      :height = !buttonheight
+      :top 2px
+      :background-image url(/images/event_calendar/buttons.png)
+      :background-position left top
+      :background-repeat no-repeat
+    .previous 
+      :left 4px
+    .previous:hover 
+      :background-position left bottom
+    .next 
+      :right 4px
+      :background-position center top
+    .next:hover 
+      :background-position center bottom
+    .closeButton 
+      :display none
+      :right 0px
+      :top 0px
+      :background-position right top
+    .closeButton:hover 
+      :background-position right bottom
+      
+  .body 
+    :position relative
+    :top 0px
+    :left 2px
+    :width = !pickerwidth - 4px
+    :height = !pickerheight - !headerheight - 8px
+    :overflow hidden
+    .selected 
+      :background-color = !highlight
+      :color white
+    
+  .days 
+    .day 
+      :float left
+      :text-align center
+      :overflow hidden
+      :width = !daywidth
+      :height = !dayheight
+      :margin 0 1px 1px 0
+      :padding 8px 0 1px
+    .titles 
+      :height = !dayheight
+      :color = !mid
+      :margin-bottom 4px
+      :font-size = !daysfontsize
+    .day0 
+      :margin-right 0
+    .week5
+      .day 
+        :margin-bottom 0
+    .week 
+      .day 
+        :cursor pointer
+      .day:hover 
+        :color = !bg
+        :background-color = !pale
+        :font-weight bold
+    .otherMonth 
+      :color = !pale
+
+  .months
+    :margin-top 16px
+    :font-size = !headfontsize
+    .month 
+      :float left
+      :cursor pointer
+      :text-align center
+      :padding-top 6px
+      :width = !monthwidth
+      :height = !monthheight
+      :overflow hidden
+      :margin 0 1px 1px 0
+      :padding 12px 0 1px
+    .month3, .month6, .month9, .month12 
+      :margin-right 0
+    .month10, .month11, .month12 
+      :margin-bottom 0
+    .month:hover 
+      :color = !bg
+      :background-color = !pale
+      :font-weight bold
+
+
+  .years
+    :margin-top 16px
+    .year
+      :float left
+      :cursor pointer
+      :text-align center
+      :padding-top 6px
+      :width = !yearwidth
+      :height = !yearheight
+      :overflow hidden
+      :margin 0 1px 1px 0
+      :padding 12px 0 1px
+    .year4, .year9, .year14, .year19 
+      :margin-right 0
+    .year15, .year16, .year17, .year18, .year19 
+      :margin-bottom 0
+    .year:hover 
+      :color = !bg
+      :background-color = !pale
+      :font-weight bold
+
+  .time 
+    :position relative
+    :width 100%
+    :margin-top 32px
+    .hour, .separator, .minutes 
+      :border 1px solid #ccc
+      :background #fff
+      :width 50px
+      :font-size 32px
+      :position absolute
+      :top 10px
+      :text-align center
+      :padding 2px
+    .hour 
+      :left = !time_offset + 5px
+    .separator 
+      :background transparent
+      :border 0px
+      :width 10px
+      :left = !time_offset + 60px
+      :padding-top 10px
+    .minutes 
+      :left = !time_offset + 74px
+    .ok 
+      :position absolute
+      :top 65px
+      :width 136px
+      :left = !time_offset
+      :font-size 20px
+    .canceller
+      :position absolute
+      :top 132px
+      :width 136px
+      :text-align center
+      :left = !time_offset
+    
+    
+  .unavailable 
+    :background none !important
+    :color #fbb !important
+    :cursor default !important
+  .canceller
+    :color = !highlight
+    :font-size = 12px
+    :cursor pointer
+    
