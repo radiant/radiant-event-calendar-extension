@@ -1,14 +1,19 @@
 require 'uuidtools'
-
 class Event < ActiveRecord::Base
-  attr_accessor :start_time, :end_time, :recurrence_period, :recurrence_basis, :recurrence_limit, :recurrence_count
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::DateHelper
+
+  belongs_to :created_by, :class_name => 'User'
+  belongs_to :updated_by, :class_name => 'User'
   
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped
   
-  before_validation_on_create :get_uuid
   validates_presence_of :uuid, :title, :start_date, :status_id
   validates_uniqueness_of :uuid
+
+  before_validation_on_create :get_uuid
+  before_validation_on_create :set_default_status
 
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
@@ -66,21 +71,49 @@ class Event < ActiveRecord::Base
     finish = start + 1.day
     { :conditions => ['start_date BETWEEN ? AND ?', start, finish] }
   }
-  
-  def allday?
-    start_date.hour == 0 && end_date.hour == 0
+    
+  def date
+    start_date.to_datetime.strftime(date_format)
+  end
+
+  def short_date
+    start_date.to_datetime.strftime(short_date_format)
   end
   
-  def nice_date
-    start_date.to_datetime.strftime("%d %M %Y")
+  def start_time
+    start_date.to_datetime.strftime(start_date.min == 0 ? round_time_format : time_format).downcase
   end
-  
-  def nice_start_time
-    if start_date.min == 0
-      start_date.to_datetime.strftime("%-1I%p").downcase
+
+  def end_time
+    end_date.to_datetime.strftime(end_date.min == 0 ? round_time_format : time_format).downcase if end_date
+  end
+
+  def starts
+    if all_day?
+      "all day"
     else
-      start_date.to_datetime.strftime("%-1I:%M%p").downcase
+      start_time
     end
+  end
+  
+  def finishes
+    if end_date
+      if within_day?
+        end_time
+      elsif all_day?
+        "on #{end_date.to_datetime.strftime(short_date_format)}"
+      else
+        "#{end_time} on #{end_date.to_datetime.strftime(short_date_format)}"
+      end
+    end
+  end
+    
+  def one_day?
+    all_day? && within_day?
+  end
+  
+  def within_day?
+    (!end_date || start_date.to_date.jd == end_date.to_date.jd)
   end
   
   def editable?
@@ -94,10 +127,64 @@ class Event < ActiveRecord::Base
     self.status_id = value.id
   end
   
+  def recurrence
+    rec = ""
+    unless recurrence_period.blank?
+      rec << recurrence_period.titlecase
+      rec << " for #{period_units}" if recurrence_basis == 'count' && recurrence_count
+      rec << " until #{recurrence_limit.to_datetime.strftime(date_format)}" if recurrence_basis == 'limit' && recurrence_limit
+    end
+    rec
+  end
+  
+  def period_units
+    return unless recurrence_period && recurrence_count
+    name = recurrence_period.sub(/ly$/, '')
+    name = "day" if name == 'dai'
+    pluralize(recurrence_count, name)
+  end
+  
+  # a comprehensible subset of the RFC 2445 recurrence rule
+  def recurrence_rule
+    if !recurrence_period.blank? && recurrence_period != 'never'
+      rule = ["FREQ=#{recurrence_period.upcase}"]
+      rule << "COUNT=#{recurrence_count}" if recurrence_basis == 'count'
+      rule << "UNTIL=#{recurrence_limit}" if recurrence_basis == 'limit'
+      self.recurrence_rule = rule.join(';')
+    else
+      self.recurrence_rule = nil
+    end
+  end
+  
+  def recurrence_bounded?
+    true if recurrence_period and not recurrence_count or recurrence_limit
+  end
+    
 protected
 
   def get_uuid
-    self.uuid ||= UUID.timestamp_create().to_s
+    self.uuid ||= UUIDTools::UUID.timestamp_create.to_s
   end
+
+  def set_default_status
+    self.status ||= Status[:Published]
+  end
+  
+  def date_format
+    Radiant::Config['event_calendar.date_format'] || "%d %B %Y"
+  end
+  
+  def short_date_format
+    Radiant::Config['event_calendar.short_date_format'] || "%d/%m/%Y"
+  end
+  
+  def time_format
+    Radiant::Config['event_calendar.time_format'] || "%-1I:%M%p"
+  end
+  
+  def round_time_format
+    Radiant::Config['event_calendar.time_format'] || "%-1I%p"
+  end
+  
 
 end

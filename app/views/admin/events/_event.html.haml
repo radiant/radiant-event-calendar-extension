@@ -1,23 +1,27 @@
 %tr.node.level-1
   - render_region :tbody do |tbody|
+    - tbody.date_cell do
+      %td.datemark
+        %a{:href => admin_event_url(event)}
+          %span.month
+            = Date::ABBR_MONTHNAMES[event.start_date.month]
+          %span.day
+            = event.start_date.mday
     - tbody.title_cell do
       %td.event
-        %h4.title
-          = image('event', :alt => 'event-icon')
-          = link_to event.name, edit_admin_event_url(event)
+        %h3.title
+          = link_to event.title, edit_admin_event_url(event)
         %p.description
-          = truncate(event.description, 64)
-      %td.date
-        - if event.allday?
-          all day 
-        - else
-          = event.nice_start_time
-        on
-        = event.nice_date
+          = truncate(event.description, 128)
+    - tbody.time_cell do
+      %td.time
+        = event.starts
+      %td.time
+        = event.finishes
+    - tbody.location_cell do
       %td.location
         = event.location
-      %td.keywords
-        = event.keywords
+    - tbody.recurrence_cell do
       %td.recurrence
         = event.recurrence
     - tbody.modify_cell do

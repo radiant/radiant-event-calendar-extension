@@ -10,16 +10,15 @@
             = f.text_field :title, :class => 'textbox'
           %p.keywords
             = f.label :keywords, "Keywords"
-            = f.text_field :title, :class => 'textbox'
+            = f.text_field :keywords, :class => 'textbox'
 
       - form.edit_date do
         #date
           %p.start_date
             = f.label :start_date, "Start date and time"
             = f.text_field :start_date, :class => 'date'
-            = check_box_tag :all_day
-            %label{:for => "all_day", :class => 'minor'}
-              All-day event?
+            = f.check_box :all_day
+            = f.label :all_day, 'All-day event?', :class => 'minor'
           %p.end_date
             = f.label :end_date, "end date and time"
             = f.text_field :end_date, :class => 'date'
@@ -47,14 +46,15 @@
         #recurrence
           %p.recurrence
             = f.label :recurrence_period, "Repeats: "
-            = f.select :recurrence_period, options_for_select(['never', 'daily', 'weekly', 'monthly', 'yearly'], 'never')
+            = f.select :recurrence_period, [['never', ''], ['every day', 'daily'], ['every week', 'weekly'], ['every month', 'monthly'], ['every year', 'yearly']]
             %span#recurrence_detail
-              = f.select :recurrence_basis, options_for_select(['until', 'for'], 'until')
+              = f.select :recurrence_basis, [['forever', ''],['until', 'limit'], ['for', 'count']]
               %span#recurrence_limit
-                = f.text_field :recurrence_limit
+                = f.text_field :recurrence_limit, :class => 'recurrence limit'
               %span#recurrence_count
-                = f.text_field :recurrence_count
+                = f.text_field :recurrence_count, :class => 'recurrence count'
                 = f.label :recurrence_count, "times"
+                (as well as the first)
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do

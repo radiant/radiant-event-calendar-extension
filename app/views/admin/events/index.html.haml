@@ -6,18 +6,25 @@
 - render_region :top do |top|
   - top.help_text do
     %p 
-      Calendar events can be entered directly or pulled in by subscription to 
+      Calendar events can be 
+      = link_to("entered directly", new_admin_event_url)
+      or pulled in by subscription to 
       = link_to("calendar feeds", admin_calendars_url) + '.'
       
 %table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
   %thead
     %tr
       - render_region :thead do |thead|
+        - thead.date_header do
+          %th.date
         - thead.title_header do
           %th.event 
             %strong Event
-        - thead.date_header do
-          %th.date Date &amp; time
+        - thead.time_header do
+          %th.date 
+            Starts
+          %th.date 
+            Finishes
         - thead.location_header do
           %th.location Location
         - thead.keywords_header do

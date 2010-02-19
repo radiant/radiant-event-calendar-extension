@@ -1,0 +1,230 @@
+=leftfield
+  :position relative
+  :width 72%
+  :float left
+  
+=rightfield
+  :position relative
+  :width 25%
+  :float right
+
+!radiant_red = #c00
+
+//calendar/index 
+
+table.index 
+  td.subscription-title 
+    :font-size 115%
+    :font-weight bold
+
+span.calendar_actions
+  img 
+    :opacity 0.5
+  a 
+    img 
+      :opacity 1
+
+//calendar/show 
+
+table.calendar 
+  :border-collapse collapse
+  :border 1px solid #ccc
+  :color #333
+  th, td 
+    :border 1px solid #ccc
+    :padding 10px
+    :vertical-align top
+  tr.monthName 
+    th 
+      :font-weight normal
+      :text-align right
+      :padding-top 1em
+      :padding-bottom 0.7em
+      :color black
+    tr.dayName 
+      th 
+        :font-size 0.7em
+        :padding-top 0.6em
+        :padding-bottom 0.3em
+    td 
+      div 
+        :width 90px
+        :height 90px
+        :overflow hidden
+    td.other_month 
+      :color #ccc
+      :background-color white
+      a 
+        :color #ccc
+    td.weekend_day 
+      :background-color #eee
+    td.eventful 
+      :background-color #fee
+    td.eventful_weekend 
+      :background-color #edd
+    td.today 
+      :background-color #eef
+      :font-weight bold
+      :color #00c
+    td.weekend_today 
+      :background-color #dde
+    th
+      a 
+        :display block
+        :color #ccc
+        :font-weight lighter
+      a:hover 
+        :color = !radiant_red
+    td
+      a 
+        :display block
+        :color = !radiant_red 
+        :text-decoration none
+        :margin 0 0 4px 0
+        :font-weight bold
+      ul 
+        :font-size 75%
+        :margin 0
+        :padding 0 0 0 12px
+        :list-style square
+
+//calendar/new 
+
+#content 
+  .form-area 
+    p, p.title 
+      :margin-bottom 10px
+      input.textbox 
+        :width 100%
+        :border 1px solid #CDC295
+        :font-family Monaco,"Courier New",Courier,monospace
+        :font-size 95%
+        :padding 4px
+      textarea 
+        :width 100%
+        :height 60px
+        :border 1px solid #CDC295
+        :font-family Monaco,"Courier New",Courier,monospace
+        :font-size 95%
+        :padding 4px
+      label 
+        :display block
+    p.thirdwidth 
+      :float left
+      :width 31%
+      :margin-right 2%
+    p.halfwidth 
+      :float left
+      :width 48%
+      :margin-right 2%
+    p.fullwidth 
+      :clear both
+      :width 100%
+    span.info 
+      :font-size 80%
+      :color #7D796C
+
+//event/index 
+
+table#events
+  td.datemark
+    :width 40px
+    :vertical-align top
+    :text-align center
+    :line-height 1
+    a
+      :color = !radiant_red
+      :text-decoration none
+    span.month
+      :display block
+      :margin-top 5px
+      :font-family helvetica, arial, sans-serif
+      :font-weight lighter
+      :font-size 80%
+      :text-transform uppercase
+    span.day
+      :display block
+      :font-family helvetica, arial, sans-serif
+      :font-weight bold
+      :font-size 160%
+  td.event 
+    :width 40%
+    :vertical-align top
+    h3 
+      :margin 0
+      :line-height 1.2
+      a 
+        :color = !radiant_red
+        :text-decoration none
+    p.description 
+      :margin 4px 0
+      :font-size 80%
+      :color #999
+  td.time, td.location, td.keywords, td.recurrence 
+    :font-size 80%
+    :padding-top 28px
+    :vertical-align top
+
+//event/new 
+
+#content 
+  .form-area 
+    div 
+      :position relative
+      :overflow visible
+    div#title
+      p.title, p.keywords 
+        input 
+          :font-family Georgia,Palatino,"Times New Roman",Times,serif
+          :font-size 200%
+          :width 100%
+      p.title
+        +leftfield
+      p.keywords 
+        +rightfield
+        input
+          :color = !radiant_red
+    div#date, div#location, div#description, div#recurrence
+      :clear both
+    div#date 
+      p 
+        :float left
+        :margin-right 2%
+      p.start_date, p.end_date 
+        :width 35%
+      p.note 
+        :padding-top 1.7em
+        :width 25%
+        :float right
+        :margin 0
+      p.problematic 
+        :color = !radiant_red
+    div#location
+      p.location
+        +leftfield
+      p.postcode
+        +rightfield
+        span.note
+          :display block
+          :margin-top 4px
+    div#recurrence
+      label 
+        :display inline
+    input.date, input.place, input.recurrence
+      :width 100%
+      :padding 6px
+      :border 1px solid #CDC295
+      :font-family Monaco,"Courier New",Courier,monospace
+      :font-size 95%
+    input.limit
+      :width 34%
+    input.count 
+      :width 100px
+    .note, label.minor
+      :font-family helvetica, arial, sans-serif
+      :font-weight lighter
+      :font-size 80%
+      :color #b2aaa4
+      :line-height 1.2
+      :display inline
+

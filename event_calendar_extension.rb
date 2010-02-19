@@ -9,7 +9,7 @@ class EventCalendarExtension < Radiant::Extension
     map.namespace :admin, :path_prefix => EXT_ROOT do |cal|
       cal.resources :calendars
       cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
-      cal.resources :events
+      cal.resources :events, :member => {:remove => :post}
       cal.calendars_home '/', :controller => 'events', :action => 'index'
     end
   end

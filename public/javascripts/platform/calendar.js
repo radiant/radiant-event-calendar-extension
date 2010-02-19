@@ -32,13 +32,13 @@ var DateControl = new Class({
       this.ender = ender;
       this.startpicker = new DatePicker(this.starter, $merge(date_picker_options, { onSelect : this.onSetStart.bind(this) }));
       this.endpicker = new DatePicker(this.ender, $merge(date_picker_options, { onSelect : this.onSetEnd.bind(this) }));
-      this.alldayer = $('all_day');
+      this.alldayer = $('event_all_day');
       this.alldayer.addEvent('click', this.toggleTimes.bind(this));
       this.announcer = $('event_note');
     }
   },
   toggleTimes: function (checkbox) {
-    if ($('all_day').checked) {
+    if (this.alldayer.checked) {
       this.startpicker.options.timePicker = false;
       this.startpicker.options.format = 'D d M Y';
       this.endpicker.options.timePicker = false;
@@ -133,7 +133,7 @@ var RecurrenceControl = new Class({
     else this.show();
   },
   chooseBasis: function () {
-    if (this.basis_chooser.get('value') == 'until') {
+    if (this.basis_chooser.get('value') == 'limit') {
       this.limiter.showInline();
       this.counter.hide();
     } else {
