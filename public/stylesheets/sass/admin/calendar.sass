@@ -8,9 +8,30 @@
   :width 25%
   :float right
 
+=third
+  :float left
+  :width 35%
+
+=standard_input
+  :width 100%
+  :padding 6px 0
+  :border 1px solid #CDC295
+  :font-family Monaco,"Courier New",Courier,monospace
+  :font-size 95%
+
+=quiet
+  :font-family helvetica, arial, sans-serif
+  :font-weight lighter
+  :font-size 80%
+  :color #b2aaa4
+  :line-height 1.2
+
+=flatbottom
+  :margin-bottom 0
+
 !radiant_red = #c00
 
-//calendar/index 
+//calendars index 
 
 table.index 
   td.subscription-title 
@@ -88,43 +109,8 @@ table.calendar
         :padding 0 0 0 12px
         :list-style square
 
-//calendar/new 
 
-#content 
-  .form-area 
-    p, p.title 
-      :margin-bottom 10px
-      input.textbox 
-        :width 100%
-        :border 1px solid #CDC295
-        :font-family Monaco,"Courier New",Courier,monospace
-        :font-size 95%
-        :padding 4px
-      textarea 
-        :width 100%
-        :height 60px
-        :border 1px solid #CDC295
-        :font-family Monaco,"Courier New",Courier,monospace
-        :font-size 95%
-        :padding 4px
-      label 
-        :display block
-    p.thirdwidth 
-      :float left
-      :width 31%
-      :margin-right 2%
-    p.halfwidth 
-      :float left
-      :width 48%
-      :margin-right 2%
-    p.fullwidth 
-      :clear both
-      :width 100%
-    span.info 
-      :font-size 80%
-      :color #7D796C
-
-//event/index 
+//events index 
 
 table#events
   td.datemark
@@ -165,66 +151,140 @@ table#events
     :padding-top 28px
     :vertical-align top
 
-//event/new 
+// event and calendar forms 
 
 #content 
-  .form-area 
+  #event_form, #calendar_form
+    fieldset
+      :border 1px dotted #CDC295
+      :margin-bottom 20px
+      :overflow hidden
+      :position relative
+      :clear both
+      legend
+        +quiet
     div 
       :position relative
       :overflow visible
+      :clear left
+      p.note 
+        +rightfield
+        :padding-top 1.7em
+        a
+          :color = !radiant_red
+      
     div#title
-      p.title, p.keywords 
+      p.event_title, p.calendar_title, p.keywords
+        :margin-bottom 1em
         input 
+          +standard_input
           :font-family Georgia,Palatino,"Times New Roman",Times,serif
           :font-size 200%
-          :width 100%
-      p.title
+      p.event_title
         +leftfield
       p.keywords 
         +rightfield
         input
           :color = !radiant_red
-    div#date, div#location, div#description, div#recurrence
-      :clear both
-    div#date 
-      p 
-        :float left
+      p.calendar_category, p.calendar_slug
+        +third
+        input 
+          +standard_input
+      p.calendar_category
         :margin-right 2%
+
+    div#description
+      p.description
+        +flatbottom
+        textarea 
+          +standard_input
+
+    div#ical
+      p
+        input
+          +standard_input
+      p.url
+        +leftfield
+        :margin-top 0
+      p.username, p.password
+        +third
+      p.username
+        :margin-right 2%
+      p.refresh
+        +rightfield
+
+    div#date
       p.start_date, p.end_date 
-        :width 35%
-      p.note 
-        :padding-top 1.7em
-        :width 25%
-        :float right
-        :margin 0
+        +third
+      p.start_date
+        :margin-right 2%
       p.problematic 
         :color = !radiant_red
-    div#location
-      p.location
+      input.date
+        +standard_input
+        
+    div#recurrence
+      p.recurrence
         +leftfield
-      p.postcode
+        +flatbottom
+      select, input
+        +standard_input
+        :width 32%
+      select
+        :margin-right 1%
+      input.date
+        :float right
+      input.count
+        :width 50px
+
+    div#venue, div#newvenue
+      :overflow auto
+    
+    div#venue
+      p.existing_venue
+        +leftfield
+        select
+          +standard_input
+        a
+          +quiet
+          :color = !radiant_red
+    div#new_venue
+      p.venue_title
+        +leftfield
+        input
+          +standard_input
+        a
+          +quiet
+          :color = !radiant_red
+      p.venue_location
+        +leftfield
+        textarea
+          +standard_input
+          :height 5em
+      p.venue_postcode
         +rightfield
         span.note
           :display block
           :margin-top 4px
-    div#recurrence
-      label 
-        :display inline
-    input.date, input.place, input.recurrence
-      :width 100%
-      :padding 6px
-      :border 1px solid #CDC295
-      :font-family Monaco,"Courier New",Courier,monospace
-      :font-size 95%
-    input.limit
-      :width 34%
-    input.count 
-      :width 100px
-    .note, label.minor
-      :font-family helvetica, arial, sans-serif
-      :font-weight lighter
-      :font-size 80%
-      :color #b2aaa4
-      :line-height 1.2
-      :display inline
+        input
+          +standard_input
+      p.venue_description
+        :clear both
+        textarea
+          +standard_input
+          :height 5em
 
+    div#description
+      textarea
+        +standard_input
+        :height 8em
+
+    .note, label.minor
+      +quiet
+      :display inline
+      
+    input.date
+      :background white url(/images/event_calendar/date_input.png) no-repeat right top 
+      
+    .hidden 
+      :display none

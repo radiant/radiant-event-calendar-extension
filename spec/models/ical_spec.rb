@@ -20,13 +20,13 @@ describe Ical do
     
     it "should record timed events (with GMT times)" do
       @ical.calendar.events.first.start_date.should == DateTime.civil(2009, 2, 24, 9, 0, 0)
-      @ical.calendar.events.first.allday?.should be_false
+      @ical.calendar.events.first.all_day?.should be_false
     end
 
     it "should record all-day events (with GMT times set to midnight)" do
       @ical.calendar.events.last.start_date.should == DateTime.civil(2009, 2, 24)
       @ical.calendar.events.last.end_date.should == DateTime.civil(2009, 2, 24)
-      @ical.calendar.events.last.allday?.should be_true
+      @ical.calendar.events.last.all_day?.should be_true
     end
 
   end

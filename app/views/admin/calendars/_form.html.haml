@@ -1,49 +1,61 @@
-.form-area
+#calendar_form.form-area
   = render_region :form_top
   = error_messages_for :calendar
 
   - render_region :form do |form|
     - form.edit_name do
-      %p.title
-        = f.label :name
-        = f.text_field :name, :class => "textbox"
+      %fieldset
+        %legend 
+          Calendar
 
-    - form.edit_url do
-      %p.halfwidth
-        = f.label :category
-        = f.text_field :category, :class => "textbox"
-      %p.halfwidth
-        = f.label :slug
-        = f.text_field :slug, :class => "textbox"
-            
-    - form.edit_description do
-      %p.description
-        = f.label :description, "Description"
-        = f.text_area 'description', :size => '40x6', :class => "textarea"
+        #title
+          %p.calendar_title
+            = f.label :name
+            = f.text_field :name, :class => "textbox"
+          %p.calendar_category
+            = f.label :category
+            = f.text_field :category, :class => "textbox"
+          %p.calendar_slug
+            = f.label :slug
+            = f.text_field :slug, :class => "textbox"
+          %p.note
+            The category and slug are used create a url in the form /[calendar page]/category/slug showing only the events of this calendar.
+
+        #description
+          %p.description
+            = f.label :description, "Description"
+            = f.text_area 'description', :size => '40x6', :class => "textarea"
 
     - @calendar.build_ical unless @calendar.ical
     - form.edit_ical do
-      - f.fields_for :ical do |ical_f| 
-        %p.fullwidth
-          = ical_f.label :url, "Subscription url"
-          = ical_f.text_field :url, :class => "textbox"
-          %span.info
-            Include the http:// or https:// part. A caldav address will probably look like 
-            %code
-              https://my.calendar.com:8443/calendars/me/calendar/
-            and must include the trailing slash. An ical path looks like any other web address but with the suffix .ics.
+      %fieldset
+        %legend 
+          Subscription
 
-        %p.thirdwidth
-          = ical_f.label :username
-          = ical_f.text_field :username, :class => "textbox"
+        - f.fields_for :ical do |ical_f| 
+          #ical
+            %p.url
+              = ical_f.label :url, "Subscription url"
+              = ical_f.text_field :url, :class => "textbox"
+              = ical_f.check_box :refresh_interval
+              = ical_f.label :refresh_interval, 'Refresh automatically?', :class => 'minor'
 
-        %p.thirdwidth
-          = ical_f.label :password
-          = ical_f.text_field :password, :class => "textbox"
+            %p.note
+              The url should be a complete http(s) address that works in your browser. A CalDAV address will look like:
+              %code
+                https://my.calendar.com:8443/calendars/me/calendar/
+              and should include the trailing slash.
+              %br
+              An ical file will look like any other web address apart from the .ics suffix.
+                
 
-        %p.thirdwidth
-          = ical_f.label :refresh_interval
-          = ical_f.text_field :refresh_interval, :class => "textbox"
+            %p.username
+              = ical_f.label :username
+              = ical_f.text_field :username, :class => "textbox"
+
+            %p.password
+              = ical_f.label :password
+              = ical_f.text_field :password, :class => "textbox"
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do

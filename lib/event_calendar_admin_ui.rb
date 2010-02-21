@@ -21,7 +21,7 @@ module EventCalendarAdminUI
           returning OpenStruct.new do |calendar|
             calendar.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
-              edit.form.concat %w{edit_name edit_url edit_description edit_ical}
+              edit.form.concat %w{edit_name edit_ical}
               edit.form_bottom.concat %w{edit_timestamp edit_buttons}
             end
             calendar.index = Radiant::AdminUI::RegionSet.new do |index|
@@ -38,7 +38,7 @@ module EventCalendarAdminUI
           returning OpenStruct.new do |event|
             event.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
-              edit.form.concat %w{edit_title edit_date edit_location edit_description edit_recurrence}
+              edit.form.concat %w{edit_event edit_date edit_venue}
               edit.form_bottom.concat %w{edit_timestamp edit_buttons}
             end
             event.index = Radiant::AdminUI::RegionSet.new do |index|

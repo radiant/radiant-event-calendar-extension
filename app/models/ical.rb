@@ -52,12 +52,14 @@ class Ical < ActiveRecord::Base
           cal.events.each do |cal_event|
             cal_event.occurrences.each do |occurrence|
               event = self.calendar.events.build({
+                :uuid => cal_event.uid,
                 :title => cal_event.summary,
                 :description => cal_event.description,
                 :location => cal_event.location,
                 :url => cal_event.url,
                 :start_date => occurrence.dtstart,
-                :end_date => occurrence.dtend
+                :end_date => occurrence.dtend,
+                :all_day => !cal_event.dtstart.is_a?(DateTime),
               })
               event.status = Status[:imported]
               event.site = self.calendar.site if event.respond_to? :site=
@@ -91,17 +93,19 @@ class Ical < ActiveRecord::Base
   def ics_file
     "#{self.calendar.slug}.ics"
   end
-    
+  
+  # I've changed this to make the ical refresh decision a simple yes or no
+  # and to make the refresh interval a global value
+  def refresh_interval
+    (Radiant::Config['event_calendar.refresh_interval'] || 3600).to_i.seconds
+  end
+  
   def refresh_automatically?
     refresh_interval.nil? || refresh_interval.to_i != 0
   end
-  
-  def refresh_interval_or_default
-    (refresh_interval || Radiant::Config['event_calendar.default_refresh_interval'] || 3600).to_i.seconds
-  end
-  
+    
   def needs_refreshment?
-    last_refresh_date.nil? || Time.now > last_refresh_date + refresh_interval_or_default.to_i.seconds
+    last_refresh_date.nil? || Time.now > last_refresh_date + refresh_interval
   end
   
   def self.check_refreshments

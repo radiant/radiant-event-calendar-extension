@@ -5,9 +5,12 @@ class Event < ActiveRecord::Base
 
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped
+
+  belongs_to :event_venue
+  belongs_to :event_category
+  accepts_nested_attributes_for :event_venue, :event_category
   
   validates_presence_of :uuid, :title, :start_date, :status_id
   validates_uniqueness_of :uuid
@@ -71,7 +74,9 @@ class Event < ActiveRecord::Base
     finish = start + 1.day
     { :conditions => ['start_date BETWEEN ? AND ?', start, finish] }
   }
-    
+
+
+
   def date
     start_date.to_datetime.strftime(date_format)
   end
