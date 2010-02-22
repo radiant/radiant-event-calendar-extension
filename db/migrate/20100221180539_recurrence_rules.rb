@@ -1,6 +1,6 @@
 class RecurrenceRules < ActiveRecord::Migration
   def self.up
-    create_table :recurrence_rules do |t|
+    create_table :event_recurrence_rules do |t|
       t.column :event_id, :integer
       t.column :period, :string
       t.column :basis, :string
@@ -14,7 +14,7 @@ class RecurrenceRules < ActiveRecord::Migration
       t.column :lock_version, :integer
       t.column :site_id, :integer
     end
-    add_index :recurrence_rules, :event_id
+    add_index :event_recurrence_rules, :event_id
     remove_column :events, :recurrence_period
     remove_column :events, :recurrence_basis
     remove_column :events, :recurrence_limit
@@ -23,7 +23,7 @@ class RecurrenceRules < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :recurrence_rules
+    drop_table :event_recurrence_rules
     add_column :events, :recurrence_period, :string
     add_column :events, :recurrence_basis, :string
     add_column :events, :recurrence_limit, :datetime

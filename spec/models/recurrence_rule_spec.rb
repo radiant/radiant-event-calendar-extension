@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe RecurrenceRule do
+describe EventRecurrenceRule do
   dataset :recurrence
   
   describe "date-limited rule" do
     before do 
-      @rule = recurrence_rules(:date_limited)
+      @rule = event_recurrence_rules(:date_limited)
     end
     
     it "should be bounded" do
@@ -23,7 +23,7 @@ describe RecurrenceRule do
 
   describe "count-limited rule" do
     before do 
-      @rule = recurrence_rules(:count_limited)
+      @rule = event_recurrence_rules(:count_limited)
     end
     
     it "should be bounded" do
@@ -41,7 +41,7 @@ describe RecurrenceRule do
 
   describe "unlimited rule" do
     before do 
-      @rule = recurrence_rules(:unlimited)
+      @rule = event_recurrence_rules(:unlimited)
     end
     
     it "should not be bounded" do
@@ -59,7 +59,7 @@ describe RecurrenceRule do
 
   describe "imported rule" do
     before do 
-      @rule = RecurrenceRule.from("FREQ=DAILY;INTERVAL=1;UNTIL=20090228")
+      @rule = EventRecurrenceRule.from("FREQ=DAILY;INTERVAL=1;UNTIL=20090228")
     end
     
     it "should be bounded" do

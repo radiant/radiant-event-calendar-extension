@@ -10,15 +10,17 @@ class Event < ActiveRecord::Base
   belongs_to :event_venue
   accepts_nested_attributes_for :event_venue, :reject_if => :all_blank
 
-  has_many :recurrence_rules
+  has_many :occurrences, :class_name => 'EventOccurrence'
+  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule'
   accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true#, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
-  
+
   validates_presence_of :uuid, :title, :start_date, :end_date, :status_id
   validates_uniqueness_of :uuid
 
   before_validation_on_create :get_uuid
   before_validation_on_create :set_default_status
   before_validation :set_default_end_date
+  after_save :write_occurrences
   
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
@@ -145,19 +147,19 @@ class Event < ActiveRecord::Base
   end
   
   def add_recurrence(rule)
-    self.recurrence_rules << RecurrenceRule.from(rule)
+    self.recurrence_rules << EventRecurrenceRule.from(rule)
   end
       
   def to_ri_cal
     RiCal.Event do |cal_event|
       cal_event.uid = uuid
       cal_event.summary = title
-      cal_event.description = description
-      cal_event.dtstart =  all_day? ? start_date.to_date : start_date if start_date
-      cal_event.dtend = all_day? ? end_date.to_date : end_date if end_date
-      cal_event.url = url
-      cal_event.add_rrules(recurrence_rules.map(&:rule))
-      cal_event.location = location
+      cal_event.description = description if description
+      cal_event.dtstart =  (all_day? ? start_date.to_date : start_date) if start_date
+      cal_event.dtend = (all_day? ? end_date.to_date : end_date) if end_date
+      cal_event.url = url if url
+      cal_event.rrules = recurrence_rules.map(&:to_ical) if recurrence_rules.any?
+      cal_event.location = location if location
     end
   end
   
@@ -198,6 +200,16 @@ protected
     if end_date.blank?
       default_duration = Radiant::Config['event_calendar.default_duration'] || 1.hour
       self.end_date = start_date + default_duration
+    end
+  end
+  
+  def write_occurrences
+    occurrences.clear
+    occurrences.create
+    if recurrence_rules.any?
+      to_ri_cal.occurrences.each do |occ|
+        occurrences.create(:start_date => occ.dtstart, :end_date => occ.dtend)
+      end
     end
   end
   

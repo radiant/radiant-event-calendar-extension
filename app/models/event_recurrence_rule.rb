@@ -1,4 +1,4 @@
-class RecurrenceRule < ActiveRecord::Base
+class EventRecurrenceRule < ActiveRecord::Base
   include ActionView::Helpers::TextHelper
   
   belongs_to :created_by, :class_name => 'User'
@@ -67,6 +67,10 @@ class RecurrenceRule < ActiveRecord::Base
     rrule = self.new
     rrule.rule = rule
     rrule
+  end
+  
+  def to_ical
+    rule.to_ical
   end
 
 end
