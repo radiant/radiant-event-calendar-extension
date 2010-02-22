@@ -29,6 +29,15 @@ describe Ical do
       @ical.calendar.events.last.all_day?.should be_true
     end
 
+    it "should record repeating events" do
+      event = @ical.calendar.events.find_by_title("Repeating Event")
+      event.recurrence_rules.should_not be_empty
+      rrule = event.recurrence_rules.first
+      rrule.period.downcase.should == 'daily'
+      rrule.interval.should == 1
+      rrule.limiting_date.should == DateTime.civil(2009, 2, 28, 4, 59, 59)
+    end
+
   end
   describe "reading an ics file from another timezone" do
     before do

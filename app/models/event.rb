@@ -1,6 +1,5 @@
 require 'uuidtools'
 class Event < ActiveRecord::Base
-  include ActionView::Helpers::TextHelper
   include ActionView::Helpers::DateHelper
 
   belongs_to :created_by, :class_name => 'User'
@@ -8,16 +7,18 @@ class Event < ActiveRecord::Base
   belongs_to :calendar
   is_site_scoped if respond_to? :is_site_scoped
 
+  has_many :recurrence_rules
   belongs_to :event_venue
   belongs_to :event_category
   accepts_nested_attributes_for :event_venue, :event_category
   
-  validates_presence_of :uuid, :title, :start_date, :status_id
+  validates_presence_of :uuid, :title, :start_date, :end_date, :status_id
   validates_uniqueness_of :uuid
 
   before_validation_on_create :get_uuid
   before_validation_on_create :set_default_status
-
+  before_validation_on_create :set_default_end_date
+  
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
   named_scope :approved, { :conditions => ["status_id >= (?)", Status[:published].to_s] }
@@ -74,8 +75,10 @@ class Event < ActiveRecord::Base
     finish = start + 1.day
     { :conditions => ['start_date BETWEEN ? AND ?', start, finish] }
   }
-
-
+  
+  def location
+    event_venue || read_attribute(:location)
+  end
 
   def date
     start_date.to_datetime.strftime(date_format)
@@ -91,6 +94,10 @@ class Event < ActiveRecord::Base
 
   def end_time
     end_date.to_datetime.strftime(end_date.min == 0 ? round_time_format : time_format).downcase if end_date
+  end
+  
+  def duration
+    end_date - start_date
   end
 
   def starts
@@ -132,39 +139,46 @@ class Event < ActiveRecord::Base
     self.status_id = value.id
   end
   
-  def recurrence
-    rec = ""
-    unless recurrence_period.blank?
-      rec << recurrence_period.titlecase
-      rec << " for #{period_units}" if recurrence_basis == 'count' && recurrence_count
-      rec << " until #{recurrence_limit.to_datetime.strftime(date_format)}" if recurrence_basis == 'limit' && recurrence_limit
-    end
-    rec
+  def add_recurrence(rule)
+    self.recurrence_rules << RecurrenceRule.from(rule)
   end
-  
-  def period_units
-    return unless recurrence_period && recurrence_count
-    name = recurrence_period.sub(/ly$/, '')
-    name = "day" if name == 'dai'
-    pluralize(recurrence_count, name)
-  end
-  
-  # a comprehensible subset of the RFC 2445 recurrence rule
-  def recurrence_rule
-    if !recurrence_period.blank? && recurrence_period != 'never'
-      rule = ["FREQ=#{recurrence_period.upcase}"]
-      rule << "COUNT=#{recurrence_count}" if recurrence_basis == 'count'
-      rule << "UNTIL=#{recurrence_limit}" if recurrence_basis == 'limit'
-      self.recurrence_rule = rule.join(';')
-    else
-      self.recurrence_rule = nil
+      
+  def to_ri_cal
+    RiCal.Event do |cal_event|
+      cal_event.uid = uuid
+      cal_event.summary = title
+      cal_event.description = description
+      cal_event.dtstart =  all_day? ? start_date.to_date : start_date if start_date
+      cal_event.dtend = all_day? ? end_date.to_date : end_date if end_date
+      cal_event.url = url
+      cal_event.add_rrules(recurrence_rules.map(&:rule))
+      cal_event.location = location
     end
   end
   
-  def recurrence_bounded?
-    true if recurrence_period and not recurrence_count or recurrence_limit
+  def ical
+    self.to_ri_cal.to_s
   end
-    
+  
+  def self.from(cal_event)
+    event = new({
+      :uuid => cal_event.uid,
+      :title => cal_event.summary,
+      :description => cal_event.description,
+      :location => cal_event.location,
+      :url => cal_event.url,
+      :start_date => cal_event.dtstart,
+      :end_date => cal_event.dtend,
+      :all_day => !cal_event.dtstart.is_a?(DateTime)
+    })
+    event.status = Status[:imported]
+    cal_event.rrule.each { |rule| event.add_recurrence(rule) }
+    event
+  rescue => error
+    logger.error "Event import error: #{error}."
+    raise
+  end
+  
 protected
 
   def get_uuid
@@ -173,6 +187,13 @@ protected
 
   def set_default_status
     self.status ||= Status[:Published]
+  end
+  
+  def set_default_end_date
+    if end_date.nil?
+      default_duration = Radiant::Config['event_calendar.default_duration'] || 1.hour
+      self.end_date = start_date + default_duration
+    end
   end
   
   def date_format
@@ -188,8 +209,7 @@ protected
   end
   
   def round_time_format
-    Radiant::Config['event_calendar.time_format'] || "%-1I%p"
+    Radiant::Config['event_calendar.round_time_format'] || "%-1I%p"
   end
-  
 
 end

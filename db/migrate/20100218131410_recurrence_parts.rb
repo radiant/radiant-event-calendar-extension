@@ -5,6 +5,7 @@ class RecurrenceParts < ActiveRecord::Migration
     add_column :events, :recurrence_basis, :string
     add_column :events, :recurrence_limit, :datetime
     add_column :events, :recurrence_count, :integer
+    add_column :events, :recurrence_interval, :integer
   end
 
   def self.down
@@ -12,6 +13,7 @@ class RecurrenceParts < ActiveRecord::Migration
     remove_column :events, :recurrence_basis
     remove_column :events, :recurrence_limit
     remove_column :events, :recurrence_count
+    remove_column :events, :recurrence_interval
     add_column :events, :recurrence_rule, :string
   end
 end

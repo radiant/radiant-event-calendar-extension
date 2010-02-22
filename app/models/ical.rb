@@ -50,22 +50,11 @@ class Ical < ActiveRecord::Base
           cal = components.first
           event_count = 0
           cal.events.each do |cal_event|
-            cal_event.occurrences.each do |occurrence|
-              event = self.calendar.events.build({
-                :uuid => cal_event.uid,
-                :title => cal_event.summary,
-                :description => cal_event.description,
-                :location => cal_event.location,
-                :url => cal_event.url,
-                :start_date => occurrence.dtstart,
-                :end_date => occurrence.dtend,
-                :all_day => !cal_event.dtstart.is_a?(DateTime),
-              })
-              event.status = Status[:imported]
-              event.site = self.calendar.site if event.respond_to? :site=
-              event.save!
-              event_count += 1
-            end
+            event = Event.from(cal_event)
+            event.site = self.calendar.site if event.respond_to? :site=
+            self.calendar.events << event
+            event.save!
+            event_count += 1
           end
         end
         self.last_refresh_count = event_count

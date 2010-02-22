@@ -11,9 +11,12 @@ class CalendarsDataset < Dataset::Base
       attributes = calendar_attributes(attributes.update(:name => name))
       calendar = create_model Calendar, name.symbolize, attributes
       calendar.ical = calendar.build_ical(:url => 'stubbed')
-      calendar
+      if block_given?
+        @calendar = calendar
+        yield
+      end
     end
-        
+    
     def calendar_attributes(attributes={})
       name = attributes[:name] || "Default"
       symbol = name.symbolize
@@ -26,5 +29,6 @@ class CalendarsDataset < Dataset::Base
       attributes[:site] = sites(:test) if defined? Site
       attributes
     end
+    
   end
 end
