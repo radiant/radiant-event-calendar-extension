@@ -26,11 +26,24 @@ class Calendar < ActiveRecord::Base
   }
   
   def to_ics
+    # we might need to write the ics file
     File.join "", self.ical.ics_path, self.ical.ics_file
   end
   
   def to_s
     self.name
   end
+  
+  # def ical
+  #   self.to_ri_cal.to_s
+  # end
+  # 
+  # def to_ri_cal
+  #   RiCal.Calendar do |cal|
+  #     events.each do |event|
+  #       cal.add_event(event.to_ri_cal)
+  #     end
+  #   end
+  # end
 
 end

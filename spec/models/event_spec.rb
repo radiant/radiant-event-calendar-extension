@@ -17,10 +17,10 @@ describe Event do
       @event.valid?.should be_true
     end
     
-    [:uuid, :title, :start_date, :end_date, :status_id].each do |field|
+    [:uuid, :title, :start_date, :status_id].each do |field|
       it "should not be valid without a #{field}" do
         @event.send "#{field}=".intern, nil
-        @event.valid?.should_not be_true
+        @event.valid?.should be_false
       end
     end
     

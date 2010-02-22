@@ -1,23 +1,23 @@
 class RecurrenceRule < ActiveRecord::Base
   include ActionView::Helpers::TextHelper
-
+  
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :event
   is_site_scoped if respond_to? :is_site_scoped
 
   def basis
-    return nil unless limiting_count || limiting_date
-    return :count if limiting_count
-    return :limit if limiting_date
+    basis = read_attribute(:basis)
+    return nil unless basis == 'count' || basis == 'limit'
+    basis
   end
-
+  
   def unbounded?
     basis.nil?
   end
   
   def single?
-    true if limiting_count == 1
+    true if basis == 'limit' && limiting_count == 1
   end
 
   def to_s
@@ -32,9 +32,9 @@ class RecurrenceRule < ActiveRecord::Base
     if unbounded?
       summary.last << ","
       summary << 'indefinitely'
-    elsif basis == :limit && limiting_date
+    elsif basis == 'limit' && limiting_date
       summary << "until #{limiting_date.to_datetime.strftime('%d %B %Y')}" if limiting_date
-    elsif basis == :count && limiting_count
+    elsif basis == 'count' && limiting_count
       summary.last << ","
       summary << "#{limiting_count} times"
     end
@@ -45,15 +45,20 @@ class RecurrenceRule < ActiveRecord::Base
     rule = RiCal::PropertyValue::RecurrenceRule.convert(nil, rule) unless rule.is_a? RiCal::PropertyValue::RecurrenceRule
     self.period = rule.freq
     self.interval = rule.interval
-    self.limiting_date = rule.until.value
-    self.limiting_count = rule.count
+    if rule.until
+      self.basis = 'limit'
+      self.limiting_date = rule.until.value
+    elsif rule.count
+      self.basis = 'count'
+      self.limiting_count = rule.count
+    end
   end
   
   def rule
     rule = RiCal::PropertyValue::RecurrenceRule.convert(nil, "") unless rule.is_a? RiCal::PropertyValue::RecurrenceRule
     rule.freq = period.upcase
-    rule.until = limiting_date if limiting_date
-    rule.count = limiting_count if limiting_count
+    rule.until = limiting_date if basis == 'limit' && limiting_date
+    rule.count = limiting_count if basis == 'count' && limiting_count
     rule.interval = interval
     rule
   end

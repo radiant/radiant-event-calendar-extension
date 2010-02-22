@@ -1,8 +1,11 @@
 - @venues = EventVenue.find(:all)
+- @event.recurrence_rules.build unless @event.recurrence_rules.any?
 
 - form_for [:admin, @event] do |f|
   = f.hidden_field :lock_version
   = render_region :form_top
+
+  = error_messages_for :event
 
   #event_form.form-area
     - render_region :form do |form|
@@ -41,19 +44,27 @@
               If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
 
           #recurrence
-            %p.recurrence
-              = f.label :recurrence_period, "Repeats: "
-              %br
-              = f.select :recurrence_period, [['never', ''], ['every day', 'daily'], ['every week', 'weekly'], ['every month', 'monthly'], ['every year', 'yearly']], {}, :class => 'textbox'
-              %span#recurrence_detail
-                = f.select :recurrence_basis, [['forever', ''],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox'
-                %span#recurrence_limit
-                  = f.text_field :recurrence_limit, :class => 'textbox date'
-                %span#recurrence_count
-                  = f.text_field :recurrence_count, :class => 'count'
-                  = f.label :recurrence_count, "times"
+            - f.fields_for :recurrence_rules do |rf|
+            
+              %p.recurrence
+                = rf.check_box 'active', :class => 'toggle'
+                = rf.label :active, 'Repeats'
+                %span.recurrence_detail
+                  %span.recurrence_interval
+                    Every
+                    = rf.text_field :interval, :class => 'textbox short'
+                  %span.recurrence_period
+                    = rf.select :period, [['day', 'daily'], ['week', 'weekly'], ['month', 'monthly'], ['year', 'yearly']], {}, :class => 'textbox'
+                  %span.recurrence_basis
+                    = rf.select :basis, [['forever', ''],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox'
+                  %span.recurrence_limit
+                    = rf.text_field :limiting_date, :class => 'textbox date'
+                  %span.recurrence_count
+                    = rf.text_field :limiting_count, :class => 'textbox short'
+                    = rf.label :limiting_count, "occasions"
+                    (including the first)
             %p.note
-              This is for regular but separate events. For an event of more than one day, you only need to set the start and end.
+              Repeats are for separate similar events. For long events you only need to set the start and end on different days.
 
       - form.edit_venue do
         %fieldset

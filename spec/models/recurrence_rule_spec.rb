@@ -13,7 +13,7 @@ describe RecurrenceRule do
     end
 
     it "should report the right basis" do
-      @rule.basis.should == :limit
+      @rule.basis.should == 'limit'
     end
 
     it "should describe itself correctly" do
@@ -31,7 +31,7 @@ describe RecurrenceRule do
     end
 
     it "should report the right basis" do
-      @rule.basis.should == :count
+      @rule.basis.should == 'count'
     end
 
     it "should describe itself correctly" do
@@ -67,7 +67,7 @@ describe RecurrenceRule do
     end
 
     it "should report the right basis" do
-      @rule.basis.should == :limit
+      @rule.basis.should == 'limit'
     end
 
     it "should have the right limiting date" do
