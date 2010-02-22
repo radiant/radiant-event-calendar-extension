@@ -1,5 +1,3 @@
-var dateset = null;
-var recurrence = null;
 var default_duration = 60 * 60 * 1000;
 
 var date_picker_options = {
@@ -17,24 +15,18 @@ var no_time_options = {
   format: 'D d M Y'
 };
 
-var period_labels = {
-  never : '',
-  daily : 'days',
-  weekly : 'weeks',
-  monthly : 'months',
-  yearly : 'years'
-};
-
 var DateControl = new Class({
   initialize: function (starter, ender) {
     if (starter && ender) { 
       this.starter = starter;
       this.ender = ender;
-      this.startpicker = new DatePicker(this.starter, $merge(date_picker_options, { onSelect : this.onSetStart.bind(this) }));
-      this.endpicker = new DatePicker(this.ender, $merge(date_picker_options, { onSelect : this.onSetEnd.bind(this) }));
       this.alldayer = $('event_all_day');
       this.alldayer.addEvent('click', this.toggleTimes.bind(this));
+      picker_options = (this.alldayer.checked) ? $merge(date_picker_options, no_time_options) : date_picker_options; 
+      this.startpicker = new DatePicker(this.starter, $merge(picker_options, { onSelect : this.onSetStart.bind(this) }));
+      this.endpicker = new DatePicker(this.ender, $merge(picker_options, { onSelect : this.onSetEnd.bind(this) }));
       this.announcer = $('event_note');
+      this.toggleTimes();
     }
   },
   toggleTimes: function (checkbox) {
@@ -108,37 +100,53 @@ var DateControl = new Class({
 });
 
 var RecurrenceControl = new Class({
-  initialize: function (chooser, detail) {   
-    if (chooser && detail) {
-      this.chooser = chooser;
-      this.detail = detail;
-      this.basis_chooser = detail.getElement('select#event_recurrence_basis');
-      this.limiter = detail.getElement('span#recurrence_limit');
-      this.limit_field = this.limiter.getElement('input');
-      this.counter = detail.getElement('span#recurrence_count');
-      this.count_label = this.counter.getElement('label');
+  initialize: function (container) {   
+    this.container = container;
+    this.toggle = container.getElement('input.toggle');
+    this.detail = container.getElement('span.recurrence_detail');
+    this.interval_block = this.detail.getElement('span.recurrence_interval');
+    this.basis_block = this.detail.getElement('span.recurrence_basis');
+    this.period_block = this.detail.getElement('span.recurrence_period');
+    this.limit_block = this.detail.getElement('span.recurrence_limit');
+    this.count_block = this.detail.getElement('span.recurrence_count');
 
-      this.chooser.addEvent('change', this.showIfRelevant.bindWithEvent(this));
-      this.basis_chooser.addEvent('change', this.chooseBasis.bindWithEvent(this));
-      this.limitpicker = new DatePicker(this.limit_field, $merge(date_picker_options, no_time_options, { onSelect : this.checkLimit.bind(this) }));
+    this.interval_field = this.interval_block.getElement('input');
+    if (this.interval_field.get('value') == '') this.interval_field.set('value', '1');
+    this.basis_chooser = this.basis_block.getElement('select');
+    this.period_chooser = this.period_block.getElement('select');
+    this.limit_field = this.limit_block.getElement('input');
+    this.count_label = this.count_block.getElement('label');
 
-      this.chooseBasis();
-      this.showIfRelevant();
-    }
+    this.toggle.addEvent('click', this.showIfRelevant.bindWithEvent(this));
+    this.interval_field.addEvent('blur', this.setInterval.bindWithEvent(this));
+    this.basis_chooser.addEvent('change', this.chooseBasis.bindWithEvent(this));
+    this.limitpicker = new DatePicker(this.limit_field, $merge(date_picker_options, no_time_options, { onSelect : this.checkLimit.bind(this) }));
+    
+    this.setInterval();
+    this.chooseBasis();
+    this.showIfRelevant();
   },
   showIfRelevant: function () {
-    var selection = this.chooser.get('value');
-    this.count_label.set('text', period_labels[selection]);
-    if (selection == '' || selection == 'never') this.hide();
-    else this.show();
+    if (this.toggle.checked) this.show();
+    else this.hide();
+  },
+  setInterval: function () {
+    if (this.interval_field.get('value') == 1) {
+      this.singularize();
+    } else {
+      this.pluralize();
+    }
   },
   chooseBasis: function () {
-    if (this.basis_chooser.get('value') == 'limit') {
-      this.limiter.showInline();
-      this.counter.hide();
+    if (this.basis_chooser.get('value') == '') {
+      this.count_block.hide();
+      this.limit_block.hide();
+    } else if (this.basis_chooser.get('value') == 'limit') {
+      this.limit_block.showInline();
+      this.count_block.hide();
     } else {
-      this.limiter.hide();
-      this.counter.showInline();
+      this.limit_block.hide();
+      this.count_block.showInline();
     }
   },
   checkLimit: function () {
@@ -149,10 +157,45 @@ var RecurrenceControl = new Class({
   },
   hide: function () {
     this.detail.fade('out');
+  },
+  singularize: function () {
+    this.period_chooser.getElements('option').each(function (opt) {
+      opt.set('text', opt.get('text').replace(/s$/, ''));
+    });
+  },
+  pluralize: function () {
+    this.period_chooser.getElements('option').each(function (opt) {
+      opt.set('text', opt.get('text') + 's');
+    });
   }
 });
 
+var VenueControl = new Class({
+  initialize: function (oldvenue, newvenue) {
+    this.choosing = oldvenue;
+    this.chooser = oldvenue.getElement('select');
+    this.adding = newvenue;
+    document.getElements('a.newvenue').addEvent('click', this.showAdder.bindWithEvent(this));
+    document.getElements('a.oldvenue').addEvent('click', this.showChooser.bindWithEvent(this));
+  },
+  showAdder: function (e) {
+    unevent(e);
+    this.choosing.addClass('hidden');
+    this.adding.removeClass('hidden');
+  },
+  showChooser: function (e) {
+    unevent(e);
+    this.adding.addClass('hidden');
+    this.choosing.removeClass('hidden');
+  }
+});
+
+var d = null;
+var r = null;
+var v = null;
+
 activations.push(function (scope) {
-  dateset = new DateControl(scope.getElements('#event_start_date'), scope.getElements('#event_end_date'));
-  recurrence = new RecurrenceControl(scope.getElements('#event_recurrence_period'), scope.getElements('#recurrence_detail'));
+  d = new DateControl(scope.getElements('#event_start_date'), scope.getElements('#event_end_date'));
+  v = new VenueControl(scope.getElements('#venue'), scope.getElements('#new_venue'));
+  scope.getElements('p.recurrence').each (function (element) { new RecurrenceControl(element); });
 });

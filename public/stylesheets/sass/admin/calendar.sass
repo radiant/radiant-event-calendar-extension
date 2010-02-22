@@ -167,6 +167,9 @@ table#events
       :position relative
       :overflow visible
       :clear left
+      p
+        input.textbox, select.textbox, textarea
+          +standard_input
       p.note 
         +rightfield
         :padding-top 1.7em
@@ -177,7 +180,6 @@ table#events
       p.event_title, p.calendar_title, p.keywords
         :margin-bottom 1em
         input 
-          +standard_input
           :font-family Georgia,Palatino,"Times New Roman",Times,serif
           :font-size 200%
       p.event_title
@@ -188,21 +190,14 @@ table#events
           :color = !radiant_red
       p.calendar_category, p.calendar_slug
         +third
-        input 
-          +standard_input
       p.calendar_category
         :margin-right 2%
 
     div#description
       p.description
         +flatbottom
-        textarea 
-          +standard_input
 
     div#ical
-      p
-        input
-          +standard_input
       p.url
         +leftfield
         :margin-top 0
@@ -210,8 +205,6 @@ table#events
         +third
       p.username
         :margin-right 2%
-      p.refresh
-        +rightfield
 
     div#date
       p.start_date, p.end_date 
@@ -220,63 +213,66 @@ table#events
         :margin-right 2%
       p.problematic 
         :color = !radiant_red
-      input.date
-        +standard_input
         
     div#recurrence
       p.recurrence
         +leftfield
         +flatbottom
-      select, input
-        +standard_input
-        :width 32%
-      select
-        :margin-right 1%
-      input.date
-        :float right
-      input.count
-        :width 50px
-
+        span.recurrence_detail
+          :display block
+        span.recurrence_interval
+          :float left
+          :margin-right 2%
+        span.recurrence_period
+          :float left
+          :width 15%
+          :margin-right 2%
+        span.recurrence_basis
+          :float left
+          :width 15%
+          :margin-right 2%
+        span.recurrence_limit
+          :display block
+          :float left
+          :width 35%
+        span.recurrence_count
+          :display block
+          :float left
+        input.short
+          :width 2em
+          :text-align center
+          
     div#venue, div#newvenue
       :overflow auto
     
     div#venue
       p.existing_venue
         +leftfield
-        select
-          +standard_input
         a
           +quiet
           :color = !radiant_red
     div#new_venue
       p.venue_title
         +leftfield
-        input
-          +standard_input
         a
           +quiet
           :color = !radiant_red
       p.venue_location
         +leftfield
         textarea
-          +standard_input
           :height 5em
       p.venue_postcode
         +rightfield
         span.note
           :display block
           :margin-top 4px
-        input
-          +standard_input
       p.venue_description
         :clear both
         textarea
-          +standard_input
           :height 5em
 
     div#description
       textarea
-        +standard_input
         :height 8em
 
     .note, label.minor
