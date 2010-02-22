@@ -1,6 +1,7 @@
 class Calendar < ActiveRecord::Base
   has_one :ical, :dependent => :destroy
   has_many :events, :dependent => :destroy
+  has_many :occurrences
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   is_site_scoped if respond_to? :is_site_scoped
@@ -8,6 +9,7 @@ class Calendar < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_uniqueness_of :slug, :scope => :category
+
   accepts_nested_attributes_for :ical
   validates_associated :ical
   
@@ -34,16 +36,16 @@ class Calendar < ActiveRecord::Base
     self.name
   end
   
-  # def ical
-  #   self.to_ri_cal.to_s
-  # end
-  # 
-  # def to_ri_cal
-  #   RiCal.Calendar do |cal|
-  #     events.each do |event|
-  #       cal.add_event(event.to_ri_cal)
-  #     end
-  #   end
-  # end
+  def to_ri_cal
+    RiCal.Calendar do |cal|
+      events.each do |event|
+        cal.add_subcomponent(event.to_ri_cal)
+      end
+    end
+  end
+
+  def to_ical
+    self.to_ri_cal.to_s
+  end
 
 end

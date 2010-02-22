@@ -1,5 +1,5 @@
 class EventVenue < ActiveRecord::Base
-  has_many :events
+  has_many :events, :dependent => :nullify
   validates_presence_of :title, :address
   
   def to_s

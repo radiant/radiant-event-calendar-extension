@@ -10,8 +10,8 @@ class Event < ActiveRecord::Base
   belongs_to :event_venue
   accepts_nested_attributes_for :event_venue, :reject_if => :all_blank
 
-  has_many :occurrences, :class_name => 'EventOccurrence'
-  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule'
+  has_many :occurrences, :class_name => 'EventOccurrence', :dependent => :destroy
+  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy
   accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true#, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
 
   validates_presence_of :uuid, :title, :start_date, :end_date, :status_id
@@ -203,6 +203,7 @@ protected
     end
   end
   
+  # doesn't yet observe exceptions
   def write_occurrences
     occurrences.clear
     occurrences.create
