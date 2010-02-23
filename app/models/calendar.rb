@@ -27,9 +27,9 @@ class Calendar < ActiveRecord::Base
     { :conditions => [ names.map{"calendars.name LIKE ?"}.join(' OR '), *names ] }
   }
   
+
   def to_ics
-    # we might need to write the ics file
-    File.join "", self.ical.ics_path, self.ical.ics_file
+    ical.to_ics if ical
   end
   
   def to_s

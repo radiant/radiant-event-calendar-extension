@@ -21,17 +21,44 @@ class EventCalendarPage < Page
     end
   end
   
-  # we ought to be munching date parameters (eg from, since) into Date objects
+  def date_parameters
+    @request.path_parameters[:url].select{|p| p !~ /\w/}
+  end
+  
+  def selection_parameters
+    @request.path_parameters[:url].select{|p| p !~ /\W/}
+  end
 
   def calendar_category
-    @request.path_parameters[:url][1]
+    selection_parameters[1]
   end
   
   def calendar_slug
-    @request.path_parameters[:url][2]
+    selection_parameters[2]
   end
   
-  def get_calendars
+  def calendar_year
+    date_parameters[1]
+  end
+  
+  def calendar_month
+    date_parameters[2]
+  end
+  
+  def selected_events
+    if selection_parameters.any?
+      events = EventOccurrence.in_calendars(calendars)
+    else
+      events = EventOccurrence.all
+    end
+    if calendar_year && calendar_month
+      events = events.in_month(calendar_year, calendar_month)
+    elsif calendar_year
+      events = events.in_year(calendar_year, calendar_month)
+    end
+  end
+  
+  def selected_calendars
     if category = calendar_category
       selection = Calendar.in_category(category)
       if slug = calendar_slug
@@ -39,9 +66,12 @@ class EventCalendarPage < Page
       end
       selection.find(:all)
     else
-      Calendar.find(:all)
+      Calendar.all
     end
   end
+  
+  
+  
 
   desc %{
     Renders a trail of breadcrumbs to the current page. On an event calendar page this tag is 

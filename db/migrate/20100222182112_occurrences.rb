@@ -2,6 +2,7 @@ class Occurrences < ActiveRecord::Migration
   def self.up
     create_table :event_occurrences do |t|
       t.column :event_id, :integer
+      t.column :status_id, :integer
       t.column :calendar_id, :integer
       t.column :event_venue_id, :integer
       t.column :start_date, :datetime

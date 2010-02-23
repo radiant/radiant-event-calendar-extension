@@ -83,6 +83,10 @@ class Ical < ActiveRecord::Base
     "#{self.calendar.slug}.ics"
   end
   
+  def to_ics
+    File.join "", ics_path, ics_file
+  end
+
   # I've changed this to make the ical refresh decision a simple yes or no
   # and to make the refresh interval a global value
   def refresh_interval
