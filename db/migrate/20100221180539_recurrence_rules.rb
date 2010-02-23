@@ -2,6 +2,7 @@ class RecurrenceRules < ActiveRecord::Migration
   def self.up
     create_table :event_recurrence_rules do |t|
       t.column :event_id, :integer
+      t.column :active, :boolean
       t.column :period, :string
       t.column :basis, :string
       t.column :interval, :integer, :default => 1
