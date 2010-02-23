@@ -11,7 +11,7 @@ class VenuesAndCategories < ActiveRecord::Migration
       t.column :updated_at, :datetime
       t.column :lock_version, :integer
     end
-    add_column :events, :event_venue_id
+    add_column :events, :event_venue_id, :integer
     add_index :events, :event_venue_id
   end
 
