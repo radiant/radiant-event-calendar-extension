@@ -9,8 +9,9 @@ class Event < ActiveRecord::Base
 
   belongs_to :event_venue
   accepts_nested_attributes_for :event_venue, :reject_if => :all_blank
-
-  has_many :occurrences, :class_name => 'EventOccurrence', :dependent => :destroy
+  
+  belongs_to :master, :class_name => 'Event'
+  has_many :occurrences, :class_name => 'Event', :foreign_key => 'master_id', :dependent => :destroy
   has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy
   accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true#, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
 
@@ -20,11 +21,76 @@ class Event < ActiveRecord::Base
   before_validation_on_create :get_uuid
   before_validation_on_create :set_default_status
   before_validation :set_default_end_date
-  after_save :write_occurrences
+  after_save :update_occurrences
   
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
   named_scope :approved, { :conditions => ["status_id >= (?)", Status[:published].to_s] }
+
+  named_scope :primary, { :conditions => "master_id IS NULL" }
+  named_scope :recurrent, { :conditions => "master_id IS NOT NULL" }
+  
+  named_scope :in_calendars, lambda { |calendars| # list of calendar objects
+    ids = calendars.map{ |c| c.id }
+    { :conditions => [ ids.map{"calendar_id = ?"}.join(" OR "), *ids] }
+  }
+  
+  named_scope :after, lambda { |datetime| # datetime. eg calendar.occurrences.after(Time.now)
+    { :conditions => ['start_date > ?', datetime] }
+  }
+  
+  named_scope :before, lambda { |datetime| # datetime. eg calendar.occurrences.before(Time.now)
+    { :conditions => ['start_date < ?', datetime] }
+  }
+  
+  named_scope :between, lambda { |start, finish| # datetimable objects. eg. Event.between(reader.last_login, Time.now)
+    { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date < :finish AND start_date > :start)', {:start => start, :finish => finish}] }
+  }
+
+  named_scope :within, lambda { |period| # seconds. eg calendar.occurrences.within(6.months)
+    start = Time.now
+    finish = start + period
+    between(start, finish)
+  }
+
+  named_scope :in_the_last, lambda { |period| # seconds. eg calendar.occurrences.in_the_last(1.week)
+    finish = Time.now
+    start = finish - period
+    between(start, finish)
+  }
+
+  named_scope :in_year, lambda { |year| # just a number. eg calendar.occurrences.in_year(2010)
+    start = DateTime.civil(year)
+    finish = start + 1.year
+    between(start, finish)
+  }
+
+  named_scope :in_month, lambda { |year, month| # numbers. eg calendar.occurrences.in_month(2010, 12)
+    start = DateTime.civil(year, month)
+    finish = start + 1.month
+    between(start, finish)
+  }
+  
+  named_scope :in_week, lambda { |year, week| # numbers, with a commercial week: eg calendar.occurrences.in_week(2010, 35)
+    start = DateTime.commercial(year, week)
+    finish = start + 1.week
+    between(start, finish)
+  }
+  
+  named_scope :on_day, lambda { |year, month, day| # numbers: eg calendar.occurrences.on_day(2010, 12, 12)
+    start = DateTime.civil(year, month, day)
+    finish = start + 1.day
+    between(start, finish)
+  }
+
+  def master?
+    master.nil?
+  end
+  
+  def occurrence?
+    !master?
+  end
+  
 
   def location
     event_venue || read_attribute(:location)
@@ -151,16 +217,15 @@ protected
   end
   
   # doesn't yet observe exceptions
-  def write_occurrences
+  def update_occurrences
     occurrences.clear
-    occurrences.create
     if recurrence_rules.any?
       to_ri_cal.occurrences.each do |occ|
-        occurrences.create(:start_date => occ.dtstart, :end_date => occ.dtend)
+        occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil))
       end
     end
   end
-  
+    
   def date_format
     Radiant::Config['event_calendar.date_format'] || "%d %B %Y"
   end

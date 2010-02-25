@@ -6,7 +6,7 @@ class EventOccurrence < ActiveRecord::Base
   
   is_site_scoped if respond_to? :is_site_scoped
 
-  delegate :title, :description, :location, :postcode, :url, :keywords, :contact, :all_day, :to => :event
+  delegate :title, :description, :location, :postcode, :url, :keywords, :contact, :all_day, :one_day?, :within_day?, :to => :event
 
   before_validation_on_create :set_defaults
   

@@ -7,9 +7,8 @@ module EventCalendarTags
   # include CalendarHelper
   class TagError < StandardError; end
   
-  # events:* tags
-  # initiate an event search
-  # and display the results
+  #### events:* tags
+  #### initiate an event search and display the results
   
   desc %{ 
     Specify a set of events ready for listing, tabulation or other display.
@@ -111,8 +110,8 @@ module EventCalendarTags
     result
   end
 
-  # Calendars:* tags
-  # iterate over the set of calendars
+  #### Calendars:* tags
+  #### iterate over the set of calendars
 
   desc %{
     Loop over a set of calendars specified by the usual search conditions.
@@ -170,9 +169,8 @@ module EventCalendarTags
     links.to_sentence
   end
 
-  # Calendar:* tags
-  # select and display attributes of a single calendar
-  # many of these are shortcuts to events: tags that set a calendar parameter and pass through.
+  #### Calendar:* tags
+  #### select and display attributes of a single calendar
 
   tag 'calendar' do |tag|
     tag.locals.calendar ||= get_calendar(tag)
@@ -225,41 +223,6 @@ module EventCalendarTags
     end
     result
   end
-
-  # month, week and day tags 
-  # tabulate a period and show any events in the current set that fall into that period
-
-  [:year, :month, :week, :day].each do |period|
-    desc %{ 
-      Shortcut tag that renders a #{period} view of the current calendar with all contained events.
-      On EventCalendar pages, these tags will obey relevant year, month, week and day request parameters.
-      Any other period tags are ignored.
-      
-      Usage:
-      <pre><code><r:calendar:#{period} [year=""] [month=""] [week=""] [day=""] /></code></pre> 
-    }
-  end
-
-  tag "calendar:day" do |tag|
-    tag.locals.period = period_from_parts(:day => tag.attr['day'], :month => tag.attr['month'], :year => tag.attr['year'])
-    tag.render("events:day")
-  end
-
-  tag "calendar:month" do |tag|
-    tag.locals.period = period_from_parts(:month => tag.attr['month'], :year => tag.attr['year'])
-    tag.render("events:month")
-  end
-
-  tag "calendar:week" do |tag|
-    tag.locals.period = period_from_parts(:week => tag.attr['week'], :year => tag.attr['year'])
-    tag.render("events:week")
-  end
-
-  tag "calendar:year" do |tag|
-    tag.locals.period = period_from_parts(:year => tag.attr['year'])
-    tag.render("events:year")
-  end
-
 
   desc %{ 
     Renders the address that would be used to display the current calendar by itself on the current page.
@@ -327,8 +290,8 @@ module EventCalendarTags
     %{<a href="#{tag.render('calendar:ical_url')}" class="ical"><img src="/images/event_calendar/ical16.png" alt="subscribe to #{tag.render('calendar:name')}" width="16" height="16" /> #{text}</a>}
   end
 
-  # Event:* tags
-  # display attributes of a single event 
+  #### Event:* tags
+  #### display attributes of a single event 
 
   tag "event" do |tag|
     raise TagError, "can't have r:event without an event" unless tag.locals.event
@@ -390,7 +353,7 @@ module EventCalendarTags
 
   desc %{ 
     If the event has a url, renders a link to that address around the title of the event. If not, just the title without a link.
-    As usual, if the tag is double the contents are used instead, and any other attributes are passed through to the link tag, if any.
+    As usual, if the tag is double the contents are used instead, and any other attributes are passed through to the link tag.
 
     Usage:
     <pre><code>
@@ -443,16 +406,16 @@ module EventCalendarTags
   desc %{ 
     Renders a sensible presentation of the time of the event. This is usually all you need, as it will do the right thing with all-day events.
       
-    The presentation is minimal: 10:00am will be shorted to 10am.
+    The presentation is minimal: 10:00am will be shortened to 10am.
 
     Usage:
     <pre><code><r:event:time />: <r:event:title /></code></pre> 
   }
   tag "event:time" do |tag|
-    if tag.locals.event.allday?
+    if tag.locals.event.all_day?
       "All day"
     else
-      tag.locals.event.nice_start_time
+      tag.locals.event.start_time
     end
   end
 
@@ -470,7 +433,7 @@ module EventCalendarTags
   end
 
   desc %{ 
-    Renders the start time of the current event with the specified strftime format. Unlike start and end, the default here is '%d %M'
+    Renders the start time of the current event with the specified strftime format. Unlike start and end, the default here is '%m/%d/%Y'
 
     Usage:
     <pre><code>
@@ -490,7 +453,7 @@ module EventCalendarTags
 
   desc %{ 
     Prints the day-of-week of the start date of the current event.
-    Equivalent to calling <r:event:date format="%A" /> but a bit clearer.
+    Equivalent to calling <r:event:date format="%A" />.
     For the short form, set short="true"
 
     Usage:
@@ -502,7 +465,7 @@ module EventCalendarTags
 
   desc %{ 
     Prints the day-of-month of the start date of the current event.
-    Equivalent to calling <r:event:date format="%d" /> but a bit clearer.
+    Equivalent to calling <r:event:date format="%d" />.
 
     Usage:
     <pre><code><r:event:day /></code></pre> 
@@ -513,7 +476,6 @@ module EventCalendarTags
 
   desc %{ 
     Prints the ordinal form of the day-of-month of the start date of the current event.
-    Equivalent to calling <r:event:date format="%d" /> but a bit clearer.
 
     Usage:
     <pre><code><r:event:day_ordinal /></code></pre> 
@@ -524,7 +486,7 @@ module EventCalendarTags
 
   desc %{ 
     Prints the week-of-year of the start date of the current event.
-    Equivalent to calling <r:event:date format="%W" /> but a bit clearer.
+    Equivalent to calling <r:event:date format="%W" />.
 
     Usage:
     <pre><code><r:event:week /></code></pre> 
@@ -535,7 +497,7 @@ module EventCalendarTags
 
   desc %{ 
     Prints the name of the month of the start date of the current event.
-    Equivalent to calling <r:event:date format="%B" /> but a bit clearer.
+    Equivalent to calling <r:event:date format="%B" />.
 
     Usage:
     <pre><code><r:event:month /></code></pre> 
@@ -546,7 +508,7 @@ module EventCalendarTags
 
   desc %{ 
     Prints the year of the start date of the current event.
-    Equivalent to calling <r:event:date format="%Y" /> but a bit clearer.
+    Equivalent to calling <r:event:date format="%Y" />.
 
     Usage:
     <pre><code><r:event:year /></code></pre> 
@@ -566,7 +528,7 @@ module EventCalendarTags
   tag "event:period" do |tag|
     format = tag.attr['format'] || "%H:%M"
     separator = tag.attr['separator'] || "-"
-    if tag.locals.event.allday?
+    if tag.locals.event.all_day?
       result = "all day"
     elsif tag.locals.event.start_date.strftime("%x") == tag.locals.event.end_date.strftime("%x")
       result = tag.locals.event.start_date.strftime(format)

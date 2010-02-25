@@ -1,7 +1,6 @@
 class Calendar < ActiveRecord::Base
   has_one :ical, :dependent => :destroy
   has_many :events, :dependent => :destroy
-  has_many :occurrences
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   is_site_scoped if respond_to? :is_site_scoped
@@ -38,7 +37,7 @@ class Calendar < ActiveRecord::Base
   
   def to_ri_cal
     RiCal.Calendar do |cal|
-      events.each do |event|
+      events.primary.each do |event|
         cal.add_subcomponent(event.to_ri_cal)
       end
     end

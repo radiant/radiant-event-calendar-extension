@@ -40,5 +40,4 @@ class CalendarEventsDataset < Dataset::Base
     @event.recurrence_rules.create(attributes)
   end
   
-  
 end
