@@ -1,4 +1,5 @@
 - @venues = EventVenue.find(:all)
+- @event.event_venue ||= EventVenue.new
 - @event.recurrence_rules.build unless @event.recurrence_rules.any?
 
 - form_for [:admin, @event] do |f|
@@ -40,7 +41,7 @@
             %p.end_date
               = f.label :end_date, "end date and time"
               = f.text_field :end_date, :class => 'textbox date'
-            %p.note
+            %p#event_note.note
               If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
 
           #recurrence
@@ -81,7 +82,7 @@
               to update addresses and directions for all relevant events.
 
           #new_venue{:class => @venues.any? ? 'hidden' : 'visible'}
-            - fields_for :event_venue do |ef|
+            - f.fields_for :event_venue do |ef|
               %p.venue_title
                 = ef.label :title, "Add a new place"
                 = ef.text_field :title, :class => 'textbox'
@@ -95,8 +96,8 @@
                 - else
                   Next time you add an event you'll be able to choose this venue from a list
               %p.venue_location
-                = ef.label :location, "Location"
-                = ef.text_area :location, :class => 'textarea'
+                = ef.label :address, "Address or location"
+                = ef.text_area :address, :class => 'textarea'
               %p.venue_postcode
                 = ef.label :postcode, "Postcode or gridref"
                 = ef.text_field :postcode, :class => 'textbox place'

@@ -12,7 +12,6 @@ class MoreEventData < ActiveRecord::Migration
     add_column :events, :created_at, :datetime
     add_column :events, :updated_by_id, :integer
     add_column :events, :updated_at, :datetime
-    add_index :events, :uuid, :unique => true
   end
 
   def self.down

@@ -8,7 +8,7 @@ class Event < ActiveRecord::Base
   is_site_scoped if respond_to? :is_site_scoped
 
   belongs_to :event_venue
-  accepts_nested_attributes_for :event_venue, :reject_if => :all_blank
+  accepts_nested_attributes_for :event_venue, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } } # radiant 0.8.1 is using rails 2.3.4, which doesn't include the :all_blank sugar
   
   belongs_to :master, :class_name => 'Event'
   has_many :occurrences, :class_name => 'Event', :foreign_key => 'master_id', :dependent => :destroy
@@ -23,6 +23,8 @@ class Event < ActiveRecord::Base
   before_validation :set_default_end_date
   after_save :update_occurrences
   
+  default_scope :order => 'start_date ASC'
+  
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
   named_scope :approved, { :conditions => ["status_id >= (?)", Status[:published].to_s] }
@@ -34,7 +36,7 @@ class Event < ActiveRecord::Base
     ids = calendars.map{ |c| c.id }
     { :conditions => [ ids.map{"calendar_id = ?"}.join(" OR "), *ids] }
   }
-  
+
   named_scope :after, lambda { |datetime| # datetime. eg calendar.occurrences.after(Time.now)
     { :conditions => ['start_date > ?', datetime] }
   }
@@ -82,6 +84,14 @@ class Event < ActiveRecord::Base
     finish = start + 1.day
     between(start, finish)
   }
+
+  def self.future
+    after(Time.now)
+  end
+
+  def self.past
+    before(Time.now)
+  end
 
   def master?
     master.nil?

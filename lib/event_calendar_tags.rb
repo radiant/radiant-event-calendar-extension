@@ -826,7 +826,7 @@ module EventCalendarTags
       elsif attr[:calendars]
         return Calendar.with_names_like(attr[:calendars])
       elsif self.class == EventCalendarPage 
-        get_calendars
+        selected_calendars
       else
         Calendar.find(:all)
       end
