@@ -8,7 +8,7 @@ class Event < ActiveRecord::Base
   is_site_scoped if respond_to? :is_site_scoped
 
   belongs_to :event_venue
-  accepts_nested_attributes_for :event_venue, :reject_if => :all_blank
+  accepts_nested_attributes_for :event_venue, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
 
   has_many :occurrences, :class_name => 'EventOccurrence', :dependent => :destroy
   has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy
