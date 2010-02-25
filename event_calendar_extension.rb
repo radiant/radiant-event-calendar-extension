@@ -47,8 +47,7 @@ class EventCalendarExtension < Radiant::Extension
       if admin.tabs["Calendar"].respond_to?(:add_link)   # that is, if the submenu extension is installed
         admin.tabs["Calendar"].add_link "events", EXT_ROOT
         admin.tabs["Calendar"].add_link "calendars", EXT_ROOT + "/calendars"
-        admin.tabs["Calendar"].add_link "new subscription", EXT_ROOT + "/calendars/new"
-        admin.tabs["Calendar"].add_link "refresh all", EXT_ROOT + "/icals/refresh_all"
+        admin.tabs["Calendar"].add_link "refresh subscriptions", EXT_ROOT + "/icals/refresh_all"
       end
     end
 
