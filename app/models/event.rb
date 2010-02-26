@@ -8,14 +8,14 @@ class Event < ActiveRecord::Base
   is_site_scoped if respond_to? :is_site_scoped
 
   belongs_to :event_venue
-  accepts_nested_attributes_for :event_venue, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } } # radiant 0.8.1 is using rails 2.3.4, which doesn't include the :all_blank sugar
+  accepts_nested_attributes_for :event_venue, :reject_if => proc { |attributes| attributes.all? {|k,v| v.blank?} } # radiant 0.8.1 is using rails 2.3.4, which doesn't include the :all_blank sugar
   
   belongs_to :master, :class_name => 'Event'
   has_many :occurrences, :class_name => 'Event', :foreign_key => 'master_id', :dependent => :destroy
   has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy
-  accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true#, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
+  accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
 
-  validates_presence_of :uuid, :title, :start_date, :end_date, :status_id
+  validates_presence_of :uuid, :title, :start_date, :status_id
   validates_uniqueness_of :uuid
 
   before_validation_on_create :get_uuid
@@ -49,41 +49,41 @@ class Event < ActiveRecord::Base
     { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date < :finish AND start_date > :start)', {:start => start, :finish => finish}] }
   }
 
-  named_scope :within, lambda { |period| # seconds. eg calendar.occurrences.within(6.months)
+  def self.within(period)               # seconds. eg calendar.occurrences.within(6.months)
     start = Time.now
     finish = start + period
     between(start, finish)
-  }
+  end
 
-  named_scope :in_the_last, lambda { |period| # seconds. eg calendar.occurrences.in_the_last(1.week)
+  def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
     finish = Time.now
     start = finish - period
     between(start, finish)
-  }
+  end
 
-  named_scope :in_year, lambda { |year| # just a number. eg calendar.occurrences.in_year(2010)
+  def self.in_year(year)                 # just a number. eg calendar.occurrences.in_year(2010)
     start = DateTime.civil(year)
     finish = start + 1.year
     between(start, finish)
-  }
+  end
 
-  named_scope :in_month, lambda { |year, month| # numbers. eg calendar.occurrences.in_month(2010, 12)
+  def self.in_month(year, month)          # numbers. eg calendar.occurrences.in_month(2010, 12)
     start = DateTime.civil(year, month)
     finish = start + 1.month
     between(start, finish)
-  }
+  end
   
-  named_scope :in_week, lambda { |year, week| # numbers, with a commercial week: eg calendar.occurrences.in_week(2010, 35)
+  def self.in_week(year, week)            # numbers, with a commercial week: eg calendar.occurrences.in_week(2010, 35)
     start = DateTime.commercial(year, week)
     finish = start + 1.week
     between(start, finish)
-  }
+  end
   
-  named_scope :on_day, lambda { |year, month, day| # numbers: eg calendar.occurrences.on_day(2010, 12, 12)
+  def self.on_day (year, month, day)      # numbers: eg calendar.occurrences.on_day(2010, 12, 12)
     start = DateTime.civil(year, month, day)
     finish = start + 1.day
     between(start, finish)
-  }
+  end
 
   def self.future
     after(Time.now)
@@ -93,6 +93,14 @@ class Event < ActiveRecord::Base
     before(Time.now)
   end
 
+  def category
+    calendar.category if calendar
+  end
+
+  def slug
+    calendar.slug if calendar
+  end
+
   def master?
     master.nil?
   end
@@ -100,10 +108,9 @@ class Event < ActiveRecord::Base
   def occurrence?
     !master?
   end
-  
 
   def location
-    event_venue || read_attribute(:location)
+    event_venue ? event_venue.to_s : read_attribute(:location)
   end
 
   def date
@@ -123,7 +130,11 @@ class Event < ActiveRecord::Base
   end
   
   def duration
-    end_date - start_date
+    if end_date
+      end_date - start_date
+    else
+      0
+    end
   end
 
   def starts
@@ -152,6 +163,18 @@ class Event < ActiveRecord::Base
   
   def within_day?
     (!end_date || start_date.to_date.jd == end_date.to_date.jd)
+  end
+  
+  # sometimes we need to filter an existing list to get the day's events
+  # usually in a radius tag, to avoid going back to the database for each day in a list
+  # so we call events.select {|e| e.on_this_day?(day) }
+  
+  def on_this_day?(date)
+    if end_date
+      start_date < date.end_of_day && end_date > date.beginning_of_day
+    else
+      start_date > date.beginning_of_day && start_date < date.end_of_day
+    end
   end
   
   def editable?
@@ -220,15 +243,17 @@ protected
   end
   
   def set_default_end_date
-    if end_date.blank?
-      default_duration = Radiant::Config['event_calendar.default_duration'] || 1.hour
-      self.end_date = start_date + default_duration
-    end
+    # if end_date.blank?
+    #   default_duration = Radiant::Config['event_calendar.default_duration'] || 1.hour
+    #   self.end_date = start_date + default_duration
+    # end
   end
   
   # doesn't yet observe exceptions
   def update_occurrences
     occurrences.clear
+    logger.warn "!!! update_occurrences: rules are #{recurrence_rules.inspect}"
+    
     if recurrence_rules.any?
       to_ri_cal.occurrences.each do |occ|
         occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil))

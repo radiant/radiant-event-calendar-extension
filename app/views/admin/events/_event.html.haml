@@ -20,18 +20,23 @@
             = event.title
         %p.description
           = truncate(event.description, 128)
+        - unless event.keywords.blank?
+          %p.keywords
+            %strong
+              tags: 
+            = event.keywords
     - tbody.time_cell do
       %td.time
         = event.starts
-      %td.time
-        = event.finishes
+        - if event.end_date
+          to
+          = event.finishes
     - tbody.location_cell do
       %td.location
         = event.location
-    - tbody.recurrence_cell do
-      %td.recurrence
-        = event.recurrence
     - tbody.modify_cell do
       %td.remove
         - if event.editable?
           = link_to image('remove', :alt => 'Remove event'), remove_admin_event_url(event)
+        - else
+          = image('no-remove', :alt => 'Subscribed event is not removable')

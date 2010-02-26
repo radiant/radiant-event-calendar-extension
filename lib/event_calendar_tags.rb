@@ -351,6 +351,26 @@ module EventCalendarTags
     end
   end
 
+  #todo: venue:* tags
+  
+  desc %{ 
+    If the current event has a venue, this renders a sensible description and link. If not, it returns the location string.
+
+    Usage:
+    <pre><code><r:event:venue /></code></pre> 
+  }
+  tag "event:venue" do |tag|
+    if venue = tag.locals.event.event_venue
+      if venue.url
+        %{<a href="#{venue.url}">#{venue.title}</a>, #{venue.address}}
+      else
+        %{#{venue.title}, #{venue.address}}
+      end
+    else
+      tag.render('event:location')
+    end
+  end
+
   desc %{ 
     If the event has a url, renders a link to that address around the title of the event. If not, just the title without a link.
     As usual, if the tag is double the contents are used instead, and any other attributes are passed through to the link tag.
@@ -466,12 +486,18 @@ module EventCalendarTags
   desc %{ 
     Prints the day-of-month of the start date of the current event.
     Equivalent to calling <r:event:date format="%d" />.
+    Supply zeropad="true" to get 1 as 01.
 
     Usage:
     <pre><code><r:event:day /></code></pre> 
   }
   tag "event:day" do |tag|
-    tag.locals.event.start_date.mday
+    d = tag.locals.event.start_date.mday
+    if tag.attr['zeropad'] == 'true'
+      "%02d" % d
+    else
+      d
+    end
   end
 
   desc %{ 
@@ -588,33 +614,35 @@ module EventCalendarTags
     with_subscription = attr[:subscription_link] == 'true'
     
     cal = %(<table class="minimonth"><thead><tr>)
-    cal << %(<th colspan="2" class="month_link"><a href="?year=#{previous.year}&amp;month=#{previous.month}">&lt; #{month_names[previous.month]}</a></th>) if with_paging
-    cal << %(<th colspan="#{with_paging ? 3 : 7}" class="month_name">#{month_names[first_day.month]} #{first_day.year}</th>)
-    cal << %(<th colspan="2" class="month_link"><a href="?year=#{following.year}&amp;month=#{following.month}">#{month_names[following.month]} &gt;</a></th>) if with_paging
-    cal << %(</tr><tr class="day_name">)
-    cal << day_names.map { |d| "<th scope='col'>#{d.first}</th>" }.join
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{previous.year}/#{previous.month}" title="#{month_names[previous.month]}">&lt;</a></th>) if with_paging
+    cal << %(<th colspan="#{with_paging ? 5 : 7}" class="month_name">#{month_names[first_day.month]} #{first_day.year}</th>)
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{following.year}/#{following.month}" title="#{month_names[following.month]}">&gt;</a></th>) if with_paging
+    cal << %(</tr><tr>)
+    cal << day_names.map { |d| %{<th class="day_name" scope="col">#{d.first}</th>} }.join
     cal << "</tr></thead><tbody>"
 
     first_shown.upto(last_shown) do |day|
-      events_today = tag.locals.events.select{ |e| e.start_date <= day + 1.day && e.end_date >= day }
+      events_today = tag.locals.events.select{ |e| e.on_this_day?(day) }
       event_list = cell_text = date_label = ""
       cell_class = "day"
+      cell_class += " today" if today?(day)
+      cell_class += " past" if day < Date.today
+      cell_class += " future" if day > Date.today
       cell_class += " other_month" if day.month != first_day.month
       unless day.month != first_day.month
         cell_class += " weekend_day" if weekend?(day)
-        cell_class += " today" if today?(day)
         cell_class += " weekend_today" if weekend?(day) && today?(day)
         date_label = day.mday
  
         if events_today.any?
           cell_class += " eventful"
           cell_class += " eventful_weekend" if weekend?(day)
-          cell_class += events_today.map{|e| " #{e.calendar.slug}"}.join
+          cell_class += events_today.map{|e| " #{e.slug}"}.join
           date_label = %{<a href="#event_#{events_today.first.id}">#{date_label}</a>}
         else
           cell_class += " uneventful"
         end
-        cell_text = %{<div class="event_holder">#{date_label}#{event_list}</div>}
+        cell_text = %{#{date_label}#{event_list}}
       end
       cal << "<tr>" if day == day.beginning_of_week
       cal << %{<td class="#{cell_class}">#{cell_text}</td>}
@@ -725,7 +753,7 @@ module EventCalendarTags
       attr
     end
   
-    # set_period turns supplied attributes into a start point and duration and returns a CalendarPeriod object
+    # these calculations all return a CalendarPeriod object, which is really just a beginning and end marker with some useful operations
   
     def set_period(tag)
       attr = tag.attr.symbolize_keys
@@ -782,7 +810,7 @@ module EventCalendarTags
       # default is the present month
       period_from_parts
     end
-        
+
     def period_from_parts(parts={})
       parts.each {|k,v| parts[k] = parts[k].to_i}
       return CalendarPeriod.new(Date.civil(parts[:year], 1, 1), 1.year) if parts[:year] and not parts[:month]
@@ -817,6 +845,9 @@ module EventCalendarTags
       return CalendarPeriod.new(parts[:from], 1.month)
     end
 
+    # filter by calendar
+    # returns a simple list which can be passed to Event.in_calendar
+
     def set_calendars(tag)
       attr = tag.attr.symbolize_keys
       if tag.locals.calendar  # either we're inside an r:calendar tag or we're eaching calendars. either way, it's set for us and parameters have no effect
@@ -832,11 +863,14 @@ module EventCalendarTags
       end
     end
     
+    # combines all the scopes that have been set 
+    # and returns a list of events
+    
     def get_events(tag)
       Ical.check_refreshments
       tag.locals.period ||= set_period(tag)
       tag.locals.calendars ||= set_calendars(tag)
-      event_finder = EventOccurrence.between(tag.locals.period.start, tag.locals.period.finish)
+      event_finder = Event.between(tag.locals.period.start, tag.locals.period.finish)
       event_finder = event_finder.approved if Radiant::Config['event_calendar.require_approval']
       event_finder = event_finder.in_calendars(tag.locals.calendars) if tag.locals.calendars
 

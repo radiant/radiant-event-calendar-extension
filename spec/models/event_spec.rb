@@ -24,9 +24,9 @@ describe Event do
       end
     end
     
-    it "should have a default end date" do
-      @event.end_date.should_not be_nil
-      @event.duration.should == 1.hour
+    it "should not mind if it has no end date" do
+      @event.end_date.should be_nil
+      @event.duration.should == 0
     end
   end
 

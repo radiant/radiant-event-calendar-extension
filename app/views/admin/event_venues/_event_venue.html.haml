@@ -1,0 +1,18 @@
+%tr{:class => ".node.level-1"}
+  - render_region :tbody do |tbody|
+    - tbody.title_cell do
+      %td.event_venue
+        %h3.title
+          = link_to event_venue.title, edit_admin_event_venue_url(event_venue)
+        %p.description
+          = truncate(event_venue.description, 128)
+    - tbody.location_cell do
+      %td.location
+        = event_venue.address
+    - tbody.url_cell do
+      %td.url
+        - if event_venue.url
+          = link_to event_venue.url
+    - tbody.modify_cell do
+      %td.remove
+        = link_to image('remove', :alt => 'Remove event venue'), remove_admin_event_venue_url(event_venue)

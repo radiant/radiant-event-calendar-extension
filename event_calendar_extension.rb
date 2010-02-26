@@ -10,6 +10,7 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :calendars
       cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
       cal.resources :events, :member => {:remove => :post}
+      cal.resources :event_venues, :member => {:remove => :post}
       cal.calendars_home '/', :controller => 'events', :action => 'index'
     end
   end
@@ -36,6 +37,7 @@ class EventCalendarExtension < Radiant::Extension
       Radiant::AdminUI.send :include, EventCalendarAdminUI
       admin.calendar = Radiant::AdminUI.load_default_calendar_regions
       admin.event = Radiant::AdminUI.load_default_event_regions
+      admin.event_venue = Radiant::AdminUI.load_default_event_venue_regions
     end
     
     if respond_to?(:tab)
@@ -47,6 +49,7 @@ class EventCalendarExtension < Radiant::Extension
       if admin.tabs["Calendar"].respond_to?(:add_link)   # that is, if the submenu extension is installed
         admin.tabs["Calendar"].add_link "events", EXT_ROOT
         admin.tabs["Calendar"].add_link "calendars", EXT_ROOT + "/calendars"
+        admin.tabs["Calendar"].add_link "places", EXT_ROOT + "/event_venues"
         admin.tabs["Calendar"].add_link "refresh subscriptions", EXT_ROOT + "/icals/refresh_all"
       end
     end

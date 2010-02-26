@@ -15,15 +15,20 @@
         %fieldset
           %legend Event
         
-          #title
+          .title
             %p.event_title
               = f.label :title, "Title"
               = f.text_field :title, :class => 'textbox'
             %p.keywords
-              = f.label :keywords, "Keywords"
+              = f.label :keywords, "Tags"
               = f.text_field :keywords, :class => 'textbox'
 
-          #description
+          .url
+            %p.url
+              = f.label :url, "Link to"
+              = f.text_field :url, :class => 'textbox'
+
+          .description
             %p.description
               = f.label :description, "Description"
               = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
@@ -32,7 +37,7 @@
         %fieldset
           %legend Dates
 
-          #date
+          .date
             %p.start_date
               = f.label :start_date, "Start date and time"
               = f.text_field :start_date, :class => 'textbox date'
@@ -44,7 +49,7 @@
             %p#event_note.note
               If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
 
-          #recurrence
+          .recurrence
             - f.fields_for :recurrence_rules do |rf|
             
               %p.recurrence
@@ -70,43 +75,20 @@
       - form.edit_venue do
         %fieldset
           %legend Place
-        
-          #venue{:class => @venues.any? ? 'visible' : 'hidden'}
+          .venue{:class => @venues.any? ? 'visible' : 'hidden'}
             %p.existing_venue
               = f.label :event_venue_id, "Choose a place"
-              = f.select :event_venue_id, @venues.map {|v| [v.id, v.name]}, :class => 'textbox'
+              = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
               = link_to "add a new place", '#', :class => 'newvenue'
             %p.note
               You can 
-              = link_to "edit the venue list", '#'
+              = link_to "edit the venue list", admin_event_venues_url
               to update addresses and directions for all relevant events.
 
-          #new_venue{:class => @venues.any? ? 'hidden' : 'visible'}
-            - f.fields_for :event_venue do |ef|
-              %p.venue_title
-                = ef.label :title, "Add a new place"
-                = ef.text_field :title, :class => 'textbox'
-                - if @venues.any?
-                  = link_to "choose an existing place", '#', :class => 'oldvenue'
-              %p.note
-                - if @venues.any?
-                  If you've used this place before, please 
-                  = link_to "choose it from the list", '#', :class => 'oldvenue'
-                  so that you can update it globally
-                - else
-                  Next time you add an event you'll be able to choose this venue from a list
-              %p.venue_location
-                = ef.label :address, "Address or location"
-                = ef.text_area :address, :class => 'textarea'
-              %p.venue_postcode
-                = ef.label :postcode, "Postcode or gridref"
-                = ef.text_field :postcode, :class => 'textbox place'
-                %span.note
-                  This will not be displayed: it's used to place your event on the map and to let people know how far away it is.
-              %p.venue_description
-                = ef.label :description, "Description"
-                = ef.text_area :description, :class => 'textarea'
-
+          .new_venue{:class => @venues.any? ? 'hidden' : 'visible'}
+            - event_venue = EventVenue.new
+            - f.fields_for :event_venue, event_venue do |ef|
+              = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => true}
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do

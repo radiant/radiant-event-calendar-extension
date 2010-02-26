@@ -47,9 +47,9 @@ class EventCalendarPage < Page
   
   def selected_events
     if selection_parameters.any?
-      events = EventOccurrence.in_calendars(calendars)
+      events = Event.in_calendars(calendars)
     else
-      events = EventOccurrence.all
+      events = Event.all
     end
     if calendar_year && calendar_month
       events = events.in_month(calendar_year, calendar_month)

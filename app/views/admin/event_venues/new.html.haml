@@ -1,0 +1,32 @@
+- include_stylesheet "admin/calendar"
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1
+      Add an event location
+    %p
+      You can also do this whenever you enter a new event.
+
+  - main.edit_form do
+    - form_for [:admin, @event_venue] do |f|
+
+      = f.hidden_field :lock_version
+      = render_region :form_top
+
+      = error_messages_for :event_venue
+
+      #venue_form.form-area
+        - render_region :form do |form|
+          - form.edit_event_venue do
+            .new_venue
+              = render :partial => 'form', :locals => {:f => f}
+              
+        - render_region :form_bottom do |form_bottom|
+          - form_bottom.edit_timestamp do
+            = updated_stamp @event_venue
+          - form_bottom.edit_buttons do
+            %p.buttons
+              = f.submit "Create Venue", :name => "commit", :class => "button"
+              = save_model_and_continue_editing_button(@event_venue)
+              or
+              = link_to 'Cancel', admin_event_venues_url

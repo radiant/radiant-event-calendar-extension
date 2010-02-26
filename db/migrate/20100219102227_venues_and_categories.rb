@@ -3,6 +3,7 @@ class VenuesAndCategories < ActiveRecord::Migration
     create_table :event_venues do |t|
       t.column :title, :string
       t.column :address, :string
+      t.column :url, :string
       t.column :description, :text
       t.column :postcode, :string
       t.column :created_by, :integer

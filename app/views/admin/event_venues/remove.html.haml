@@ -1,0 +1,17 @@
+%h1 Remove event
+
+%p 
+  Are you sure you want to 
+  %strong.warning 
+    remove permanently
+  the following event?
+
+%table.index#events
+  %tbody
+    = render :partial => 'event', :object => @event
+
+- form_for [:admin, @event], :html => {:method => :delete} do
+  %p.buttons
+    %input.button{:type=>"submit", :value=>"Delete event"}/
+    or
+    = link_to 'Cancel', admin_events_url

@@ -1,0 +1,35 @@
+- or_choose ||= false
+- event_venue ||= EventVenue.new
+
+.title
+  %p.venue_title
+    = f.label :title, "Venue or location title"
+    = f.text_field :title, :class => 'textbox'
+    - if or_choose && @venues.any?
+      = link_to "choose an existing place", '#', :class => 'oldvenue'
+
+%p.note
+  - if or_choose && @venues.any?
+    If you've used this place before, please 
+    = link_to "choose it from the list", '#', :class => 'oldvenue'
+    so that you can update it globally
+  - else
+    Next time you add an event you'll be able to choose this venue from a list
+
+%p.url
+  = f.label :url, "Venue website"
+  = f.text_field :url, :class => 'textbox'
+
+%p.venue_location
+  = f.label :address, "Address or location"
+  = f.text_area :address, :class => 'textarea'
+
+%p.venue_postcode
+  = f.label :postcode, "Postcode or gridrf"
+  = f.text_field :postcode, :class => 'textbox place'
+  %span.note
+    This will not be displayed: it's used to place your event on the map and to let people know how far away it is.
+
+%p.venue_description
+  = f.label :description, "Description"
+  = f.text_area :description, :class => 'textarea'
