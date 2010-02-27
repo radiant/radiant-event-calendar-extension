@@ -12,7 +12,7 @@ class Event < ActiveRecord::Base
   
   belongs_to :master, :class_name => 'Event'
   has_many :occurrences, :class_name => 'Event', :foreign_key => 'master_id', :dependent => :destroy
-  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy
+  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy, :conditions => {:active => 1}
   accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
 
   validates_presence_of :uuid, :title, :start_date, :status_id
@@ -251,9 +251,7 @@ protected
   
   # doesn't yet observe exceptions
   def update_occurrences
-    occurrences.clear
-    logger.warn "!!! update_occurrences: rules are #{recurrence_rules.inspect}"
-    
+    occurrences.destroy_all
     if recurrence_rules.any?
       to_ri_cal.occurrences.each do |occ|
         occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil))

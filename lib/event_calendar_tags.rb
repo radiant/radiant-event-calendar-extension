@@ -583,7 +583,32 @@ module EventCalendarTags
     tag.expand unless tag.locals.event.allday?
   end
 
+  desc %{ 
+    Returns a day-and-date stamp suitable for CSS styling.
+    Supply a 'class' parameter to add classes to the containing div.
 
+    Usage:
+    <pre><code><r:event:datemark /></code></pre>
+  }
+  tag "event:datemark" do |tag|
+    html = %{<div class="datemark #{tag.attr['class']}">}
+    html << _datemark(tag.locals.event.start_date)
+    if tag.locals.event.end_date && tag.locals.event.start_date.mday != tag.locals.event.end_date.mday
+      html << %{<span class="conjunction">to</span>}
+      html << _datemark(tag.locals.event.end_date)
+    end
+    html << %{</div>}
+    html
+  end
+  
+  def _datemark(date=Time.now)
+    %{
+      <span class="dow">#{Date::ABBR_DAYNAMES[date.wday]}</span>
+      <span class="dom">#{"%02d" % date.mday}</span>
+    }
+  end
+    
+  
   # calendar month blocks large and small. need some drying.
   
   desc %{ 
