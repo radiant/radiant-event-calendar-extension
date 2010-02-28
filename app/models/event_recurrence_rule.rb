@@ -5,6 +5,10 @@ class EventRecurrenceRule < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :event
   is_site_scoped if respond_to? :is_site_scoped
+  
+  def active
+    new_record? ? false : read_attribute(:active)
+  end
 
   def basis
     basis = read_attribute(:basis)

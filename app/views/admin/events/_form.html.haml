@@ -51,7 +51,7 @@
 
           .recurrence
             - f.fields_for :recurrence_rules do |rf|
-            
+              
               %p.recurrence
                 = rf.check_box 'active', :class => 'toggle'
                 = rf.label :active, 'Repeats'
