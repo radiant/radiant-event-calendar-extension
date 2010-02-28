@@ -28,7 +28,7 @@
           - tbody.name_cell do          
             %td.subscription-title
               = link_to calendar.name, admin_calendar_url(calendar)
-              = "(#{calendar.ical.last_refresh_count || '0'} events)"
+              = "(#{calendar.events.count || '0'} events)"
 
           - tbody.url_cell do
             %td.url
@@ -38,9 +38,11 @@
 
           - tbody.refresh_cell do
             %td.refreshed
-              =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
+              - if calendar.ical
+                =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
             %td.autorefresh
-              = calendar.ical.refresh_automatically? ? "yes" : "no"
+              - if calendar.ical
+                = calendar.ical.refresh_automatically? ? "yes" : "no"
 
           - tbody.action_cell do
             %td

@@ -68,6 +68,16 @@ module EventCalendarTags
     result
   end
   
+  tag "if_events" do | tag|
+    tag.locals.events ||= get_events(tag)
+    tag.expand if tag.locals.events.any?
+  end
+  
+  tag "unless_events" do | tag|
+    tag.locals.events ||= get_events(tag)
+    tag.expand unless tag.locals.events.any?
+  end
+  
   desc %{ 
     This is a shortcut that returns a set of tabulated months covering the period defined. 
     It works in the same way as r:events:each but presents the results in a familiar calendar format.
@@ -102,9 +112,11 @@ module EventCalendarTags
     this_month = nil
     tag.locals.period.start.upto(tag.locals.period.finish) do |day|
       if day.month != this_month
-        tag.locals.calendar_start = day
-        result << tag.render(attr[:compact] ? 'events:minimonth' : 'events:month', attr.dup)
         this_month = day.month
+        if !attr[:omit_empty] || tag.locals.events.any? {|event| event.in_this_month?(day) }
+          tag.locals.calendar_start = day
+          result << tag.render(attr[:compact] ? 'events:minimonth' : 'events:month', attr.dup)
+        end
       end
     end
     result
@@ -591,20 +603,18 @@ module EventCalendarTags
     <pre><code><r:event:datemark /></code></pre>
   }
   tag "event:datemark" do |tag|
-    html = %{<div class="datemark #{tag.attr['class']}">}
+    html = ""
     html << _datemark(tag.locals.event.start_date)
     if tag.locals.event.end_date && tag.locals.event.start_date.mday != tag.locals.event.end_date.mday
       html << %{<span class="conjunction">to</span>}
       html << _datemark(tag.locals.event.end_date)
     end
-    html << %{</div>}
     html
   end
   
   def _datemark(date=Time.now)
     %{
-      <span class="dow">#{Date::ABBR_DAYNAMES[date.wday]}</span>
-      <span class="dom">#{"%02d" % date.mday}</span>
+      <div class="datemark"><span class="dow">#{Date::ABBR_DAYNAMES[date.wday]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
     }
   end
     
@@ -631,7 +641,7 @@ module EventCalendarTags
     previous = first_day - 1.day
     following = last_day + 1.day
 
-    month_names = Date::ABBR_MONTHNAMES.dup
+    month_names = Date::MONTHNAMES.dup
     day_names = Date::DAYNAMES.dup
     day_names.push(day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. we've gone for the rails standard.
     with_paging = attr[:month_links] == 'true'
@@ -639,9 +649,9 @@ module EventCalendarTags
     with_subscription = attr[:subscription_link] == 'true'
     
     cal = %(<table class="minimonth"><thead><tr>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{previous.year}/#{previous.month}" title="#{month_names[previous.month]}">&lt;</a></th>) if with_paging
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{previous.year}/#{month_names[previous.month].downcase}" title="#{month_names[previous.month]}" class="previous">&lt;</a></th>) if with_paging
     cal << %(<th colspan="#{with_paging ? 5 : 7}" class="month_name">#{month_names[first_day.month]} #{first_day.year}</th>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{following.year}/#{following.month}" title="#{month_names[following.month]}">&gt;</a></th>) if with_paging
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{following.year}/#{month_names[following.month].downcase}" title="#{month_names[following.month]}" class="next">&gt;</a></th>) if with_paging
     cal << %(</tr><tr>)
     cal << day_names.map { |d| %{<th class="day_name" scope="col">#{d.first}</th>} }.join
     cal << "</tr></thead><tbody>"
@@ -753,8 +763,25 @@ module EventCalendarTags
     cal
   end
   
+  tag "calendar_periods" do |tag|
+    html = "<ul>"
+    stack = Event.as_months
+    stack.keys.sort.each do |year|
+      Date::MONTHNAMES.each do |month|
+        html << %{<li><strong><a href="#{tag.locals.page.url}#{year}/#{month.downcase}">#{month} #{year}</a></strong> #{stack[year][month].length} events</li>} if stack[year][month] && stack[year][month].any?
+      end
+    end
+    html << "</ul>"
+    html
+  end
   
+  tag "requested_month" do |tag|
+    Date::MONTHNAMES[calendar_month.to_i] if respond_to?(:calendar_month) && calendar_month
+  end
   
+  tag "requested_year" do |tag|
+    calendar_year if respond_to?(:calendar_year) && calendar_year
+  end
   
   
   
@@ -782,6 +809,11 @@ module EventCalendarTags
   
     def set_period(tag)
       attr = tag.attr.symbolize_keys
+      if self.class == EventCalendarPage && period = self.calendar_period
+        logger.warn "EventCalendarPage: check period"
+        return period
+      end
+
       date_parts = [:year, :month, :week, :day]
       interval_parts = [:months, :calendar_months, :days, :since, :until, :from, :to]
       relatives = {'previous' => -1, 'now' => 0, 'next' => 1}
@@ -832,8 +864,8 @@ module EventCalendarTags
         return period_from_interval(parts)
       end
       
-      # default is the present month
-      period_from_parts
+      # default is one month from today
+      period_from_interval
     end
 
     def period_from_parts(parts={})
@@ -882,7 +914,7 @@ module EventCalendarTags
       elsif attr[:calendars]
         return Calendar.with_names_like(attr[:calendars])
       elsif self.class == EventCalendarPage 
-        selected_calendars
+        calendar_set
       else
         Calendar.find(:all)
       end

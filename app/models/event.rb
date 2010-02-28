@@ -93,6 +93,18 @@ class Event < ActiveRecord::Base
     before(Time.now)
   end
 
+  def self.as_months
+    stack = {}
+    find(:all).each_with_object({}) do |event, stack|
+      y = event.start_date.year
+      m = Date::MONTHNAMES[event.start_date.month]
+      stack[y] ||= {}
+      stack[y][m] ||= []
+      stack[y][m].push event
+    end
+    stack
+  end
+
   def category
     calendar.category if calendar
   end
@@ -174,6 +186,14 @@ class Event < ActiveRecord::Base
       start_date < date.end_of_day && end_date > date.beginning_of_day
     else
       start_date > date.beginning_of_day && start_date < date.end_of_day
+    end
+  end
+
+  def in_this_month?(date)
+    if end_date
+      start_date < date.end_of_month && end_date > date.beginning_of_month
+    else
+      start_date > date.beginning_of_month && start_date < date.end_of_month
     end
   end
   

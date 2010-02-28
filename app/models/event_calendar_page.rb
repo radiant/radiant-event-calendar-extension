@@ -21,54 +21,50 @@ class EventCalendarPage < Page
     end
   end
   
-  def date_parameters
-    @request.path_parameters[:url].select{|p| p !~ /\w/}
-  end
-  
-  def selection_parameters
-    @request.path_parameters[:url].select{|p| p !~ /\W/}
-  end
-
-  def calendar_category
-    selection_parameters[1]
-  end
-  
-  def calendar_slug
-    selection_parameters[2]
+  def calendar_parameters
+    @request.path_parameters[:url]
   end
   
   def calendar_year
-    date_parameters[1]
+    calendar_parameters.find{|p| p =~ /^\d\d\d\d$/}
   end
   
   def calendar_month
-    date_parameters[2]
+    if month = calendar_parameters.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
+      Date::MONTHNAMES.index(month.titlecase)
+    end
   end
   
-  def selected_events
-    if selection_parameters.any?
-      events = Event.in_calendars(calendars)
-    else
-      events = Event.all
-    end
+  def calendar_filters
+    calendar_parameters - [calendar_year, calendar_month]
+  end
+
+  def calendar_category
+    calendar_filters.find{|p| Calendar.categories.include?(p) }
+  end
+
+  def calendar_slug
+    calendar_filters.find{|p| Calendar.slugs.include?(p) }
+  end
+  
+  def calendar_period
+    logger.warn "EventCalendarPage looking for period with #{calendar_year}, #{calendar_month}"
     if calendar_year && calendar_month
-      events = events.in_month(calendar_year, calendar_month)
+      CalendarPeriod.new(Date.civil(calendar_year.to_i, calendar_month.to_i, 1), 1.month - 1.day)
     elsif calendar_year
-      events = events.in_year(calendar_year, calendar_month)
+      CalendarPeriod.new(Date.civil(calendar_year.to_i, 1, 1), 1.year - 1.day)
     end
   end
   
-  def selected_calendars
-    if category = calendar_category
-      selection = Calendar.in_category(category)
-      if slug = calendar_slug
-        selection = selection.with_slugs(slug) unless slug.blank? || slug == 'all'
-      end
-      selection.find(:all)
-    else
-      Calendar.all
+  def calendar_set
+    if calendar_category and calendar_slug 
+      calendars.in_category(calendar_category).with_slugs(calendar_slug)
     end
   end
+    
+  
+  
+  
   
   
   

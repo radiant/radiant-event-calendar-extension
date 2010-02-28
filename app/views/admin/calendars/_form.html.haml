@@ -8,7 +8,7 @@
         %legend 
           Calendar
 
-        #title
+        .title
           %p.calendar_title
             = f.label :name
             = f.text_field :name, :class => "textbox"
@@ -21,7 +21,7 @@
           %p.note
             The category and slug are used create a url in the form /[calendar page]/category/slug showing only the events of this calendar.
 
-        #description
+        .description
           %p.description
             = f.label :description, "Description"
             = f.text_area 'description', :size => '40x6', :class => "textarea"
@@ -33,7 +33,7 @@
           Subscription (optional)
 
         - f.fields_for :ical do |ical_f| 
-          #ical
+          .ical
             %p.url
               = ical_f.label :url, "Subscription url"
               = ical_f.text_field :url, :class => "textbox"

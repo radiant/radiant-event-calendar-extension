@@ -9,8 +9,8 @@ class Calendar < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_uniqueness_of :slug, :scope => :category
 
-  accepts_nested_attributes_for :ical
-  validates_associated :ical
+  accepts_nested_attributes_for :ical, :reject_if => proc { |attributes| attributes['url'].blank? }
+  # validates_associated :ical
   
   named_scope :in_category, lambda { |category| # string. needs to match exactly
     { :conditions => [ "calendars.category = ?", category ] }
@@ -26,6 +26,13 @@ class Calendar < ActiveRecord::Base
     { :conditions => [ names.map{"calendars.name LIKE ?"}.join(' OR '), *names ] }
   }
   
+  def self.categories
+    categories = find( :all, :select => "DISTINCT category" ).map(&:category)
+  end
+  
+  def self.slugs
+    slugs = find( :all, :select => "DISTINCT slug" ).map(&:slug)
+  end
 
   def to_ics
     ical.to_ics if ical
