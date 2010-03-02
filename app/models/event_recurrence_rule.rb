@@ -70,6 +70,7 @@ class EventRecurrenceRule < ActiveRecord::Base
   def self.from(rule)         # ical string or RiCal::PropertyValue::RecurrenceRule
     rrule = self.new
     rrule.rule = rule
+    rrule.active = true
     rrule
   end
   

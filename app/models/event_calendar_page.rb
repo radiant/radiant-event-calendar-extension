@@ -1,6 +1,9 @@
 require 'rack/utils'
 
 class EventCalendarPage < Page
+  include WillPaginate::ViewHelpers
+
+  attr_writer :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_category, :calendar_slug
 
   description %{ Create a series of calendar pages. }
 
@@ -14,7 +17,9 @@ class EventCalendarPage < Page
 
   def find_by_url(url, live = true, clean = false)
     url = clean_url(url) if clean
-    if (url =~ %r{^#{ self.url }}) && (not live or published?)
+    my_url = self.url
+    if url =~ /^#{Regexp.quote(my_url)}(.*)/
+      @filters = $1.split('/')
       self
     else
       super
@@ -22,29 +27,32 @@ class EventCalendarPage < Page
   end
   
   def calendar_parameters
-    @request.path_parameters[:url]
+    logger.warn "!!  filters: #{@filters}"
+    @filters ||= []
   end
   
   def calendar_year
-    calendar_parameters.find{|p| p =~ /^\d\d\d\d$/}
+    @calendar_year ||= calendar_parameters.find{|p| p =~ /^\d\d\d\d$/}
   end
   
   def calendar_month
-    if month = calendar_parameters.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
-      Date::MONTHNAMES.index(month.titlecase)
+    unless @calendar_month
+      if month = calendar_parameters.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
+        @calendar_month = Date::MONTHNAMES.index(month.titlecase)
+      end
     end
   end
   
   def calendar_filters
-    calendar_parameters - [calendar_year, calendar_month]
+    @calendar_filters ||= calendar_parameters - [calendar_year, calendar_month]
   end
 
   def calendar_category
-    calendar_filters.find{|p| Calendar.categories.include?(p) }
+    @calendar_category ||= calendar_filters.find{|p| Calendar.categories.include?(p) }
   end
 
   def calendar_slug
-    calendar_filters.find{|p| Calendar.slugs.include?(p) }
+    @calendar_slug ||= calendar_filters.find{|p| Calendar.slugs.include?(p) }
   end
   
   def calendar_period
@@ -61,13 +69,13 @@ class EventCalendarPage < Page
       calendars.in_category(calendar_category).with_slugs(calendar_slug)
     end
   end
-    
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
   desc %{
     Renders a trail of breadcrumbs to the current page. On an event calendar page this tag is 

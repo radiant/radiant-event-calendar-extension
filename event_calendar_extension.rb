@@ -18,6 +18,7 @@ class EventCalendarExtension < Radiant::Extension
   extension_config do |config|
     config.gem 'ri_cal', :source => 'http://gemcutter.org'
     config.gem 'uuidtools', :source => 'http://gemcutter.org'
+    config.gem 'will_paginate', :source => 'http://gemcutter.org'
   end
   
   def activate
