@@ -3,7 +3,7 @@ require 'rack/utils'
 class EventCalendarPage < Page
   include WillPaginate::ViewHelpers
 
-  attr_writer :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_category, :calendar_slug
+  attr_reader :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_page, :calendar_category, :calendar_slug, :calendar_period
 
   description %{ Create a series of calendar pages. }
 
@@ -12,65 +12,75 @@ class EventCalendarPage < Page
   end
 
   def cache?
-    true
+    false
   end
 
   def find_by_url(url, live = true, clean = false)
     url = clean_url(url) if clean
     my_url = self.url
     if url =~ /^#{Regexp.quote(my_url)}(.*)/
-      @filters = $1.split('/')
+      read_parameters($1)
       self
     else
       super
     end
   end
   
-  def calendar_parameters
-    logger.warn "!!  filters: #{@filters}"
-    @filters ||= []
-  end
-  
-  def calendar_year
-    @calendar_year ||= calendar_parameters.find{|p| p =~ /^\d\d\d\d$/}
-  end
-  
-  def calendar_month
-    unless @calendar_month
-      if month = calendar_parameters.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
+  def read_parameters(path)
+    if path.blank?
+      @calendar_parameters = []
+    else
+      parts = path.split(/\/+/)
+      @calendar_page = parts.shift if parts.last =~ /^\d{1,3}$/
+      @calendar_year = parts.find{|p| p =~ /^\d\d\d\d$/}
+      if month = parts.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
         @calendar_month = Date::MONTHNAMES.index(month.titlecase)
       end
+      @calendar_category = parts.find{|p| Calendar.categories.include?(p) }
+      @calendar_slug = parts.find{|p| Calendar.slugs.include?(p) }
+      @calendar_period = if @calendar_year && @calendar_month
+        start = Date.civil(@calendar_year.to_i, @calendar_month.to_i)
+        CalendarPeriod.between(start, start.end_of_month)
+      elsif @calendar_year
+        start = Date.civil(@calendar_year.to_i)
+        CalendarPeriod.between(start, start.end_of_year)
+      end
+      @calendar_parameters = parts
     end
   end
-  
-  def calendar_filters
-    @calendar_filters ||= calendar_parameters - [calendar_year, calendar_month]
-  end
-
-  def calendar_category
-    @calendar_category ||= calendar_filters.find{|p| Calendar.categories.include?(p) }
-  end
-
-  def calendar_slug
-    @calendar_slug ||= calendar_filters.find{|p| Calendar.slugs.include?(p) }
-  end
-  
-  def calendar_period
-    logger.warn "EventCalendarPage looking for period with #{calendar_year}, #{calendar_month}"
-    if calendar_year && calendar_month
-      CalendarPeriod.new(Date.civil(calendar_year.to_i, calendar_month.to_i, 1), 1.month - 1.day)
-    elsif calendar_year
-      CalendarPeriod.new(Date.civil(calendar_year.to_i, 1, 1), 1.year - 1.day)
-    end
-  end
-  
+    
   def calendar_set
     if calendar_category and calendar_slug 
       calendars.in_category(calendar_category).with_slugs(calendar_slug)
     end
   end
+  
+  def url_parts
+    {
+      :month => @calendar_month,
+      :year => @calendar_year
+    }
+  end
+  
+  def url_with_parts(overrides={})
+    parts = url_parts.merge(overrides)
+    parts[:month] = month_names[parts[:month]].downcase if parts[:month] && defined? month_names[parts[:month]]
+    clean_url(url_without_parts + parts.values.join('/'))
+  end
+  alias_method_chain :url, :parts
 
-
+  def month_names
+    @month_names ||= Date::MONTHNAMES.dup
+  end
+  
+  def day_names
+    unless @day_names
+      @day_names = Date::DAYNAMES.dup
+      @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. we've gone for the rails standard.
+    end
+    @day_names
+  end
+  
 
 
 

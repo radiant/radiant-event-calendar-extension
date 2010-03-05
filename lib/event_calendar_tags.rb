@@ -136,7 +136,6 @@ module EventCalendarTags
     <pre><code><r:events:pagination /></code></pre>
   }
   tag "events:pagination" do |tag|
-    renderer = Library::LinkRenderer.new(tag)
     options = {}
     result = []
     entry_name = tag.attr['entry_name'] || 'item'
@@ -144,7 +143,7 @@ module EventCalendarTags
       options[a] = tag.attr[a.to_s] unless tag.attr[a.to_s].blank?
     end
     result << %{<div class="pagination">}
-    result << will_paginate(tag.locals.events, options.merge(:renderer => renderer, :container => false))
+    result << will_paginate(tag.locals.events, options.merge(:renderer => PaginationLinkRenderer.new(tag), :container => false))
     if tag.attr['with_summary'] != "false"
       result << %{<span class="summary">}
       result << page_entries_info(tag.locals.events, :entry_name => entry_name)         
@@ -656,7 +655,7 @@ module EventCalendarTags
   
   def _datemark(date=Time.now)
     %{
-      <div class="datemark"><span class="dow">#{Date::ABBR_DAYNAMES[date.wday]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
+      <div class="datemark"><span class="month">#{Date::ABBR_MONTHNAMES[date.month]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
     }
   end
     
@@ -683,21 +682,18 @@ module EventCalendarTags
     previous = first_day - 1.day
     following = last_day + 1.day
 
-    month_names = Date::MONTHNAMES.dup
-    day_names = Date::DAYNAMES.dup
-    day_names.push(day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. we've gone for the rails standard.
     with_paging = attr[:month_links] == 'true'
     with_list = attr[:event_list] == 'true'
     with_subscription = attr[:subscription_link] == 'true'
     
     cal = %(<table class="minimonth"><thead><tr>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{previous.year}/#{month_names[previous.month].downcase}" title="#{month_names[previous.month]}" class="previous">&lt;</a></th>) if with_paging
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url(:year => previous.year, :month => previous.month)}" title="#{month_names[previous.month]}" class="previous">&lt;</a></th>) if with_paging
     cal << %(<th colspan="#{with_paging ? 5 : 7}" class="month_name">)
-    cal <<%(<a href="#{tag.locals.page.url}#{first_day.year}/#{month_names[first_day.month].downcase}">) if with_paging
-    cal <<%(#{month_names[first_day.month]} #{first_day.year})
+    cal << %(<a href="#{tag.locals.page.url(:year => first_day.year, :month => first_day.month)}">) if with_paging
+    cal << %(#{month_names[first_day.month]} #{first_day.year})
     cal << %(</a>) if with_paging
-    cal <<%(</th>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url}#{following.year}/#{month_names[following.month].downcase}" title="#{month_names[following.month]}" class="next">&gt;</a></th>) if with_paging
+    cal << %(</th>)
+    cal << %(<th class="month_link"><a href="#{tag.locals.page.url(:year => following.year, :month => following.month)}" title="#{month_names[following.month]}" class="next">&gt;</a></th>) if with_paging
     cal << %(</tr><tr>)
     cal << day_names.map { |d| %{<th class="day_name" scope="col">#{d.first}</th>} }.join
     cal << "</tr></thead><tbody>"
@@ -984,7 +980,6 @@ private
     tag.attr[:by] ||= 'start_date'
     tag.attr[:order] ||= 'asc'
     retrieval_options = standard_find_options(tag).merge(pagination_defaults)
-    logger.warn ">>  retrieval options will be: #{retrieval_options.inspect}"
     ef.paginate(retrieval_options)
   end
 
@@ -1015,7 +1010,7 @@ private
     p = request.params[:page]
     p = 1 if p.blank? || p == 0
     return {
-      :page => request.params[:page] || 1, 
+      :page => calendar_page || 1, 
       :per_page => request.params[:per_page] || Radiant::Config['event_calendar.per_page'] || 10
     }
   end

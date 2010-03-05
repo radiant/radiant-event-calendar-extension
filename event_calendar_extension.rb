@@ -24,6 +24,7 @@ class EventCalendarExtension < Radiant::Extension
   def activate
     CalendarPeriod
     EventCalendarPage
+    PaginationLinkRenderer
     Status.send :include, EventStatuses
     ApplicationController.send :include, ApplicationControllerExtensions    # adds exclude_stylesheet and exclude_javascript
     ApplicationHelper.send :include, Admin::CalendarHelper
