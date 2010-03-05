@@ -115,7 +115,7 @@ module EventCalendarTags
     tag.locals.events ||= get_events(tag)
     result = ''
     this_month = nil
-    tag.locals.period ||= period_from_events(tag.locals.events)
+    tag.locals.period = period_from_events(tag.locals.events)
     tag.locals.period.start.upto(tag.locals.period.finish) do |day|
       if day.month != this_month
         this_month = day.month
