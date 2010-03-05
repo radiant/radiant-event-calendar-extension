@@ -153,6 +153,16 @@ module EventCalendarTags
     result << %{</div>}
     result
   end
+  
+  desc %{
+    Expands only if there are other pages to show.
+
+    *Usage:* 
+    <pre><code><r:events:if_paginated><h3>Pages</h3><r:events:pagination /></r:events:if_paginated></code></pre>
+  }
+  tag "events:if_paginated" do |tag|
+    tag.expand if tag.locals.events.any? && (tag.locals.events.next_page || tag.locals.events.previous_page)
+  end
 
   #### Calendars:* tags
   #### iterate over the set of calendars
