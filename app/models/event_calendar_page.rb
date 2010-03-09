@@ -31,7 +31,7 @@ class EventCalendarPage < Page
       @calendar_parameters = []
     else
       parts = path.split(/\/+/)
-      @calendar_page = parts.shift if parts.last =~ /^\d{1,3}$/
+      @calendar_page = parts.pop if parts.last =~ /^\d{1,3}$/
       @calendar_year = parts.find{|p| p =~ /^\d\d\d\d$/}
       if month = parts.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
         @calendar_month = Date::MONTHNAMES.index(month.titlecase)
@@ -40,10 +40,10 @@ class EventCalendarPage < Page
       @calendar_slug = parts.find{|p| Calendar.slugs.include?(p) }
       @calendar_period = if @calendar_year && @calendar_month
         start = Date.civil(@calendar_year.to_i, @calendar_month.to_i)
-        CalendarPeriod.between(start, start.end_of_month)
+        CalendarPeriod.between(start, start.to_datetime.end_of_month)
       elsif @calendar_year
-        start = Date.civil(@calendar_year.to_i)
-        CalendarPeriod.between(start, start.end_of_year)
+        start = Date.civil(@calendar_year.to_i).beginning_of_year
+        CalendarPeriod.between(start, start.to_datetime.end_of_year)
       end
       @calendar_parameters = parts
     end
@@ -64,7 +64,7 @@ class EventCalendarPage < Page
   
   def url_with_parts(overrides={})
     parts = url_parts.merge(overrides)
-    parts[:month] = month_names[parts[:month]].downcase if parts[:month] && defined? month_names[parts[:month]]
+    parts[:month] = month_names[parts[:month]].downcase unless parts[:month].blank? || parts[:month] =~ /[a-zA-Z]/
     clean_url(url_without_parts + parts.values.join('/'))
   end
   alias_method_chain :url, :parts
@@ -80,11 +80,6 @@ class EventCalendarPage < Page
     end
     @day_names
   end
-  
-
-
-
-
 
 
   desc %{

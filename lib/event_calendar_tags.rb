@@ -1,6 +1,4 @@
-require 'date'
-require 'parsedate'
-# require 'calendar_helper'
+require 'chronic'
 
 module EventCalendarTags
   include Radiant::Taggable
@@ -161,6 +159,32 @@ module EventCalendarTags
   }
   tag "events:if_paginated" do |tag|
     tag.expand if tag.locals.events.any? && (tag.locals.events.next_page || tag.locals.events.previous_page)
+  end
+  
+  desc %{
+    Renders a friendly description of the period currently being displayed.
+
+    *Usage:* 
+    <pre><code><r:events:list_description /></code></pre>
+  }
+  tag "events:list_description" do |tag|
+    tag.locals.events ||= get_events(tag)
+    filters = filters_applied(tag)
+    paginated = true if (tag.locals.events.next_page || tag.locals.events.previous_page)
+    html = %{<p class="list_summary">}
+    html << %{Showing events #{filters.join(", ")}} if filters.any?
+    html << %{<br />} if paginated && filters.any?
+    html << %{Page #{tag.locals.events.current_page} of #{tag.locals.events.total_pages}.</span>} if paginated
+    html << %{</p>}
+    html
+  end
+  
+  # chain anchor point
+  
+  def filters_applied(tag)
+    html = []
+    html << tag.locals.period.description if tag.locals.period
+    html
   end
 
   #### Calendars:* tags
@@ -810,7 +834,7 @@ module EventCalendarTags
     stack = Event.as_months
     stack.keys.sort.each do |year|
       Date::MONTHNAMES.each do |month|
-        html << %{<li><strong><a href="#{tag.locals.page.url}#{year}/#{month.downcase}">#{month} #{year}</a></strong> #{stack[year][month].length} events</li>} if stack[year][month] && stack[year][month].any?
+        html << %{<li><strong><a href="#{tag.locals.page.url(:year => year, :month => month)}">#{month} #{year}</a></strong> #{stack[year][month].length} events</li>} if stack[year][month] && stack[year][month].any?
       end
     end
     html << "</ul>"
@@ -824,8 +848,6 @@ module EventCalendarTags
   tag "requested_year" do |tag|
     calendar_year if respond_to?(:calendar_year) && calendar_year
   end
-  
-  
   
   
   
@@ -852,7 +874,6 @@ private
   def set_period(tag)
     attr = tag.attr.symbolize_keys
     if self.class == EventCalendarPage && period = self.calendar_period
-      logger.warn "EventCalendarPage: check period"
       return period
     end
 
@@ -861,90 +882,83 @@ private
     relatives = {'previous' => -1, 'now' => 0, 'next' => 1}
 
     # 1. fully specified period: any numeric date part found
-    #    not overridable
+    #    eg. <r:events:each year="2010" month="3">
 
     specified_date_parts = date_parts.select {|p| attr[p] && attr[p] == attr[p].to_i.to_s}
-    return period_from_parts(attr.slice(*specified_date_parts)) if specified_date_parts.any?
+    if specified_date_parts.any?
+      return period_from_parts(attr.slice(*specified_date_parts))
+    end
     
-    # 2. relative period: any relative date part specified and no numeric date part
-    #    overridable on an EventCalendarPage: input date parts have the effect of shifting now but leave the rest of the period calculation the same
-    #    this ought to be the most common case
+    # 2. relative period: any relative date part specified (and no numeric date part)
+    #    eg. <r:events:each month="now"> or <r:events:each month="next">
     
     relative_date_parts = date_parts.select {|p| relatives.keys.include? attr[p]}
-    if p = relative_date_parts.last    # if more than one - which there shouldn't be - we take the finest.
+    # if more than one - which there shouldn't be - we take the finest.
+    if p = relative_date_parts.last   
       
-      # read date parts from tag and request
-      parts = attr.slice(*date_parts)
-      
-      if self.class == EventCalendarPage
-        params = @request.parameters.symbolize_keys
-        parts.merge!( params.slice(*date_parts) )
-      end
+      # get a present period with the right resolution
+      relative_date_parts.each {|k,v| parts[k] = Date.today.send(k) unless parts[k].to_i.to_s == parts[k]}
+      period = period_from_parts(relative_date_parts)
 
-      # replace any remaining magic words with the present date part
-      parts.each {|k,v| parts[k] = Date.today.send(k) unless parts[k].to_i.to_s == parts[k]}
-      
-      # params now holds an up to date mixture of tag attributes and input parameters
-      period = period_from_parts(parts)
-
-      # but the magic words are still in attr and are used to shift the period:
+      # and then shift it in the right direction by the right amount:
       period += 1.send(p) if attr[p] == 'next'
       period -= 1.send(p) if attr[p] == 'previous'
       return period
     end
 
     # 3. relative interval
-    #    parameters specified in the tag can be overridden by input (on an EventCalendar page). Others are ignored.
+    #    eg. <r:events:each months="3"> or <r:events:each since="12/12/1969">
+    #    any date string understood by chronic should be ok
     
     specified_interval_parts = interval_parts.select {|p| !attr[p].blank?}
     if specified_interval_parts.any?
       parts = attr.slice(*specified_interval_parts)
-      if self.class == EventCalendarPage
-        params = @request.parameters.symbolize_keys
-        parts.merge!(params.slice(*interval_parts))
-      end
       return period_from_interval(parts)
     end
     
-    # default is one year of the future
-    period_from_interval(:from => Time.now, :years => 1)
+    # overall default will be to show (paginated) all future events
+    period_from_interval(:from => Date.today)
   end
 
   def period_from_parts(parts={})
     parts.each {|k,v| parts[k] = parts[k].to_i}
-    return CalendarPeriod.new(Date.civil(parts[:year], 1, 1), 1.year) if parts[:year] and not parts[:month]
+    return CalendarPeriod.from(Date.civil(parts[:year], 1, 1), 1.year) if parts[:year] and not parts[:month]
     parts[:year] ||= Date.today.year
-    return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], 1), 1.month - 1.day) if parts[:month] && !parts[:week] && !parts[:day]
+    return CalendarPeriod.from(Date.civil(parts[:year], parts[:month], 1), 1.month - 1.day) if parts[:month] && !parts[:week] && !parts[:day]
     parts[:month] ||= Date.today.month
-    return CalendarPeriod.new(Date.commercial(parts[:year], parts[:week], 1), 1.week ) if parts[:week]
-    return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], parts[:day]), 1.day) if parts[:day]
-    # if all defaults apply, you get the present month
-    return CalendarPeriod.new(Date.civil(parts[:year], parts[:month], 1), 1.month)
+    return CalendarPeriod.from(Date.commercial(parts[:year], parts[:week], 1), 1.week ) if parts[:week]
+    return CalendarPeriod.from(Date.civil(parts[:year], parts[:month], parts[:day]), 1.day) if parts[:day]
+
+    # default from parts is the present month
+    return CalendarPeriod.from(Date.civil(parts[:year], parts[:month], 1), 1.month)
   end
   
   def period_from_interval(parts={})
-    # starting point defaults to now
-    parts[:from] = Date.today if parts[:from].nil? || parts[:from] == 'now'
-
     # from and to fully specified (including since and until as they are always relative to the present)
-    return CalendarPeriod.between(Time.now, parts[:until].to_date) if parts[:until]
-    return CalendarPeriod.between(parts[:since].to_date, Time.now) if parts[:since]
-    return CalendarPeriod.between(parts[:from].to_date, parts[:to].to_date) if parts[:from] && parts[:to]
+    return CalendarPeriod.between(Time.now, Chronic.parse(parts[:until])) if parts[:until]
+    return CalendarPeriod.between(Chronic.parse(parts[:since]), Time.now) if parts[:since]
+    return CalendarPeriod.between(Chronic.parse(parts[:from]), Chronic.parse(parts[:to])) if parts[:from] && parts[:to]
 
+    # starting point defaults to now
+    parts[:from] = Date.today if parts[:from].blank? || parts[:from] == 'now'
+    from = Chronic.parse(parts[:from])
+    
     # start moves to the first of the month if we're displaying calendar months
-    return CalendarPeriod.new(parts[:from].beginning_of_month, parts[:calendar_months].to_i.months - 1.day) if parts[:calendar_months]
+    return CalendarPeriod.from(from.beginning_of_month, parts[:calendar_months].to_i.months - 1.day) if parts[:calendar_months]
     
     # and in the end it's just a question of how much of the future to show
-    return CalendarPeriod.new(parts[:from], parts[:years].to_i.years) if parts[:years]
-    return CalendarPeriod.new(parts[:from], parts[:months].to_i.months) if parts[:months]
-    return CalendarPeriod.new(parts[:from], parts[:weeks].to_i.weeks) if parts[:weeks]
-    return CalendarPeriod.new(parts[:from], parts[:days].to_i.days) if parts[:days]
+    return CalendarPeriod.from(from, parts[:years].to_i.years) if parts[:years]
+    return CalendarPeriod.from(from, parts[:months].to_i.months) if parts[:months]
+    return CalendarPeriod.from(from, parts[:weeks].to_i.weeks) if parts[:weeks]
+    return CalendarPeriod.from(from, parts[:days].to_i.days) if parts[:days]
     
-    # by default we get one month of future events
-    return CalendarPeriod.new(parts[:from], 1.month)
+    # default is all future
+    logger.warn "!!  defaulting to show all future events. parts[:from] is #{parts[:from].inspect} and parsed is #{from}"
+    
+    return CalendarPeriod.from(from)
   end
   
-  # If no period has been specificed then we may need to examine the current page of events in order to work out which months to display
+  # If no period has been specified then we may need to examine the current page of events to work out which month tables to display
   def period_from_events(events=[])
     if events.any?
       period_from_interval :from => events.first.start_date, :to => events.last.start_date
@@ -983,8 +997,16 @@ private
     ef.paginate(retrieval_options)
   end
 
+  # other extensions - eg taggable_events - will chain the event_finder to add more scopes
+
   def event_finder(tag)
-    ef = Event.between(tag.locals.period.start, tag.locals.period.finish) 
+    if tag.locals.period.bounded?
+      ef = Event.between(tag.locals.period.start, tag.locals.period.finish) 
+    elsif tag.locals.period.start
+      ef = Event.after(tag.locals.period.start) 
+    else
+      ef = Event.before(tag.locals.period.finish)
+    end
     ef = ef.approved if Radiant::Config['event_calendar.require_approval']
     ef = ef.in_calendars(tag.locals.calendars) if tag.locals.calendars
     ef

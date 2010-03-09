@@ -1,3 +1,14 @@
+- clear_javascripts
+
+- include_javascript "mootools"
+- include_javascript "mootools-more"
+- include_javascript "platform"
+- include_javascript "platform/datepicker"
+- include_javascript "platform/calendar"
+
+- include_stylesheet "datepicker"
+- include_stylesheet "admin/calendar"
+
 - @venues = EventVenue.find(:all)
 - @event.event_venue ||= EventVenue.new
 - @event.recurrence_rules.build unless @event.recurrence_rules.any?

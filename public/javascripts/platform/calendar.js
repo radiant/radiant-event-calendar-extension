@@ -196,6 +196,6 @@ var v = null;
 
 activations.push(function (scope) {
   d = new DateControl(scope.getElements('#event_start_date'), scope.getElements('#event_end_date'));
-  v = new VenueControl(scope.getElements('#venue'), scope.getElements('#new_venue'));
+  v = new VenueControl(scope.getElements('div.venue'), scope.getElements('div.new_venue'));
   scope.getElements('p.recurrence').each (function (element) { new RecurrenceControl(element); });
 });

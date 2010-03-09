@@ -629,9 +629,11 @@ var DatePicker = new Class({
 	},
 		
 	showDate: function (d) {
-		this.input.set('value', this.format(d, this.options.inputOutputFormat));
-		this.visual.set('value', this.format(d, this.options.format));
-		this.visual.highlight();
+		if (this.input) this.input.set('value', this.format(d, this.options.inputOutputFormat));
+		if (this.visual) {
+		  this.visual.set('value', this.format(d, this.options.format));
+		  this.visual.highlight();
+    }
 	},
 	
 	leadZero: function(v) {
