@@ -18,8 +18,8 @@ class Event < ActiveRecord::Base
   validates_presence_of :uuid, :title, :start_date, :status_id
   validates_uniqueness_of :uuid
 
-  before_validation_on_create :get_uuid
-  before_validation_on_create :set_default_status
+  before_validation :set_uuid
+  before_validation :set_default_status
   before_validation :set_default_end_date
   after_save :update_occurrences
   
@@ -254,9 +254,8 @@ class Event < ActiveRecord::Base
   
 protected
 
-  def get_uuid
-    # self.uuid = UUIDTools::UUID.timestamp_create.to_s if uuid.blank?
-    self.uuid ||= UUIDTools::UUID.timestamp_create.to_s
+  def set_uuid
+    self.uuid = UUIDTools::UUID.timestamp_create.to_s if uuid.blank?
   end
 
   def set_default_status
