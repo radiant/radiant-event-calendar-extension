@@ -2,7 +2,6 @@ require 'chronic'
 
 module EventCalendarTags
   include Radiant::Taggable
-  # include CalendarHelper
   class TagError < StandardError; end
   
   tag 'all_events' do |tag|
@@ -162,28 +161,24 @@ module EventCalendarTags
   end
   
   desc %{
-    Renders a friendly description of the period currently being displayed.
+    Renders a friendly description of the period currently being displayed and any other filters that have been applied.
 
     *Usage:* 
-    <pre><code><r:events:list_description /></code></pre>
+    <pre><code><r:events:summary /></code></pre>
   }
-  tag "events:list_description" do |tag|
+  tag "events:summary" do |tag|
     tag.locals.events ||= get_events(tag)
     filters = filters_applied(tag)
     paginated = true if (tag.locals.events.next_page || tag.locals.events.previous_page)
     html = %{<p class="list_summary">}
-    html << %{Showing events #{filters.join(", ")}} if filters.any?
+    html << %{Showing events #{filters.join(" ")}} if filters.any?
     html << %{<br />} if paginated && filters.any?
-    html << %{Page #{tag.locals.events.current_page} of #{tag.locals.events.total_pages}.</span>} if paginated
+    if paginated
+      html << %{<a href="#{tag.locals.page.url(:page => tag.locals.events.previous_page)}">&laquo; Previous</a> &middot; } if tag.locals.events.previous_page
+      html << %{Page #{tag.locals.events.current_page} of #{tag.locals.events.total_pages}}
+      html << %{ &middot; <a href="#{tag.locals.page.url(:page => tag.locals.events.next_page)}">Next &raquo;</a>} if tag.locals.events.next_page
+    end
     html << %{</p>}
-    html
-  end
-  
-  # chain anchor point
-  
-  def filters_applied(tag)
-    html = []
-    html << tag.locals.period.description if tag.locals.period
     html
   end
 
@@ -917,7 +912,7 @@ private
     end
     
     # overall default will be to show (paginated) all future events
-    period_from_interval(:from => Date.today)
+    return CalendarPeriod.default
   end
 
   def period_from_parts(parts={})
@@ -953,8 +948,6 @@ private
     return CalendarPeriod.from(from, parts[:days].to_i.days) if parts[:days]
     
     # default is all future
-    logger.warn "!!  defaulting to show all future events. parts[:from] is #{parts[:from].inspect} and parsed is #{from}"
-    
     return CalendarPeriod.from(from)
   end
   
@@ -1035,6 +1028,15 @@ private
       :page => calendar_page || 1, 
       :per_page => request.params[:per_page] || Radiant::Config['event_calendar.per_page'] || 10
     }
+  end
+
+  # chain anchor point
+  # for building a description of the current result set
+  
+  def filters_applied(tag)
+    html = []
+    html << %{<a href="#{tag.locals.page.url(:year => nil, :month => nil)}" class="defilter">#{tag.locals.period.description}</a>} if tag.locals.period && !tag.locals.period.default?
+    html
   end
 
   def weekend?(date)

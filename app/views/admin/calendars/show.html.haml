@@ -24,5 +24,13 @@
   %p
     This may be part of a master calendar with several individual calendars. In that case there will be a different address that lets you access all the calendars at once. Consult your site administrator if unsure.
 
-%div#calendar_holder
-  = render :partial => 'month'
+%table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
+  = render :partial => 'events/list_head'
+  %tbody
+    - if @calendar.events.any?
+      - @calendar.events.each do |event|
+        = render :partial => 'event', :object => event
+    - else
+      %tr
+        %td.note{:colspan => admin.event.index.tbody.length} 
+          No Events

@@ -245,9 +245,6 @@ class Event < ActiveRecord::Base
       :all_day => !cal_event.dtstart.is_a?(DateTime)
     })
     event.status = Status[:imported]
-
-    # p "^^  importing event with rules #{cal_event.rrule}"
-
     cal_event.rrule.each { |rule| event.add_recurrence(rule) }
     event
   rescue => error

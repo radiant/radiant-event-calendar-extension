@@ -21,6 +21,14 @@ class CalendarPeriod
     between(from, to)
   end
   
+  def self.default
+    between(Time.now, nil)
+  end
+  
+  def default?
+    finish.nil? && (Time.now - start).to_i.abs < 1.minute
+  end
+  
   def start
     @start.to_datetime if @start
   end
@@ -60,7 +68,7 @@ class CalendarPeriod
   end
   
   def inspect
-    detailed = "%-1I:%M%p %d %m %Y"
+    detailed = "%-1I:%M%p %d/%m/%Y"
     %{#{describe_start(detailed)} to #{describe_finish(detailed)}}
   end
   

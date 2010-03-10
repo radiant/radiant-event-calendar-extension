@@ -12,23 +12,8 @@
       = link_to("calendar feeds", admin_calendars_url) + '.'
       
 %table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
-  %thead
-    %tr
-      - render_region :thead do |thead|
-        - thead.date_header do
-          %th.date
-        - thead.title_header do
-          %th.event 
-            %strong Event
-        - thead.time_header do
-          %th.date 
-            Time
-        - thead.location_header do
-          %th.location Location
-        - thead.keywords_header do
-          %th.keywords Keywords
-        - thead.modify_header do
-          %th.modify Modify
+  = render :partial => 'list_head'
+  
   %tbody
     - if @events.any?
       - @events.each do |event|

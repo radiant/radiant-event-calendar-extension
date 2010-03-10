@@ -3,16 +3,16 @@ require 'rack/utils'
 class EventCalendarPage < Page
   include WillPaginate::ViewHelpers
 
-  attr_reader :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_page, :calendar_category, :calendar_slug, :calendar_period
+  attr_accessor :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_page, :calendar_category, :calendar_slug, :calendar_period
 
-  description %{ Create a series of calendar pages. }
+  description %{ Create a viewer for calendar data. }
 
   def self.sphinx_indexes
     []
   end
 
   def cache?
-    true
+    false
   end
 
   def find_by_url(url, live = true, clean = false)
@@ -27,25 +27,37 @@ class EventCalendarPage < Page
   end
   
   def read_parameters(path)
-    if path.blank?
-      @calendar_parameters = []
-    else
+    @calendar_parameters = []
+    unless path.blank?
       parts = path.split(/\/+/)
       @calendar_page = parts.pop if parts.last =~ /^\d{1,3}$/
-      @calendar_year = parts.find{|p| p =~ /^\d\d\d\d$/}
-      if month = parts.find{|p| Date::MONTHNAMES.include?(p.titlecase) }
-        @calendar_month = Date::MONTHNAMES.index(month.titlecase)
+      parts.each do |part|
+        if part.match(/^\d\d\d\d$/)
+          @calendar_year = part
+        elsif Date::MONTHNAMES.include?(part.titlecase)
+          @calendar_month = Date::MONTHNAMES.index(part.titlecase)
+        elsif Calendar.categories.include?(part)
+          @calendar_category = part
+        elsif Calendar.slugs.include?(part)
+          @calendar_slug = part
+        else 
+          @calendar_parameters.push(part)
+        end
       end
-      @calendar_category = parts.find{|p| Calendar.categories.include?(p) }
-      @calendar_slug = parts.find{|p| Calendar.slugs.include?(p) }
-      @calendar_period = if @calendar_year && @calendar_month
+      
+      if @calendar_year && @calendar_month
         start = Date.civil(@calendar_year.to_i, @calendar_month.to_i)
-        CalendarPeriod.between(start, start.to_datetime.end_of_month)
-      elsif @calendar_year
-        start = Date.civil(@calendar_year.to_i).beginning_of_year
-        CalendarPeriod.between(start, start.to_datetime.end_of_year)
+        @calendar_period = CalendarPeriod.between(start, start.to_datetime.end_of_month)
+      elsif calendar_year
+        start = Date.civil(@calendar_year.to_i)
+        @calendar_period = CalendarPeriod.between(start, start.to_datetime.end_of_year)
       end
-      @calendar_parameters = parts
+      
+      logger.warn "!   calendar_period is #{@calendar_period.inspect}"
+      logger.warn "!   calendar_year is #{@calendar_year.inspect}"
+      logger.warn "!   calendar_month is #{@calendar_month.inspect}"
+      
+      @calendar_parameters
     end
   end
     
@@ -84,7 +96,8 @@ class EventCalendarPage < Page
 
   desc %{
     Renders a trail of breadcrumbs to the current page. On an event calendar page this tag is 
-    overridden to show the category and slug of the calendar chosen as well as the path to this page.
+    overridden to show the filters applied to calendar data (including category, slug and date rage) 
+    as well as the path to this page.
 
     *Usage:*
 
