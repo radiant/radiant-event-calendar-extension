@@ -1,0 +1,38 @@
+@import constants.sass
+
+div.pagination 
+  +grid(10)
+  +prefix(1)
+  +flush
+  +functionalfonts
+  :color = !text
+  :font-size 125%
+  :line-height 2
+  :margin-top 50px
+  :margin-bottom 20px
+  a, span.current, span.disabled
+    :padding 6px 7px 3px 7px
+    :border
+      :style solid
+      :width 1px
+      :color = !link
+  a
+  a:hover
+    :border-color = !hover
+  .next_page, .prev_page
+  span.current 
+    :color = !text
+    :font-weight bold
+    :border-color = !text
+  span.separator
+    :visibility hidden
+  span.disabled 
+    :display none
+    :color = !verypale
+    :border-color = !verypale
+    +blurred
+  span.summary 
+    :padding 6px
+    :font-size 75%
+    :color = !verypale
+    :margin-left 10px
