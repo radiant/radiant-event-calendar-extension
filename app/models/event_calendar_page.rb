@@ -12,7 +12,7 @@ class EventCalendarPage < Page
   end
 
   def cache?
-    false
+    true
   end
 
   def find_by_url(url, live = true, clean = false)
