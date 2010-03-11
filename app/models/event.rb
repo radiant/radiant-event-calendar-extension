@@ -1,6 +1,7 @@
 require 'uuidtools'
 class Event < ActiveRecord::Base
   include ActionView::Helpers::DateHelper
+  include ActionView::Helpers::TextHelper
 
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
@@ -112,6 +113,10 @@ class Event < ActiveRecord::Base
   def slug
     calendar.slug if calendar
   end
+  
+  def short_description(length=256, ellipsis="...")
+    truncate(description, length, ellipsis)
+  end
 
   def master?
     master.nil?
@@ -123,6 +128,10 @@ class Event < ActiveRecord::Base
 
   def location
     event_venue ? event_venue.to_s : read_attribute(:location)
+  end
+  
+  def address
+    event_venue ? event_venue.address : read_attribute(:location)
   end
 
   def date

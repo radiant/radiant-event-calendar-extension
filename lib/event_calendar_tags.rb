@@ -391,7 +391,7 @@ module EventCalendarTags
     end
   end
 
-  [:id, :title, :description, :location, :url].each do |attribute|
+  [:id, :title, :description, :short_description, :location, :url].each do |attribute|
     desc %{ 
       Renders the #{attribute} attribute of the current event.
 
@@ -979,15 +979,18 @@ private
   # combines all the scopes that have been set 
   # and returns a list of events
   
-  def get_events(tag)
+  def get_events(tag, paginate=true)
     Ical.check_refreshments
     tag.locals.period ||= set_period(tag)
     tag.locals.calendars ||= set_calendars(tag)
     ef = event_finder(tag)
     tag.attr[:by] ||= 'start_date'
     tag.attr[:order] ||= 'asc'
-    retrieval_options = standard_find_options(tag).merge(pagination_defaults)
-    ef.paginate(retrieval_options)
+    if paginate
+      ef.paginate(standard_find_options(tag).merge(pagination_defaults))
+    else
+      ef.find(:all, standard_find_options(tag))
+    end
   end
 
   # other extensions - eg taggable_events - will chain the event_finder to add more scopes

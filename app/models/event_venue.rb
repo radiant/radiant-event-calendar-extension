@@ -7,7 +7,10 @@ class EventVenue < ActiveRecord::Base
     %{#{title}, #{address}, #{postcode}}
   end
   
-  def from
-    #postcode check?
+  def location
+    address
+  end
+  def location=(location)
+    address = location
   end
 end
