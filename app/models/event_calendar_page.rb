@@ -12,7 +12,8 @@ class EventCalendarPage < Page
   end
 
   def cache?
-    ENV['RAILS_ENV'] == 'production'
+    true
+    #ENV['RAILS_ENV'] == 'production'
   end
 
   def find_by_url(url, live = true, clean = false)
@@ -52,11 +53,7 @@ class EventCalendarPage < Page
         start = Date.civil(@calendar_year.to_i)
         @calendar_period = CalendarPeriod.between(start, start.to_datetime.end_of_year)
       end
-      
-      logger.warn "!   calendar_period is #{@calendar_period.inspect}"
-      logger.warn "!   calendar_year is #{@calendar_year.inspect}"
-      logger.warn "!   calendar_month is #{@calendar_month.inspect}"
-      
+
       @calendar_parameters
     end
   end
@@ -70,14 +67,17 @@ class EventCalendarPage < Page
   def url_parts
     {
       :month => @calendar_month,
-      :year => @calendar_year
+      :year => @calendar_year,
+      :category => @calendar_category,
+      :slug => @calendar_slug
     }
   end
   
   def url_with_parts(overrides={})
     parts = url_parts.merge(overrides)
     parts[:month] = month_names[parts[:month]].downcase unless parts[:month].blank? || parts[:month] =~ /[a-zA-Z]/
-    clean_url(url_without_parts + parts.values.join('/'))
+    stem = parts.delete(:stem) || url_without_parts
+    clean_url(stem + '/' + parts.values.select{|p| !p.blank?}.join('/'))
   end
   alias_method_chain :url, :parts
 

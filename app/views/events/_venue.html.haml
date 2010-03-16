@@ -1,0 +1,16 @@
+- if venue
+  - if events = @venue_events[venue.id]
+    - if events.length == 1
+      = render :partial => 'event', :object => events.first
+    - else
+      %h3
+        Events at
+        = link_to venue.title, venue.url
+      %ul
+        - events.each do |event|
+          %li
+            %strong
+              = link_to event.title, event.url
+            on 
+            = event.date
+            

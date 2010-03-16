@@ -167,11 +167,12 @@ module EventCalendarTags
     <pre><code><r:events:summary /></code></pre>
   }
   tag "events:summary" do |tag|
-    tag.locals.events ||= get_events(tag)
+    tag.locals.events ||= get_events(tag, false)
     filters = filters_applied(tag)
-    paginated = true if (tag.locals.events.next_page || tag.locals.events.previous_page)
+    paginated = true if (tag.locals.events.respond_to?(:next_page) && (tag.locals.events.next_page || tag.locals.events.previous_page))
+    total_events = paginated ? tag.locals.events.total_entries : tag.locals.events.length
     html = %{<p class="list_summary">}
-    html << %{Showing events #{filters.join(" ")}} if filters.any?
+    html << %{Showing #{total_events} #{pluralize(total_events, "event")} #{filters.join(" ")}} if filters.any?
     html << %{<br />} if paginated && filters.any?
     if paginated
       html << %{<a href="#{tag.locals.page.url(:page => tag.locals.events.previous_page)}">&laquo; Previous</a> &middot; } if tag.locals.events.previous_page
@@ -180,6 +181,42 @@ module EventCalendarTags
     end
     html << %{</p>}
     html
+  end
+
+  desc %{
+    Renders a modified link to the current set of events. 
+    Supply a part to override it: all other parts will be carried over.
+    Only works on a calendar page.
+
+    *Usage:* 
+    <pre><code>
+    <r:events:link stem="/map">On a map</r:events:link>
+    <r:events:link stem="/calendar">As a calendar</r:events:link>
+    <r:events:link year="2011">In 2011</r:events:link>
+    <r:events:link month="3" year="2010">Next march</r:events:link>
+    </code></pre>
+  }
+
+  tag "events:link" do |tag|
+    options = tag.attr.dup
+    url = tag.locals.page.url({
+      :year => options.delete('year'),
+      :month => options.delete('month'),
+      :stem => options.delete('stem'),
+      :tags => options.delete('tags')
+    })
+    text = tag.double? ? tag.expand : "link"
+    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    %{<a href="#{url}#{anchor}" #{attributes}>#{text}</a>}
+  end
+
+  tag "events:feedlink" do |tag|
+    options = tag.attr.dup
+    format = options['format'].to_sym
+    url = events_path(url_parts.merge({:format => format}))
+    text = tag.double? ? tag.expand : format.to_s
+    %{<a href="#{url}">#{text}</a>}
   end
 
   #### Calendars:* tags
@@ -843,13 +880,6 @@ module EventCalendarTags
   tag "requested_year" do |tag|
     calendar_year if respond_to?(:calendar_year) && calendar_year
   end
-  
-  
-  
-  
-  
-  
-  
   
 private
 

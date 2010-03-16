@@ -13,6 +13,7 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :event_venues, :member => {:remove => :post}
       cal.calendars_home '/', :controller => 'events', :action => 'index'
     end
+    map.resources :events, :only => :index, :path_prefix => 'calendar'
   end
   
   extension_config do |config|
@@ -23,6 +24,8 @@ class EventCalendarExtension < Radiant::Extension
   end
   
   def activate
+    # Mime::Type.register "text/calendar", :ics
+
     CalendarPeriod                                                          # a handy way of describing the window in time that we want to display
     EventCalendarPage                                                       # the main calendar viewer: takes period, chooses events, shows page
     PaginationLinkRenderer                                                  # removes all the viewhelper calls from the pagination so that it works in a model

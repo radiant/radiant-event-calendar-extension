@@ -16,8 +16,8 @@ class Calendar < ActiveRecord::Base
     { :conditions => [ "calendars.category = ?", category ] }
   }
 
-  named_scope :with_slugs, lambda { |calendar_slugs| # pipe-separated string of slugs
-    slugs = calendar_slugs.split('|')
+  named_scope :with_slugs, lambda { |calendar_slugs| # array , or pipe-separated string
+    slugs = calendar_slugs.split('|') unless slugs.is_a? Array
     { :conditions => [ slugs.map{"calendars.slug = ?"}.join(' OR '), *slugs ] }
   }
 

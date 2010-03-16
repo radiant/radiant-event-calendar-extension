@@ -21,10 +21,9 @@ class Event < ActiveRecord::Base
 
   before_validation :set_uuid
   before_validation :set_default_status
-  before_validation :set_default_end_date
   after_save :update_occurrences
   
-  default_scope :order => 'start_date ASC'
+  default_scope :order => 'start_date ASC', :include => :event_venue
   
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
@@ -269,13 +268,6 @@ protected
 
   def set_default_status
     self.status ||= Status[:Published]
-  end
-  
-  def set_default_end_date
-    # if end_date.blank?
-    #   default_duration = Radiant::Config['event_calendar.default_duration'] || 1.hour
-    #   self.end_date = start_date + default_duration
-    # end
   end
   
   # doesn't yet observe exceptions
