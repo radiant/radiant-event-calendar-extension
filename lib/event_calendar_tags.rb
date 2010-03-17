@@ -215,14 +215,30 @@ module EventCalendarTags
     %{<a href="#{tag.locals.page.url(overrides)}#{anchor}" #{attributes}>#{text}</a>}
   end
 
+  desc %{
+    Renders a feed link that will continue to apply the rules that have been applied to 
+    get events for this page. Periods, calendars, tags (if you're using them) and other
+    filters that apply to the page carrying the link will also apply to the feed.
+
+    *Usage:* 
+    <pre><code>
+    <r:events:feedlink format="rss" />
+    <r:events:feedlink format="ics" protocal="webcal" />
+    </code></pre>
+  }
+
   tag "events:feedlink" do |tag|
     options = tag.attr.dup
-    format = options.delete('format')
+    format = options.delete('format') || 'rss'
+    protocol = options.delete('protocol') || request.protocol
+    protocol += "://" unless protocol.match /\:\/\/$/
     parameters = url_parts
     parameters.delete(:path)
     parameters[:format] = format.to_sym
+    parameters[:host] = request.host
+    parameters[:protocol] = protocol
     attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    url = events_path(parameters)
+    url = events_url(parameters)
     text = tag.double? ? tag.expand : format
     %{<a href="#{url}" #{attributes}>#{text}</a>}
   end
