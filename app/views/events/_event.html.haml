@@ -1,17 +1,21 @@
+- without_title ||= false
+
 - if event
-  %h3.event
-    = event.title
+  - unless without_title
+    %h3.event
+      = link_to event.title, event.url
   
   %p.date
-    = event.starts
-    on 
-    = event.date
-    - if event.event_venue
-      at 
-      = link_to event.event_venue.title, event.event_venue.url
-    - else
-      at
-      = event.location
+    %strong
+      = event.starts
+      on 
+      = event.date
+      - if event.event_venue
+        at 
+        = link_to event.event_venue.title, event.event_venue.url
+      - else
+        at
+        = event.location
 
   %p.description
     = event.short_description

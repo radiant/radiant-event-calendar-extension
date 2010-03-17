@@ -162,15 +162,18 @@ module EventCalendarTags
   
   desc %{
     Renders a friendly description of the period currently being displayed and any other filters that have been applied.
+    Supply `paginated="false"` if you want to omit the pagination line, eg. because you know that the main listing is 
+    not paginated either.
 
     *Usage:* 
-    <pre><code><r:events:summary /></code></pre>
+    <pre><code><r:events:summary [pageinated="true"]/></code></pre>
   }
   tag "events:summary" do |tag|
-    tag.locals.events ||= get_events(tag, false)
+    use_pagination = tag.attr['paginated'] != "false"
+    tag.locals.events ||= get_events(tag, use_pagination)
+    total_events = use_pagination ? tag.locals.events.total_entries : tag.locals.events.length
+    paginated = use_pagination && (tag.locals.events.next_page || tag.locals.events.previous_page)
     filters = filters_applied(tag)
-    paginated = true if (tag.locals.events.respond_to?(:next_page) && (tag.locals.events.next_page || tag.locals.events.previous_page))
-    total_events = paginated ? tag.locals.events.total_entries : tag.locals.events.length
     html = %{<p class="list_summary">}
     html << %{Showing #{total_events} #{pluralize(total_events, "event")} #{filters.join(" ")}} if filters.any?
     html << %{<br />} if paginated && filters.any?
@@ -184,39 +187,44 @@ module EventCalendarTags
   end
 
   desc %{
-    Renders a modified link to the current set of events. 
+    Renders a partially modified link to the current set of events. 
     Supply a part to override it: all other parts will be carried over.
     Only works on a calendar page.
 
     *Usage:* 
     <pre><code>
-    <r:events:link stem="/map">On a map</r:events:link>
-    <r:events:link stem="/calendar">As a calendar</r:events:link>
-    <r:events:link year="2011">In 2011</r:events:link>
-    <r:events:link month="3" year="2010">Next march</r:events:link>
+    <r:events:link stem="/map">These events on a map</r:events:link>  (applies the present set of filters to a different page)
+    <r:events:link year="2011" month="">All events in 2011</r:events:link>
+    <r:events:link month="3" year="2010">All events next march</r:events:link>
+    <r:events:link slug="public">All events next march</r:events:link>
     </code></pre>
   }
 
   tag "events:link" do |tag|
     options = tag.attr.dup
-    url = tag.locals.page.url({
-      :year => options.delete('year'),
-      :month => options.delete('month'),
-      :stem => options.delete('stem'),
-      :tags => options.delete('tags')
-    })
+    overrides = {}
+    url_parts.keys.each do |part|
+      overrides[part] = tag.attr[part.to_s] unless tag.attr[part.to_s].nil?
+    end
     text = tag.double? ? tag.expand : "link"
     anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
     attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    %{<a href="#{url}#{anchor}" #{attributes}>#{text}</a>}
+    
+    logger.warn ">>  events:link: overrides are #{overrides.inspect}"
+    
+    %{<a href="#{tag.locals.page.url(overrides)}#{anchor}" #{attributes}>#{text}</a>}
   end
 
   tag "events:feedlink" do |tag|
     options = tag.attr.dup
-    format = options['format'].to_sym
-    url = events_path(url_parts.merge({:format => format}))
-    text = tag.double? ? tag.expand : format.to_s
-    %{<a href="#{url}">#{text}</a>}
+    format = options.delete('format')
+    parameters = url_parts
+    parameters.delete(:path)
+    parameters[:format] = format.to_sym
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    url = events_path(parameters)
+    text = tag.double? ? tag.expand : format
+    %{<a href="#{url}" #{attributes}>#{text}</a>}
   end
 
   #### Calendars:* tags

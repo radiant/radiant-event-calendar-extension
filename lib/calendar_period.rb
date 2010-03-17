@@ -77,7 +77,7 @@ class CalendarPeriod
       bounded? && start == start.send("beginning_of_#{period}".intern) && finish == start.send("end_of_#{period}".intern)
     end
   end
-  
+    
   def describe_start(date_format=nil)
     if start
       unless date_format

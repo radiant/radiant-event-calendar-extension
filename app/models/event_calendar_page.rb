@@ -18,7 +18,7 @@ class EventCalendarPage < Page
 
   def find_by_url(url, live = true, clean = false)
     url = clean_url(url) if clean
-    my_url = self.url
+    my_url = self.url_without_parts
     if url =~ /^#{Regexp.quote(my_url)}(.*)/
       read_parameters($1)
       self
@@ -66,6 +66,7 @@ class EventCalendarPage < Page
   
   def url_parts
     {
+      :path => url_without_parts,
       :month => @calendar_month,
       :year => @calendar_year,
       :category => @calendar_category,
@@ -75,9 +76,10 @@ class EventCalendarPage < Page
   
   def url_with_parts(overrides={})
     parts = url_parts.merge(overrides)
+    page = parts.delete(:page)
+    path = parts.delete(:path)
     parts[:month] = month_names[parts[:month]].downcase unless parts[:month].blank? || parts[:month] =~ /[a-zA-Z]/
-    stem = parts.delete(:stem) || url_without_parts
-    clean_url(stem + '/' + parts.values.select{|p| !p.blank?}.join('/'))
+    clean_url([path, parts.values, page].select{|p| !p.blank?}.join('/'))
   end
   alias_method_chain :url, :parts
 

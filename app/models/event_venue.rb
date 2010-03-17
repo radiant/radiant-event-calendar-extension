@@ -4,7 +4,7 @@ class EventVenue < ActiveRecord::Base
   default_scope :order => 'title asc'
   
   def to_s
-    %{#{title}, #{address}, #{postcode}}
+    %{#{title}, #{address}}
   end
   
   def location

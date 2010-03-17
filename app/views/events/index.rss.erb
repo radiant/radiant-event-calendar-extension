@@ -1,0 +1,21 @@
+<% 
+feed = RSS::Maker.make(@version) do |m|
+  m.channel.title = @title
+  m.channel.link = @link
+  m.channel.subtitle = @description
+  m.channel.description = @description
+  m.channel.lastBuildDate = Time.now
+          
+  @events.each do |event|
+    item = m.items.new_item
+    item.title = event.title
+    item.description = render :partial => 'event.html', :object => event, :locals => {:without_title => true}
+    item.link = event.url
+    item.guid.content = event.uuid
+    item.guid.isPermaLink = false
+    # item.date = event.created_at.to_time
+  end
+  
+  m.items.do_sort = false
+end
+%><%= feed.to_s %>
