@@ -14,6 +14,7 @@ class EventsController < ApplicationController
       @events = event_finder
       @title = Radiant::Config['event_calendar.feed_title'] || "#{Radiant::Config['admin.title']} Events"
       @description = list_description
+      @description = "All future events" if @description.blank?
       format.js {
         @venues = @events.map(&:event_venue).uniq
         @venue_events = {}
@@ -23,7 +24,7 @@ class EventsController < ApplicationController
         end
       }
       format.rss {
-        @version = params[:version] || '2.0'
+        @version = params[:rss_version] || '2.0'
         @link = list_url
       }
       format.ics {
@@ -50,16 +51,17 @@ class EventsController < ApplicationController
   end
   
   def event_finder
+    ef = Event.scoped
     if @period
       if @period.bounded?
-        ef = Event.between(@period.start, @period.finish) 
+        ef = ef.between(@period.start, @period.finish) 
       elsif @period.start
-        ef = Event.after(@period.start) 
+        ef = ef.after(@period.start) 
       else
-        ef = Event.before(@period.finish) 
+        ef = ef.before(@period.finish) 
       end
     else
-      ef = Event.future
+      ef = ef.future
     end
     ef = ef.approved if Radiant::Config['event_calendar.require_approval']
     ef = ef.in_calendars(tag.locals.calendars) if @calendars && @calendars.any?

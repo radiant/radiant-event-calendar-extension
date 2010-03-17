@@ -1,4 +1,4 @@
-<% 
+<%-
 feed = RSS::Maker.make(@version) do |m|
   m.channel.title = @title
   m.channel.link = @link
@@ -18,4 +18,5 @@ feed = RSS::Maker.make(@version) do |m|
   
   m.items.do_sort = false
 end
+
 %><%= feed.to_s %>
