@@ -136,7 +136,7 @@ class Event < ActiveRecord::Base
   def date
     start_date.to_datetime.strftime(date_format)
   end
-
+  
   def short_date
     start_date.to_datetime.strftime(short_date_format)
   end
@@ -166,15 +166,28 @@ class Event < ActiveRecord::Base
   end
   
   def finishes
-    if end_date
-      if within_day?
-        end_time
-      elsif all_day?
-        "on #{end_date.to_datetime.strftime(short_date_format)}"
-      else
-        "#{end_time} on #{end_date.to_datetime.strftime(short_date_format)}"
-      end
+    if all_day?
+      "all day"
+    else
+      end_time
     end
+  end
+  
+  def summarise_period
+    period = []
+    if one_day?
+      period << "all day on #{date}"
+    elsif within_day?
+      period << "#{start_time}"
+      period << "until #{end_time}" if end_time
+      period << "on #{date}"
+    elsif all_day?
+      period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
+    else
+      period << "#{start_time} on #{date}"
+      period << "to #{end_time} on #{end_date.to_datetime.strftime(date_format)}"
+    end
+    period.join(' ')
   end
     
   def one_day?
@@ -281,11 +294,11 @@ protected
   end
     
   def date_format
-    Radiant::Config['event_calendar.date_format'] || "%d %B %Y"
+    Radiant::Config['event_calendar.date_format'] || "%-1d %B"
   end
   
   def short_date_format
-    Radiant::Config['event_calendar.short_date_format'] || "%d/%m/%Y"
+    Radiant::Config['event_calendar.short_date_format'] || "%-1d/%m/%Y"
   end
   
   def time_format

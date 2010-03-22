@@ -8,9 +8,7 @@
   
     %p.date
       %strong
-        = event.starts
-        on 
-        = event.date
+        = event.summarise_period
         - if event.event_venue
           at 
           = link_to event.event_venue.title, event.event_venue.url
