@@ -26,7 +26,9 @@ activations.push(function (scope) {
     var bounds = new GLatLngBounds();
   <% @venues.each do |venue| %>
     m = new GMarker(new GLatLng("<%= venue.lat %>","<%= venue.lng %>"), { icon: <%= @venue_events[venue.id].length > 1 ? "severalIcon" : "singleIcon" %> , title: "<%= venue.title %>" });
-    GEvent.addListener(m, "click", function() { this.openInfoWindowHtml("<%= escape_javascript(render :partial => 'venue', :object => venue) %>"); });
+    GEvent.addListener(m, "click", function() { 
+      this.openInfoWindowHtml("<%= escape_javascript(render :partial => 'venue', :object => venue) %>", {maxWidth : 400}); 
+    });
     bounds.extend(m.getPoint());
     map.addOverlay(m);
   <% end %>
@@ -35,4 +37,3 @@ activations.push(function (scope) {
     map.addControl(new GMapTypeControl());
   }
 });
-
