@@ -45,15 +45,25 @@ class Event < ActiveRecord::Base
     { :conditions => ['start_date < ?', datetime] }
   }
   
-  named_scope :between, lambda { |start, finish| # datetimable objects. eg. Event.between(reader.last_login, Time.now)
-    { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date < :finish AND start_date > :start)', {:start => start, :finish => finish}] }
+  named_scope :within, lambda { |period| # CalendarPeriod object
+    { :conditions => ['start_date > :start AND start_date < :finish', {:start => period.start, :finish => period.finish}] }
   }
 
-  def self.within(period)               # seconds. eg calendar.occurrences.within(6.months)
-    start = Time.now
-    finish = start + period
-    between(start, finish)
-  end
+  named_scope :between, lambda { |start, finish| # datetimable objects. eg. Event.between(reader.last_login, Time.now)
+    { :conditions => ['start_date > :start AND start_date < :finish', {:start => start, :finish => finish}] }
+  }
+  
+  named_scope :future_and_current, {
+    :conditions => ['(end_date > :now) OR (end_date IS NULL AND start_date > :now)', {:now => Time.now}]
+  }
+  
+  named_scope :unfinished, lambda { |start| # datetimable object.
+    { :conditions => ['start_date < :start AND end_date > :start', {:start => start}] }
+  }
+  
+  named_scope :coincident_with, lambda { |start, finish| # datetimable objects.
+    { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date > :start AND start_date < :finish)', {:start => start}] }
+  }
 
   def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
     finish = Time.now
@@ -133,8 +143,24 @@ class Event < ActiveRecord::Base
     event_venue ? event_venue.address : read_attribute(:location)
   end
 
+  def postcode
+    event_venue ? event_venue.postcode : read_attribute(:postcode)
+  end
+
   def date
     start_date.to_datetime.strftime(date_format)
+  end
+  
+  def month
+    start_date.month
+  end
+
+  def year
+    start_date.year
+  end
+
+  def mday
+    start_date.mday
   end
   
   def short_date
@@ -216,6 +242,10 @@ class Event < ActiveRecord::Base
     else
       start_date > date.beginning_of_month && start_date < date.end_of_month
     end
+  end
+  
+  def continuing?
+    end_date && start_date < Time.now && end_date > Time.now
   end
   
   def editable?

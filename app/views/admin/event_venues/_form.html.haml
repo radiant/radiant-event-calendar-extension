@@ -6,12 +6,12 @@
     = f.label :title, "Venue or location title"
     = f.text_field :title, :class => 'textbox'
     - if or_choose && @venues.any?
-      = link_to "choose an existing place", '#', :class => 'oldvenue'
+      = link_to "choose an existing place", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
 
 %p.note
   - if or_choose && @venues.any?
     If you've used this place before, please 
-    = link_to "choose it from the list", '#', :class => 'oldvenue'
+    = link_to "choose it from the list", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
     so that you can update it globally
   - else
     Next time you add an event you'll be able to choose this venue from a list
@@ -31,5 +31,6 @@
     This will not be displayed: it's used to place your event on the map and to let people know how far away it is.
 
 %p.venue_description
+  = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => "toggle[event_venue_#{event_venue.id}_description]"
   = f.label :description, "Description"
-  = f.text_area :description, :class => 'textarea'
+  = f.text_area :description, :class => 'textarea', :id => "event_venue_#{event_venue.id}_description"

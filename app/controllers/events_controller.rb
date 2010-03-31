@@ -15,7 +15,11 @@ class EventsController < ApplicationController
       @title = Radiant::Config['event_calendar.feed_title'] || "#{Radiant::Config['admin.title']} Events"
       @description = list_description
       @description = "All future events" if @description.blank?
+      format.html {
+
+      }
       format.js {
+        # for mapping purposes events are clustered by venue
         @venues = @events.map(&:event_venue).uniq
         @venue_events = {}
         @events.each do |e|
@@ -34,11 +38,15 @@ class EventsController < ApplicationController
   end
     
   def read_parameters
-    if params[:year] && params[:month]
-      start = Date.civil(params[:year].to_i, params[:month].to_i)
+    this = Date.today
+    if params[:day]
+      start = Date.civil(params[:year] || this.year, params[:month] || this.month, params[:day])
+      @period = CalendarPeriod.between(start, start.to_datetime.end_of_day)
+    elsif params[:month]
+      start = Date.civil(params[:year] || this.year, params[:month])
       @period = CalendarPeriod.between(start, start.to_datetime.end_of_month)
     elsif params[:year]
-      start = Date.civil(params[:year].to_i)
+      start = Date.civil(params[:year])
       @period = CalendarPeriod.between(start, start.to_datetime.end_of_year)
     end
     if params[:calendar_id]

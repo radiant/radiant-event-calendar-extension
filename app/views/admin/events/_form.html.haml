@@ -1,13 +1,9 @@
-- clear_javascripts
-
-- include_javascript "mootools"
-- include_javascript "mootools-more"
-- include_javascript "platform"
-- include_javascript "platform/datepicker"
-- include_javascript "platform/calendar"
-
-- include_stylesheet "datepicker"
-- include_stylesheet "admin/calendar"
+- include_stylesheet "admin/event_calendar"
+- include_javascript "admin/event_calendar"
+- if defined? TinyMceFilter
+  - include_javascript "tiny_mce/tiny_mce"
+  - include_javascript "tiny_mce/tiny_mce_settings"
+  - include_javascript "tiny_mce/application"
 
 - @venues = EventVenue.find(:all)
 - @event.event_venue ||= EventVenue.new
@@ -19,87 +15,85 @@
 
   = error_messages_for :event
 
-  #event_form.form-area
+  #event_form.form-area.container_12
     - render_region :form do |form|
 
       - form.edit_event do
-        %fieldset
-          %legend Event
-        
-          .title
-            %p.event_title
-              = f.label :title, "Title"
-              = f.text_field :title, :class => 'textbox'
-            %p.keywords
-              = f.label :keywords, "Tags"
-              = f.text_field :keywords, :class => 'textbox'
+        .title
+          %p.event_title
+            = f.label :title, "Title"
+            = f.text_field :title, :class => 'textbox'
+          %p.keywords
+            = f.label :keywords, "Tags"
+            = f.text_field :keywords, :class => 'textbox'
 
-          .url
-            %p.url
-              = f.label :url, "Link to"
-              = f.text_field :url, :class => 'textbox'
+        .url
+          %p.url
+            = f.label :url, "Link to"
+            = f.text_field :url, :class => 'textbox'
 
-          .description
-            %p.description
-              = f.label :description, "Description"
-              = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
-
+        .description
+          %p.description
+            = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
+            = f.label :description, "Description"
+            = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
+          %p.asset
+            an image-chooser will appear here.
       - form.edit_date do
-        %fieldset
-          %legend Dates
+        .date
+          %p.start_date
+            = f.label :start_date, "Start date and time"
+            = f.text_field :start_date, :class => 'textbox date time'
+            = f.check_box :all_day
+            = f.label :all_day, 'All-day event?', :class => 'minor'
+          %p.end_date
+            = f.label :end_date, "end date and time"
+            = f.text_field :end_date, :class => 'textbox date time'
+          %p#event_note.note
+            If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
 
-          .date
-            %p.start_date
-              = f.label :start_date, "Start date and time"
-              = f.text_field :start_date, :class => 'textbox date'
-              = f.check_box :all_day
-              = f.label :all_day, 'All-day event?', :class => 'minor'
-            %p.end_date
-              = f.label :end_date, "end date and time"
-              = f.text_field :end_date, :class => 'textbox date'
-            %p#event_note.note
-              If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
-
-          .recurrence
-            - f.fields_for :recurrence_rules do |rf|
+        .recurrence
+          - f.fields_for :recurrence_rules do |rf|
+            
+            %p.recurrence
+              = rf.check_box 'active', :class => 'toggle', :rel => "toggle[recurrence_detail]", :style => 'margin-left: 15px;'
+              = rf.label :active, 'Repeats', :class => 'minor'
+              %span.note
+                (this is for separate similar events. For events that span several days you only need to set the start and end.)
               
-              %p.recurrence
-                = rf.check_box 'active', :class => 'toggle'
-                = rf.label :active, 'Repeats'
-                %span.recurrence_detail
-                  %span.recurrence_interval
-                    Every
-                    = rf.text_field :interval, :class => 'textbox short'
-                  %span.recurrence_period
-                    = rf.select :period, [['day', 'daily'], ['week', 'weekly'], ['month', 'monthly'], ['year', 'yearly']], {}, :class => 'textbox'
-                  %span.recurrence_basis
-                    = rf.select :basis, [['forever', ''],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox'
-                  %span.recurrence_limit
-                    = rf.text_field :limiting_date, :class => 'textbox date'
-                  %span.recurrence_count
-                    = rf.text_field :limiting_count, :class => 'textbox short'
-                    = rf.label :limiting_count, "occasions"
-                    (including the first)
-            %p.note
-              Repeats are for separate similar events. For long events you only need to set the start and end on different days.
+              %span#recurrence_detail
+                %span#recurrence_interval
+                  = rf.label :interval, "Every"
+                  = rf.text_field :interval, :class => 'textbox short'
+                %span#recurrence_period
+                  = rf.label :period, "&nbsp;"
+                  = rf.select :period, [['day', 'daily'], ['week', 'weekly'], ['month', 'monthly'], ['year', 'yearly']], {}, :class => 'textbox'
+                %span#recurrence_basis
+                  = rf.label :basis, "&nbsp;"
+                  = rf.select :basis, [['forever', 'unbounded'],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox basis'
+                %span#recurrence_unbounded
+                %span#recurrence_limit
+                  = rf.label :limiting_date, "&nbsp;"
+                  = rf.text_field :limiting_date, :class => 'textbox date time'
+                %span#recurrence_count
+                  = rf.label :limiting_count, "this many times:", :class => 'inline'
+                  = rf.text_field :limiting_count, :class => 'textbox short'
 
       - form.edit_venue do
-        %fieldset
-          %legend Place
-          .venue{:class => @venues.any? ? 'visible' : 'hidden'}
-            %p.existing_venue
-              = f.label :event_venue_id, "Choose a place"
-              = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
-              = link_to "add a new place", '#', :class => 'newvenue'
-            %p.note
-              You can 
-              = link_to "edit the venue list", admin_event_venues_url
-              to update addresses and directions for all relevant events.
+        #venue{:class => @venues.any? ? 'visible' : 'hidden'}
+          %p#existing_venue
+            = f.label :event_venue_id, "Choose a place"
+            = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
+            = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => 'toggle[venue,new_venue]'
+          %p.note
+            You can 
+            = link_to "edit the venue list", admin_event_venues_url
+            to update addresses and directions for all relevant events.
 
-          .new_venue{:class => @venues.any? ? 'hidden' : 'visible'}
-            - event_venue = EventVenue.new
-            - f.fields_for :event_venue, event_venue do |ef|
-              = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => true}
+        #new_venue
+          - event_venue = EventVenue.new
+          - f.fields_for :event_venue, event_venue do |ef|
+            = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => true, :compact => true}
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do

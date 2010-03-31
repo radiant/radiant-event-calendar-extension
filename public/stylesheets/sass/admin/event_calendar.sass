@@ -1,0 +1,247 @@
+@import modules/rounded.sass
+@import modules/opacity.sass
+@import modules/grid.sass
+
+=standard_input
+  :width 100%
+  :padding 6px 0
+  :border 1px solid #666
+  :font-family Monaco,"Courier New",Courier,monospace
+  :font-size 95%
+
+=quiet
+  :font-family helvetica, arial, sans-serif
+  :font-weight lighter
+  :font-size 85%
+  :color #ccc
+  :line-height 1.3
+  :text-shadow none
+
+=flatbottom
+  :margin-bottom 0
+
+!radiant_red = #c00
+
+//calendars index 
+
+table.index 
+  td.subscription-title 
+    :font-size 115%
+    :font-weight bold
+
+span.calendar_actions
+  img 
+    :opacity 0.5
+  a 
+    img 
+      :opacity 1
+
+//events index 
+
+table#events
+  tr
+    td.datemark
+      :width 40px
+      :vertical-align top
+      :text-align center
+      :line-height 1
+      a
+        :text-decoration none
+      span.month
+        :display block
+        :margin-top 5px
+        :font-family helvetica, arial, sans-serif
+        :font-weight lighter
+        :font-size 80%
+        :text-transform uppercase
+      span.day
+        :display block
+        :font-family helvetica, arial, sans-serif
+        :font-weight bold
+        :font-size 160%
+    td.event 
+      :width 40%
+      :vertical-align top
+      h3 
+        :margin 0
+        :line-height 1.2
+        a 
+          :text-decoration none
+      p.description 
+        :margin 4px 0
+        :font-size 80%
+        :color #999
+      p.keywords 
+        :margin 4px 0
+        :font-size 80%
+    td.time, td.location, td.keywords, td.recurrence 
+      :font-size 80%
+      :padding-top 28px
+      :vertical-align top
+  tr.continuing
+    td.datemark
+      a
+        :color #b2aaa4
+    td.event
+      h3
+        a
+          :color #b2aaa4
+        
+#actions
+  .pagination 
+    :float right
+    :padding 14px 8px
+    span.current, span.disabled
+      :background #eee url(../../images/admin/buttons_background.png) repeat-x
+      :color #333
+      :font-size 80%
+      :padding 8px 12px
+      :text-decoration none
+      :text-shadow 1px 1px 1px #eee
+      +round-corners(5px)
+    span.disabled
+      +opacity(0.5)
+    span.current
+      :font-weight bold
+      :color #999
+      :border 1px solid #999
+      
+// venues index
+
+table#event_venues
+  td.event_venue
+    :width 40%
+    :vertical-align top
+    h3 
+      :margin 0
+      :line-height 1.2
+      a 
+        :text-decoration none
+    p.description 
+      :margin 4px 0
+      :font-size 80%
+      :color #999
+  td.location, td.url 
+    :font-size 80%
+    :vertical-align top
+
+// event and calendar forms 
+
+#content 
+  #event_form, #calendar_form, #venue_form
+    div
+      p
+        input.textbox, select.textbox, textarea
+          +standard_input
+      p.note 
+        +grid(4)
+        :padding-top 1.7em
+    div.title
+      :clear left
+      p.event_title, p.calendar_title, p.keywords, p.venue_title
+        :margin-bottom 1em
+        input 
+          :font-family Georgia,Palatino,"Times New Roman",Times,serif
+          :font-size 200%
+      p.event_title
+        +grid(8)
+      p.keywords 
+        +grid(4)
+        input
+          :color = !radiant_red
+      p.calendar_category, p.calendar_slug
+        +grid(4)
+    div.url
+      +grid(12)
+      :clear left
+      
+    div.description
+      :clear left
+      p.description
+        +grid(8)
+        textarea
+          :height 16em
+      p.asset
+        +grid(4)
+
+    div.ical
+      :clear left
+      p.url
+        +grid(8)
+        :margin-top 0
+      p.username, p.password
+        +grid(4)
+      p.username
+        :margin-right 2%
+
+    div.date
+      :clear left
+      p.start_date, p.end_date 
+        +grid(4)
+        :margin-bottom 0
+      p.problematic 
+        :color = !radiant_red
+        
+    div.recurrence
+      :clear left
+      p.recurrence
+        :margin-top 0
+        span.recurrence_detail
+          :display block
+        span#recurrence_interval
+          +grid(2)
+        span#recurrence_period
+          +grid(2)
+        span#recurrence_basis
+          +grid(2)
+        span#recurrence_limit
+          +grid(2)
+          +flush_right
+        span#recurrence_count
+          +grid(2)
+          +flush_right
+          
+    div.venue, div.newvenue
+      :overflow auto
+    
+    div#venue
+      :clear left
+      p#existing_venue
+        +grid(8)
+    div#new_venue
+      :clear left
+      p.venue_title
+        +grid(8)
+      p.url
+        :clear left
+        +grid(8)
+      p.venue_location
+        +grid(8)
+        textarea
+          :height 5em
+      p.venue_postcode
+        +grid(4)
+        span.note
+          :display block
+          :margin-top 4px
+      p.venue_description
+        +grid(12)
+        :clear both
+        textarea
+          :height 5em
+
+    .note, label.minor
+      +quiet
+      :display inline
+    label.inline
+      :display inline
+    .hidden 
+      :display none
+
+
+a.toggleMCE
+  :display block
+  :width 24px
+  :height 24px
+  :padding-left 24px
+  :float right

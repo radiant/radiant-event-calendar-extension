@@ -1,0 +1,56 @@
+- we_have_seen = {}
+
+- content_for :title do
+  - if @period
+    = @period.summary
+  - else
+    Events
+
+- content_for :views do
+  views
+
+- content_for :events do
+  - if @events.any?
+    .events
+      - @events.each do |event|
+        - event_master_id = event.master_id || event.id
+        - repeating = true if we_have_seen[event_master_id]
+        .event
+          .dateholder
+            %span.month
+              = event.month
+            %span.dom
+              = event.mday
+          .detail
+            %h3
+              = link_to event.title, event.url
+            %p.venue
+              = link_to event.event_venue.title, event.event_venue.url
+
+            - unless repeating
+              = event.filter.filter(:description)
+              - we_have_seen[event_master_id] = true;
+
+  - else
+    .no_events
+      .detail
+        No events. None.
+        
+- content_for :events_continuing do
+  %h3
+    Continuing events
+  %ul
+    - @continuing_events.each do |event|
+      %li
+        = link_to event.title, event.url
+        %span.detail
+          until 
+          = event.ends
+          at
+          = link_to event.event_venue.title, event.event_venue.url
+
+- content_for :marginalia do
+  marginalia
+
+- content_for :pagination do
+  pagination

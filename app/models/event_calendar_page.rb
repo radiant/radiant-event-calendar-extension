@@ -12,8 +12,8 @@ class EventCalendarPage < Page
   end
 
   def cache?
-    true
-    #ENV['RAILS_ENV'] == 'production'
+    # true
+    ENV['RAILS_ENV'] == 'production'
   end
 
   def find_by_url(url, live = true, clean = false)
@@ -32,9 +32,12 @@ class EventCalendarPage < Page
     unless path.blank?
       parts = path.split(/\/+/)
       @calendar_page = parts.pop if parts.last =~ /^\d{1,3}$/
+      @period = {}
       parts.each do |part|
         if part.match(/^\d\d\d\d$/)
           @calendar_year = part
+        elsif part.match(/^\d+$/)
+          @calendar_day = part
         elsif Date::MONTHNAMES.include?(part.titlecase)
           @calendar_month = Date::MONTHNAMES.index(part.titlecase)
         elsif Calendar.categories.include?(part)
@@ -67,6 +70,7 @@ class EventCalendarPage < Page
   def url_parts
     {
       :path => url_without_parts,
+      :day => @calendar_day,
       :month => @calendar_month,
       :year => @calendar_year,
       :category => @calendar_category,

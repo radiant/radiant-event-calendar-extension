@@ -1,58 +1,57 @@
 - include_stylesheet 'admin/calendar'
 = render_region :top 
 
-%h1
-  Calendar subscriptions
+#calendars_table.outset
+  %table.index
+    %thead
+      %tr
+        - render_region :thead do |thead|
+          - thead.name_header do
+            %th Name
 
-%table.index
-  %thead
-    %tr
-      - render_region :thead do |thead|
-        - thead.name_header do
-          %th Name
+          - thead.url_header do
+            %th URL (category/slug)
 
-        - thead.url_header do
-          %th URL (category/slug)
+          - thead.refresh_header do
+            %th Last Refresh
+            %th Refresh automatically?
 
-        - thead.refresh_header do
-          %th Last Refresh
-          %th Refresh automatically?
+          - thead.action_header do
+            %th 
+    %tbody
+      - @calendars.each do |calendar|
+        %tr{:class => "node level-1"}
 
-        - thead.action_header do
-          %th 
-  %tbody
-    - @calendars.each do |calendar|
-      %tr{:class => "node level-1"}
+          - render_region :tbody do |tbody|
+            - tbody.name_cell do          
+              %td.subscription-title
+                = link_to image('calendar', :alt => ''), admin_calendar_url(calendar)
+                = link_to calendar.name, admin_calendar_url(calendar)
+                = "(#{calendar.events.count || '0'} events)"
 
-        - render_region :tbody do |tbody|
-          - tbody.name_cell do          
-            %td.subscription-title
-              = link_to calendar.name, admin_calendar_url(calendar)
-              = "(#{calendar.events.count || '0'} events)"
+            - tbody.url_cell do
+              %td.url
+                =h calendar.category.to_s.downcase 
+                \/
+                =h calendar.slug.downcase
 
-          - tbody.url_cell do
-            %td.url
-              =h calendar.category.to_s.downcase 
-              \/
-              =h calendar.slug.downcase
-
-          - tbody.refresh_cell do
-            %td.refreshed
-              - if calendar.ical
-                =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
-            %td.autorefresh
-              - if calendar.ical
-                = calendar.ical.refresh_automatically? ? "yes" : "no"
-
-          - tbody.action_cell do
-            %td
-              = render :partial => 'actions', :locals => {:calendar => calendar}
+            - tbody.refresh_cell do
+              %td.refreshed
+                - if calendar.ical
+                  =h calendar.ical.last_refresh_date.strftime("%m/%d at %H:%M") unless calendar.ical.last_refresh_date.blank?
+                - else
+                  n/a
+              %td.autorefresh
+                - if calendar.ical
+                  = calendar.ical.refresh_automatically? ? "yes" : "no"
+                - else
+                  n/a
+            - tbody.action_cell do
+              %td
+                = render :partial => 'actions', :locals => {:calendar => calendar}
 
 - render_region :bottom do |bottom|
   - bottom.buttons do
-    .footnote
-      %p
-        = link_to "Refresh All", refresh_all_admin_icals_path, :method => :put
-        |
-        = link_to 'Add a calendar', new_admin_calendar_url
-  
+    #actions
+      %ul
+        %li= link_to image('plus') + " " + "new calendar", new_admin_calendar_url

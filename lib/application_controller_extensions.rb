@@ -17,6 +17,7 @@ module ApplicationControllerExtensions
       end
 
       def clear_javascripts()
+        Rails.logger.warn "In clear_javascripts, @javascripts is #{@javascripts.inspect} "
         @javascripts.clear
       end
 
