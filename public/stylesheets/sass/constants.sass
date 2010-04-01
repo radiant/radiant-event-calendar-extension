@@ -1,0 +1,80 @@
+// layout 
+
+!width = 960px
+!grid = 12
+!margin = 10px
+!box = !width / !grid
+
+=grid(!count)
+  :width = (!count * !box) - (2 * !margin)
+  :display inline
+  :float left
+  :position relative
+  :margin-left = !margin
+  :margin-right = !margin
+=prefix(!count)
+  :padding-left = !count * !box
+=suffix(!count)
+  :padding-right = !count * !box
+=push(!count)
+  :left = !count * !box
+=pull(!count)
+  :left = !count * !box * -1
+=flush
+  :margin-left 0
+=flush_right
+  :margin-right 0
+=snug
+  :margin-left 0
+  :margin-right 0
+=clearfix
+
+=newline
+  :clear left
+
+// decoration
+
+!page = #f6f6f4
+!darkpage = #efefeb
+!text = #616265
+!pale = #7f8082
+!paler = #a2a3a1
+!verypale = #C5C5C0
+!link = #9d313d
+!hover = #c93f4e
+!input = #005b7f
+!problem = #d1005d
+!shadow = #878786
+
+=bodyfonts
+  :font-family Georgia, serif
+  :line-height 1.6
+=headerfonts
+  :font-family 'Adobe Garamond Pro', Georgia, serif
+  :font-weight lighter
+  :line-height 1.05
+  :letter-spacing -0.03em
+=functionalfonts
+  :font-family helvetica, arial, sans-serif
+  :letter-spacing -0.03em
+=smallfonts
+  :font-size 80%
+  :font-style italic
+=standard_block
+  :position relative
+  :overflow hidden
+=inputfonts
+  :font-family 'Adobe Garamond Pro', Georgia, serif
+  :font-weight lighter
+=rounded(!radius = 3px)
+  //:-moz-border-radius = !radius
+  //:-webkit-border-radius = !radius
+=shadowed
+  :-webkit-box-shadow 1px 1px 3px #{!shadow}
+  :-moz-box-shadow 1px 1px 3px #{!shadow}
+=deepshadow 
+  :-webkit-box-shadow 1px 5px 11px #{!shadow}
+  :-moz-box-shadow 1px 5px 11px #{!shadow}
+=blurred(!color=!paler)
+  :text-shadow #{!color} 0 0 2px
+  
