@@ -1,6 +1,6 @@
 class MoreEventData < ActiveRecord::Migration
   def self.up
-    add_column :events, :uuid, :string, :null => false
+    add_column :events, :uuid, :string
     add_column :events, :recurrence_rule, :string
     add_column :events, :all_day, :boolean
     add_column :events, :priority, :string
