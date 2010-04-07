@@ -62,7 +62,7 @@ class Event < ActiveRecord::Base
   }
   
   named_scope :coincident_with, lambda { |start, finish| # datetimable objects.
-    { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date > :start AND start_date < :finish)', {:start => start}] }
+    { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date > :start AND start_date < :finish)', {:start => start, :finish => finish}] }
   }
 
   def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
@@ -123,6 +123,14 @@ class Event < ActiveRecord::Base
     calendar.slug if calendar
   end
   
+  def description_paragraph
+    if description =~ /\<p/
+      description
+    else
+      "<p>#{description}</p>"
+    end
+  end
+  
   def short_description(length=256, ellipsis="...")
     truncate(description, length, ellipsis)
   end
@@ -152,11 +160,19 @@ class Event < ActiveRecord::Base
   end
   
   def month
-    start_date.month
+    Date::MONTHNAMES[start_date.month]
+  end
+
+  def short_month
+    Date::ABBR_MONTHNAMES[start_date.month]
   end
 
   def year
     start_date.year
+  end
+
+  def day
+    Date::DAYNAMES[start_date.day]
   end
 
   def mday
@@ -205,7 +221,7 @@ class Event < ActiveRecord::Base
       period << "all day on #{date}"
     elsif within_day?
       period << "#{start_time}"
-      period << "until #{end_time}" if end_time
+      period << "to #{end_time}" if end_time
       period << "on #{date}"
     elsif all_day?
       period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
@@ -317,7 +333,8 @@ protected
   def update_occurrences
     occurrences.destroy_all
     if recurrence_rules.any?
-      to_ri_cal.occurrences.each do |occ|
+      recurrence_horizon = Time.now + (Radiant::Config['event_calendar.recurrence_limit'] || 10).to_i.years
+      to_ri_cal.occurrences(:before => recurrence_horizon).each do |occ|
         occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil))
       end
     end

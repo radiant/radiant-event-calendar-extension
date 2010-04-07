@@ -31,7 +31,7 @@ class EventCalendarExtension < Radiant::Extension
   def activate
     CalendarPeriod                                                          # defines the window in time that we want to display
     EventCalendarPage                                                       # the main calendar viewer: takes period, chooses events, shows page
-    PaginationLinkRenderer                                                  # removes all the viewhelper calls from the pagination so that it works in a model
+    Radiant::LinkRenderer                                                   # removes all the viewhelper calls from the pagination so that it works in a model
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events
     ApplicationController.send :include, ApplicationControllerExtensions    # adds exclude_stylesheet and exclude_javascript
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages

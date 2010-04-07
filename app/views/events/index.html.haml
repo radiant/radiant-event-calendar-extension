@@ -1,56 +1,67 @@
 - we_have_seen = {}
 
 - content_for :title do
-  - if @period
-    = @period.summary
+  - if period
+    = list_description
   - else
-    Events
+    Events Calendar
 
 - content_for :views do
-  views
+  #view_control
+    %p
+      views
 
 - content_for :events do
-  - if @events.any?
-    .events
-      - @events.each do |event|
-        - event_master_id = event.master_id || event.id
-        - repeating = true if we_have_seen[event_master_id]
-        .event
-          .dateholder
-            %span.month
-              = event.month
-            %span.dom
-              = event.mday
-          .detail
-            %h3
-              = link_to event.title, event.url
-            %p.venue
+  - if events.any?
+    - events.each do |event|
+      - event_master_id = event.master_id || event.id
+      - repeating = true if we_have_seen[event_master_id]
+      .event
+        .dateholder
+          %span.month
+            = event.short_month
+          %span.dom
+            = event.mday
+        .detail
+          %h2
+            = link_to event.title, event.url
+          %p.venue
+            = event.summarise_period
+            - if event.event_venue
+              %br
               = link_to event.event_venue.title, event.event_venue.url
+              = event.event_venue.address
 
-            - unless repeating
-              = event.filter.filter(:description)
-              - we_have_seen[event_master_id] = true;
+          - unless repeating
+            = event.description_paragraph
+            - we_have_seen[event_master_id] = true;
 
   - else
     .no_events
       .detail
         No events. None.
         
-- content_for :events_continuing do
-  %h3
-    Continuing events
-  %ul
-    - @continuing_events.each do |event|
-      %li
-        = link_to event.title, event.url
-        %span.detail
-          until 
-          = event.ends
-          at
-          = link_to event.event_venue.title, event.event_venue.url
+- content_for :continuing_events do
+  - if continuing_events.any?
+    %h3
+      Continuing events
+    %ul
+      - continuing_events.each do |event|
+        %li
+          = link_to event.title, event.url
+          %span.detail
+            until 
+            = event.ends
+            at
+            = link_to event.event_venue.title, event.event_venue.url
 
-- content_for :marginalia do
-  marginalia
+- content_for :calendar do
+  = render :partial => "events/minicalendar", :locals => {:date => period ? period.start : Date.today}
 
 - content_for :pagination do
-  pagination
+  .pagination
+    = will_paginate(events, :container => false)
+    %span.summary
+      = page_entries_info(events, :entry_name => 'event')
+
+

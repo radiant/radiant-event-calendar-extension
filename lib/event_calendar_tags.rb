@@ -164,7 +164,7 @@ module EventCalendarTags
       options[a] = tag.attr[a.to_s] unless tag.attr[a.to_s].blank?
     end
     result << %{<div class="pagination">}
-    result << will_paginate(tag.locals.events, options.merge(:renderer => PaginationLinkRenderer.new(tag), :container => false))
+    result << will_paginate(tag.locals.events, options.merge(:renderer => Radiant::LinkRenderer.new(tag), :container => false))
     if tag.attr['with_summary'] != "false"
       result << %{<span class="summary">}
       result << page_entries_info(tag.locals.events, :entry_name => entry_name)         
@@ -1065,7 +1065,7 @@ private
     tag.attr[:by] ||= 'start_date'
     tag.attr[:order] ||= 'asc'
     if paginate
-      ef.paginate(standard_find_options(tag).merge(pagination_defaults))
+      ef.paginate(standard_find_options(tag).merge(pagination))
     else
       ef.find(:all, standard_find_options(tag))
     end
@@ -1096,7 +1096,7 @@ private
     tag.attr[:by] ||= 'title'
     tag.attr[:order] ||= 'asc'
     if paginate
-      ef.paginate(standard_find_options(tag).merge(pagination_defaults))
+      ef.paginate(standard_find_options(tag).merge(pagination))
     else
       ef.find(:all, standard_find_options(tag))
     end
@@ -1115,15 +1115,6 @@ private
       :order => "#{by} #{order}",
       :limit => attr[:limit] || nil,
       :offset => attr[:offset] || nil
-    }
-  end
-
-  def pagination_defaults
-    p = request.params[:page]
-    p = 1 if p.blank? || p == 0
-    return {
-      :page => calendar_page || 1, 
-      :per_page => request.params[:per_page] || Radiant::Config['event_calendar.per_page'] || 10
     }
   end
 

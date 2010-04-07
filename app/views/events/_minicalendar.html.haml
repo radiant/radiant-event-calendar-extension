@@ -1,0 +1,48 @@
+- date ||= Date.today
+- month = date.month
+- monthname = Date::MONTHNAMES[month]
+- month_events = Event.coincident_with(date.beginning_of_month, date.end_of_month)
+
+- first_shown = date.beginning_of_month.beginning_of_week
+- last_shown = date.end_of_month.end_of_week
+- before = date.beginning_of_month - 1.day
+- after = date.end_of_month + 1.day
+
+- month_names = Date::MONTHNAMES.dup
+- day_names = Date::DAYNAMES.dup
+- day_names.push(day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.
+
+%table.minimonth
+  %thead
+    %tr
+      %th.month_link
+        p
+      %th{:colspan => 5}
+        = monthname
+      %th.month_link
+        n
+    %tr
+      - day_names.each do |d|
+        %th.day_name{:scope => 'col'}
+          = d.first
+  %tbody
+    - weeks = {}
+    - first_shown.upto(last_shown) do |day|
+      - events_today = month_events.select{ |e| e.start_date <= day + 1.day && (e.end_date.nil? || e.end_date >= day) }
+      - cell_class = "day"
+      - cell_class += " other_month" if day.month != date.month
+      - cell_class += " today" if day == ::Date.current
+      - if events_today.any?
+        - cell_class += " eventful"
+        - date_label = %{<a href="#">#{day.mday}</a>}
+      - else
+        - cell_class += " uneventful"
+        - date_label = day.mday
+      - weeks[day.cweek] ||= []
+      - weeks[day.cweek].push({:class => cell_class, :label => date_label})
+
+    - weeks.sort.each do |week, weekdays|
+      %tr
+        - weekdays.each do |d|
+          %td{:class => d[:class]}
+            = d[:label]

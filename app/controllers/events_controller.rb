@@ -1,33 +1,27 @@
 class EventsController < ApplicationController
   require 'rss/maker'
   require "uri"
+  helper_method :events, :continuing_events, :period, :calendars, :list_description
 
+  radiant_layout { |controller| controller.layout_for :calendar }
   no_login_required
-  before_filter :read_parameters, :only => :index
 
   # delivers designated lists of events in minimal formats
-  # could also deliver html and might eventually take over from EventCalendarPage
-  # but you get less direct front-end control that way.
 
   def index
     respond_to do |format|
-      @events = event_finder
-      @title = Radiant::Config['event_calendar.feed_title'] || "#{Radiant::Config['admin.title']} Events"
-      @description = list_description
-      @description = "All future events" if @description.blank?
-      format.html {
-
-      }
+      format.html { }
       format.js {
         # for mapping purposes events are clustered by venue
-        @venues = @events.map(&:event_venue).uniq
+        @venues = events.all.map(&:event_venue).uniq
         @venue_events = {}
-        @events.each do |e|
+        events.each do |e|
           @venue_events[e.event_venue.id] ||= []
           @venue_events[e.event_venue.id].push(e)
         end
       }
       format.rss {
+        @title = Radiant::Config['event_calendar.feed_title'] || "#{Radiant::Config['admin.title']} Events"
         @version = params[:rss_version] || '2.0'
         @link = list_url
       }
@@ -36,8 +30,9 @@ class EventsController < ApplicationController
       }
     end
   end
-    
-  def read_parameters
+  
+  def period
+    return @period if @period
     this = Date.today
     if params[:day]
       start = Date.civil(params[:year] || this.year, params[:month] || this.month, params[:day])
@@ -49,6 +44,10 @@ class EventsController < ApplicationController
       start = Date.civil(params[:year])
       @period = CalendarPeriod.between(start, start.to_datetime.end_of_year)
     end
+  end
+  
+  def calendars
+    return @calendars if @calendars
     if params[:calendar_id]
       @calendars = [Calendar.find(params[:calendar_id])]
     elsif params[:slug]
@@ -58,29 +57,40 @@ class EventsController < ApplicationController
     end
   end
   
-  def event_finder
-    ef = Event.scoped
-    if @period
-      if @period.bounded?
-        ef = ef.between(@period.start, @period.finish) 
-      elsif @period.start
-        ef = ef.after(@period.start) 
+  def events
+    return @events if @events
+    @events = Event.scoped
+    if period
+      if period.bounded?
+        @events = @events.between(period.start, period.finish) 
+      elsif period.start
+        @events = @events.after(period.start) 
       else
-        ef = ef.before(@period.finish) 
+        @events = @events.before(period.finish) 
       end
     else
-      ef = ef.future
+      @events = @events.future
     end
-    ef = ef.approved if Radiant::Config['event_calendar.require_approval']
-    ef = ef.in_calendars(tag.locals.calendars) if @calendars && @calendars.any?
-    ef
+    @events = @events.approved if Radiant::Config['event_calendar.require_approval']
+    @events = @events.in_calendars(calendars) if calendars
+    @events = @events.paginate(pagination)
+  end
+  
+  def continuing_events
+    return @continuing_events if @continuing_events
+    if period && period.start
+      @continuing_events = Event.unfinished(period.start)
+    else
+      @continuing_events = []
+    end
   end
   
   def list_description
-    description = []
-    description << @period.description if @period
-    description << "in #{@calendars.to_sentence}" if @calendars
-    description.join(' ')
+    return @description if @description
+    parts = []
+    parts << period.description if period
+    parts << "in #{calendars.to_sentence}" if calendars
+    @description = parts.any? ? parts.join(' ') : "All future events"
   end
   
   def list_url
@@ -105,6 +115,14 @@ class EventsController < ApplicationController
       name << params[p] unless params[p].blank?
     end
     name.join('_')
+  end
+  
+  def url_for_date(date)
+    
+  end
+  
+  def url_for_month(date)
+    
   end
   
 end

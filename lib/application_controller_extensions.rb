@@ -1,26 +1,36 @@
 module ApplicationControllerExtensions
   def self.included(base)
     base.class_eval do
-
-      helper_method :exclude_stylesheet, :clear_stylesheets, :exclude_javascript, :clear_javascripts
-
-      def exclude_stylesheet(sheet)
-        @stylesheets.delete(sheet)
-      end
-
-      def clear_stylesheets()
-        @stylesheets.clear
-      end
-
-      def exclude_javascript(script)
-        @javascripts.delete(script)
-      end
-
-      def clear_javascripts()
-        Rails.logger.warn "In clear_javascripts, @javascripts is #{@javascripts.inspect} "
-        @javascripts.clear
-      end
-
+      attr_reader :pagination
+      helper_method :pagination
+      before_filter :set_pagination
     end
   end
+
+  def set_pagination
+    @pagination = pagination_defaults.merge({
+      :page => params.delete(:page),
+      :per_page => params.delete(:per_page)
+    })
+  end
+
+  def pagination_defaults
+    {
+      :page => 1, 
+      :per_page => request.params[:per_page] || Radiant::Config['pagination.per_page'] || 20
+    }
+  end
+  
+  def layout_for(area = :event_calendar)
+    if defined? Site && current_site && current_site.respond_to?(:layout_for)
+      current_site.layout_for(area)
+    elsif area_layout = Radiant::Config["#{area}.layout"]
+      area_layout
+    elsif main_layout = Layout.find_by_name('Main')
+      main_layout.name
+    elsif any_layout = Layout.first
+      any_layout.name
+    end
+  end
+
 end
