@@ -24,3 +24,5 @@
 
       - unless repeating
         = event.description_paragraph
+        = render :partial => 'event_postscript', :locals => {:event => event}
+    
