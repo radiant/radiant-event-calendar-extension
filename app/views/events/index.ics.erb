@@ -1,6 +1,6 @@
 <%-
 ical = RiCal.Calendar do |cal|
-  @events.each do |event|
+  events.each do |event|
     cal.add_subcomponent(event.to_ri_cal) if event.master?
   end
 end

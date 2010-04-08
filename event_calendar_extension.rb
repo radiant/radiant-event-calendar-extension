@@ -13,8 +13,7 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :event_venues, :member => {:remove => :post}
       cal.calendars_home '/', :controller => 'events', :action => 'index'
     end
-    # map.resources :events, :only => :index, :path_prefix => 'calendar'
-    map.calendar "/calendar", :controller => 'events', :action => 'index'
+    map.calendar "/calendar.:format", :controller => 'events', :action => 'index'
     map.calendar_year "/calendar/:year", :controller => 'events', :action => 'index'
     map.calendar_month "/calendar/:year/:month", :controller => 'events', :action => 'index'
     map.calendar_day "/calendar/:year/:month/:mday", :controller => 'events', :action => 'index'
@@ -34,6 +33,7 @@ class EventCalendarExtension < Radiant::Extension
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
     UserActionObserver.instance.send :add_observer!, Calendar               # adds ownership and update hooks to the calendar data
+    EventsController.send :include, ResourcePagination
     Admin::ResourceController.send :include, ResourcePagination
     
     

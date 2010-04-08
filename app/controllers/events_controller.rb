@@ -1,36 +1,31 @@
-class EventsController < ApplicationController
+class EventsController < SiteController
   require 'rss/maker'
   require "uri"
-  include ResourcePagination
   
   helper_method :events, :continuing_events, :period, :calendars, :list_description
-  helper_method :url_for_date, :url_for_month, :url_without_period, :month_name, :short_month_name, :day_names
+  helper_method :url_for_date, :url_for_month, :url_without_period, :calendar_parameters, :month_name, :short_month_name, :day_names
   before_filter :numerical_parameters
   
-  radiant_layout { |controller| controller.layout_for :calendar }
+  radiant_layout { |controller| controller.layout_for :event_calendar }
   no_login_required
 
   # delivers designated lists of events in minimal formats
 
   def index
+    @seen_events = {}
     respond_to do |format|
-      format.html { }
+      format.html {
+        response.last_modified = events.map(&:created_at).max
+      }
       format.js {
-        # for mapping purposes events are clustered by venue
-        @venues = events.all.map(&:event_venue).uniq
-        @venue_events = {}
-        events.each do |e|
-          @venue_events[e.event_venue.id] ||= []
-          @venue_events[e.event_venue.id].push(e)
-        end
+        render :json => events.to_json
       }
       format.rss {
-        @title = Radiant::Config['event_calendar.feed_title'] || "#{Radiant::Config['admin.title']} Events"
-        @version = params[:rss_version] || '2.0'
-        @link = list_url
+        render :layout => false
       }
       format.ics {
-        headers["Content-disposition"] = %{attachment; filename="#{list_filename}.ics"}
+        headers["Content-disposition"] = %{attachment; filename="#{filename}.ics"}
+        render :layout => false
       }
     end
   end
@@ -62,22 +57,25 @@ class EventsController < ApplicationController
   end
   
   def events
-    return @events if @events
-    @events = Event.scoped
+    @events ||= event_finder.paginate(pagination_options)
+  end
+  
+  def event_finder
+    ef = Event.scoped
     if period
       if period.bounded?
-        @events = @events.between(period.start, period.finish) 
+        ef = ef.between(period.start, period.finish) 
       elsif period.start
-        @events = @events.after(period.start) 
+        ef = ef.after(period.start) 
       else
-        @events = @events.before(period.finish) 
+        ef = ef.before(period.finish) 
       end
     else
-      @events = @events.future
+      ef = ef.future
     end
-    @events = @events.approved if Radiant::Config['event_calendar.require_approval']
-    @events = @events.in_calendars(calendars) if calendars
-    @events = @events.paginate(pagination_options)
+    ef = ef.approved if Radiant::Config['event_calendar.require_approval']
+    ef = ef.in_calendars(calendars) if calendars
+    ef
   end
   
   def continuing_events
@@ -98,7 +96,7 @@ class EventsController < ApplicationController
   end
       
   def url_for_date(date)
-    url_for(url_parts.merge({
+    url_for(url_parts({
       :mday => date.mday,
       :month => month_name(date.month).downcase,
       :year => date.year
@@ -106,7 +104,7 @@ class EventsController < ApplicationController
   end
   
   def url_for_month(date)
-    url_for(url_parts.merge({
+    url_for(url_parts({
       :mday => nil,
       :month => month_name(date.month).downcase,
       :year => date.year
@@ -114,18 +112,35 @@ class EventsController < ApplicationController
   end
   
   def url_without_period
-    url_for(url_parts.merge({
+    url_for(url_parts({
       :mday => nil,
       :month => nil,
       :year => nil
     }))
   end
   
-  # this is a chain point for other extensions that add more ways to filter
-  # ie, to start with, taggable_events
+  def query_string
+    url_parts.map{|p| "#{p}=params[p]" }.join("&amp;")
+  end
   
-  def url_parts
-    params.slice(:year, :month, :mday, :category, :slug, :calendar_id)   # Hash#slice is defined in will_paginate/lib/core_ext
+  def filename
+    url_parts.map{|p| params[p] }.join("_")
+  end
+  
+  # this is broken down to provide chain points for other extensions that add more ways to filter
+  # eg, to start with, taggable_events
+
+  def calendar_parameters
+    url_parts
+  end
+  
+  def url_parts(amendments={})
+    parts = params.slice(*calendar_parameter_names)   # Hash#slice is defined in will_paginate/lib/core_ext
+    parts.merge(amendments)
+  end
+  
+  def calendar_parameter_names
+    [:year, :month, :mday, :category, :slug, :calendar_id]
   end
   
   def month_name(month)

@@ -11,7 +11,6 @@ module ResourcePagination
 protected
 
   def populate_pagination
-    Rails.logger.warn "!!  populate_pagination"
     @pagination_options = pagination_defaults.merge({
       :page => params.delete(:page),
       :per_page => params.delete(:per_page)

@@ -1,17 +1,9 @@
-- @seen_events = {}
-- @month_in_view = nil
-
 - content_for :title do
   - if period
     Events
     = list_description
   - else
     Events Calendar
-
-- content_for :views do
-  #view_control
-    %p
-      views
 
 - content_for :events do
   = render :partial => 'event', :collection => events
