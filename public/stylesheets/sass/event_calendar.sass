@@ -1,0 +1,203 @@
+!page = #fff
+!text = #000
+!pale = #999
+!pale = #ccc
+!verypale = #eee
+!link = #900
+!hover = #c00
+
+=functionalfonts
+  :font-family helvetica, arial, sans-serif
+  :letter-spacing -0.03em
+=blurred(!color=!verypale)
+  :text-shadow #{!color} 0 0 2px
+
+#events
+  .event
+    :position relative
+    :margin-bottom 20px
+    .dateholder
+      :position absolute
+      :left 15px
+      :top 2px
+      :padding 5px 5px 0 5px
+      :border 0
+      +functionalfonts
+      :text-align center
+      :line-height 1.05
+      :background-color = !page
+      :border
+        :style solid
+        :width 1px
+        :color = !verypale
+      span.month, span.dow 
+        :display block
+        :font-weight lighter
+        :font-size 80%
+        :text-transform uppercase
+      span.day, span.dom
+        :display block
+        :font-weight bold
+        :font-size 160%
+    .detail
+      h3
+        :margin 0
+        :font-size 180%
+      p 
+        :margin-top 0
+        :font-size 90%
+        :line-height 1.4
+      p.venue 
+        :font-style italic
+        :margin-bottom 6px
+      p.description 
+        :margin-bottom 16px
+
+#continuing
+  h3
+    +functionalfonts
+    :font-weight bold
+    :font-size 1.2em
+    :margin-bottom 0
+  ul
+    +functionalfonts
+    :font-size 90%
+    :line-height 1.2
+    :padding-left 0
+    li
+      :margin-top 10px
+      :font-style normal
+      a.title
+        :font-weight bold
+      span.detail
+        :font-size 80%
+
+#faceting  
+  a.defilter
+    :padding-left 14px
+    :background transparent url(/images/furniture/detag.png) no-repeat top left
+    :color #c00
+
+table.minimonth
+  +functionalfonts
+  :font-size 80%
+  :font-style normal
+  :border-collapse collapse
+  :border
+    :style solid
+    :width 1px
+    :color = !verypale
+  :color = !text
+  :margin 5px 0
+  a 
+    :display block
+    :color = !link
+    :font-weight lighter
+    :text-decoration none
+  a:hover 
+    :background-color = !hover
+    :color = !page
+  th, td 
+    :font-weight normal
+    :border
+      :style solid
+      :width 1px
+      :color = !verypale
+    :vertical-align top
+    :text-align center
+    :height 30px
+    :width 28px
+    :line-height 30px
+    :padding 0
+    :overflow hidden
+  th.month_link 
+    :font-size 120%
+  th.day_name 
+    :color = !verypale
+  td.other_month 
+    :color = !pale
+    a 
+      :color = !pale
+    a:hover
+      :color = !page
+  td.today
+    :background-color = !page
+  td.eventful
+  td.uneventful
+    +blurred
+    :color = !verypale
+  td.today 
+    :font-weight bold
+  td.past
+    :opacity 0.75
+
+p.help
+  +functionalfonts
+  :color = !pale
+  :font-size 80%
+
+#view_control
+  p
+    +functionalfonts
+    :color = !paler
+    :margin 0 0 10px 0
+    :line-height 30px
+    :height 25px
+    :overflow hidden
+    :font
+      :size 80%
+    a 
+      :color = !pale
+      :padding-top 4px
+    a.fg 
+      :color = !text
+    a:hover
+      :color = !hover
+  p.views
+    :font-size 100%
+    a.map
+      :padding 7px 3px 3px 17px
+      :background transparent url(/images/event_calendar/maplinkbg.png) no-repeat top left      
+    a.calendar
+      :padding 7px 3px 3px 20px
+      :background transparent url(/images/event_calendar/calendarlinkbg.png) no-repeat top left      
+  p.feeds
+    a.rss, a.ical
+      :padding 3px 3px 3px 17px
+      :height 24px
+    a.rss
+      :background transparent url(/images/icons/rss.png) no-repeat top left
+    a.ical
+      :background transparent url(/images/icons/ical.png) no-repeat top left
+
+div.pagination 
+  +functionalfonts
+  :color = !text
+  :line-height 2
+  :margin-top 50px
+  :margin-bottom 20px
+  a, span.current, span.disabled
+    :padding 6px 7px 3px 7px
+    :border
+      :style solid
+      :width 1px
+      :color = !link
+  a:hover
+    :border-color = !hover
+  .next_page, .prev_page
+  span.current 
+    :color = !text
+    :font-weight bold
+    :border-color = !text
+  span.separator
+    :visibility hidden
+  span.disabled 
+    :display none
+    :color = !verypale
+    :border-color = !verypale
+    +blurred
+  span.summary 
+    :padding 6px
+    :font-size 75%
+    :color = !verypale
+    :margin-left 10px
