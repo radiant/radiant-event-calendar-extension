@@ -65,6 +65,8 @@ class Event < ActiveRecord::Base
     { :conditions => ['(start_date < :finish AND end_date > :start) OR (end_date IS NULL AND start_date > :start AND start_date < :finish)', {:start => start, :finish => finish}] }
   }
 
+  named_scope :by_end_date,  { :order => "end_date ASC" }
+
   def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
     finish = Time.now
     start = finish - period
@@ -189,6 +191,10 @@ class Event < ActiveRecord::Base
 
   def end_time
     end_date.to_datetime.strftime(end_date.min == 0 ? round_time_format : time_format).downcase if end_date
+  end
+  
+  def last_day
+    end_date.to_datetime.strftime(date_format)if end_date
   end
   
   def duration

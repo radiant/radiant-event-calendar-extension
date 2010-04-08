@@ -69,31 +69,7 @@ module EventCalendarTags
     end
     result
   end
-  
-  tag "if_continuing_events" do | tag|
-    tag.expand if get_continuing_events(tag).any?
-  end
-  
-  tag "unless_continuing_events" do | tag|
-    tag.expand unless get_continuing_events(tag).any?
-  end
-  
-  tag "continuing_events" do |tag|
-    tag.locals.events = get_continuing_events(tag)
-    tag.expand
-  end
-
-  tag "continuing_events:each" do |tag|
-    result = []
-    tag.locals.previous_headers = {}
-    tag.locals.events.each do |event|
-      tag.locals.event = event
-      tag.locals.calendar = event.calendar
-      result << tag.expand
-    end
-    result
-  end
-  
+    
   tag "if_events" do | tag|
     tag.locals.events ||= get_events(tag)
     tag.expand if tag.locals.events.any?
@@ -149,123 +125,6 @@ module EventCalendarTags
     result
   end
 
-  desc %{
-    Displays a standard pagination block for the presently defined event list. Will_paginate's @class@, @previous_label@,
-    @next_label@, @inner_window@, @outer_window@, and @separator@ attributes are passed through.
-
-    *Usage:* 
-    <pre><code><r:events:pagination /></code></pre>
-  }
-  tag "events:pagination" do |tag|
-    options = {}
-    result = []
-    entry_name = tag.attr['entry_name'] || 'item'
-    [:class, :previous_label, :next_label, :inner_window, :outer_window, :separator, :per_page].each do |a|
-      options[a] = tag.attr[a.to_s] unless tag.attr[a.to_s].blank?
-    end
-    result << %{<div class="pagination">}
-    result << will_paginate(tag.locals.events, options.merge(:renderer => Radiant::LinkRenderer.new(tag), :container => false))
-    if tag.attr['with_summary'] != "false"
-      result << %{<span class="summary">}
-      result << page_entries_info(tag.locals.events, :entry_name => entry_name)         
-      result << %{</span>}
-    end
-    result << %{</div>}
-    result
-  end
-  
-  desc %{
-    Expands only if there are other pages to show.
-
-    *Usage:* 
-    <pre><code><r:events:if_paginated><h3>Pages</h3><r:events:pagination /></r:events:if_paginated></code></pre>
-  }
-  tag "events:if_paginated" do |tag|
-    tag.expand if tag.locals.events.any? && (tag.locals.events.next_page || tag.locals.events.previous_page)
-  end
-  
-  desc %{
-    Renders a friendly description of the period currently being displayed and any other filters that have been applied.
-    Supply `paginated="false"` if you want to omit the pagination line, eg. because you know that the main listing is 
-    not paginated either.
-
-    *Usage:* 
-    <pre><code><r:events:summary [pageinated="true"]/></code></pre>
-  }
-  tag "events:summary" do |tag|
-    use_pagination = tag.attr['paginated'] != "false"
-    tag.locals.events ||= get_events(tag, use_pagination)
-    total_events = use_pagination ? tag.locals.events.total_entries : tag.locals.events.length
-    paginated = use_pagination && (tag.locals.events.next_page || tag.locals.events.previous_page)
-    filters = filters_applied(tag)
-    html = %{<p class="list_summary">}
-    html << %{Showing #{total_events} #{pluralize(total_events, "event")} #{filters.join(" ")}} if filters.any?
-    html << %{<br />} if paginated && filters.any?
-    if paginated
-      html << %{<a href="#{tag.locals.page.url(:page => tag.locals.events.previous_page)}">&laquo; Previous</a> &middot; } if tag.locals.events.previous_page
-      html << %{Page #{tag.locals.events.current_page} of #{tag.locals.events.total_pages}}
-      html << %{ &middot; <a href="#{tag.locals.page.url(:page => tag.locals.events.next_page)}">Next &raquo;</a>} if tag.locals.events.next_page
-    end
-    html << %{</p>}
-    html
-  end
-
-  desc %{
-    Renders a partially modified link to the current set of events. 
-    Supply a part to override it: all other parts will be carried over.
-    Only works on a calendar page.
-
-    *Usage:* 
-    <pre><code>
-    <r:events:link stem="/map">These events on a map</r:events:link>  (applies the present set of filters to a different page)
-    <r:events:link year="2011" month="">All events in 2011</r:events:link>
-    <r:events:link month="3" year="2010">All events next march</r:events:link>
-    <r:events:link slug="public">All events next march</r:events:link>
-    </code></pre>
-  }
-
-  tag "events:link" do |tag|
-    options = tag.attr.dup
-    overrides = {}
-    url_parts.keys.each do |part|
-      overrides[part] = tag.attr[part.to_s] unless tag.attr[part.to_s].nil?
-    end
-    text = tag.double? ? tag.expand : "link"
-    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
-    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    
-    logger.warn ">>  events:link: overrides are #{overrides.inspect}"
-    
-    %{<a href="#{tag.locals.page.url(overrides)}#{anchor}" #{attributes}>#{text}</a>}
-  end
-
-  desc %{
-    Renders a feed link that will continue to apply the rules that have been applied to 
-    get events for this page. Periods, calendars, tags (if you're using them) and other
-    filters that apply to the page carrying the link will also apply to the feed.
-
-    *Usage:* 
-    <pre><code>
-    <r:events:feedlink format="rss" />
-    <r:events:feedlink format="ics" protocal="webcal" />
-    </code></pre>
-  }
-
-  tag "events:feedlink" do |tag|
-    options = tag.attr.dup
-    format = options.delete('format') || 'rss'
-    protocol = options.delete('protocol') || request.protocol
-    protocol += "://" unless protocol.match /\:\/\/$/
-    parameters = url_parts
-    parameters.delete(:path)
-    parameters[:format] = format.to_sym
-    parameters[:host] = request.host
-    parameters[:protocol] = protocol
-    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    url = events_url(parameters)
-    text = tag.double? ? tag.expand : format
-    %{<a href="#{url}" #{attributes}>#{text}</a>}
-  end
 
   #### Calendars:* tags
   #### iterate over the set of calendars
@@ -530,7 +389,7 @@ module EventCalendarTags
 
   desc %{ 
     If the event has a url, renders a link to that address around the title of the event. If not, just the title without a link.
-    As usual, if the tag is double the contents are used instead, and any other attributes are passed through to the link tag.
+    As usual, if the tag is double the contents are placed within the link, and any other attributes are passed through to the link tag.
 
     Usage:
     <pre><code>
@@ -719,15 +578,7 @@ module EventCalendarTags
     <pre><code><r:event:period [format=""] [separator=""] /></code></pre>
   }
   tag "event:period" do |tag|
-    format = tag.attr['format'] || "%H:%M"
-    separator = tag.attr['separator'] || "-"
-    if tag.locals.event.all_day?
-      result = "all day"
-    elsif tag.locals.event.start_date.strftime("%x") == tag.locals.event.end_date.strftime("%x")
-      result = tag.locals.event.start_date.strftime(format)
-    else
-      result = tag.locals.event.start_date.strftime(tagformat) << separator << tag.locals.event.end_date.strftime(format)
-    end
+    tag.locals.event.summarise_period
   end
 
   desc %{ 
@@ -768,12 +619,9 @@ module EventCalendarTags
       <div class="datemark"><span class="month">#{Date::ABBR_MONTHNAMES[date.month]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
     }
   end
-    
-  
-  # calendar month blocks large and small. need some drying.
   
   desc %{ 
-    Renders a minimal calendar table for a single month. Like all events: tags, if no period is specified, it defaults to the present month. 
+    Renders a little calendar table for a single month. Like all events: tags, if no period is specified, it defaults to the present month. 
     Usually you'll want to specify month and year attributes. An EventCalendar page will also obey month and year request parameters.
     If a period is specified longer than a month, we just render the first month: in that case you might want to use r:events:months to get several displayed at once.
     
@@ -914,26 +762,6 @@ module EventCalendarTags
     end
     cal << %{</tbody></table>}
     cal
-  end
-  
-  tag "calendar_periods" do |tag|
-    html = "<ul>"
-    stack = Event.as_months
-    stack.keys.sort.each do |year|
-      Date::MONTHNAMES.each do |month|
-        html << %{<li><strong><a href="#{tag.locals.page.url(:year => year, :month => month)}">#{month} #{year}</a></strong> #{stack[year][month].length} events</li>} if stack[year][month] && stack[year][month].any?
-      end
-    end
-    html << "</ul>"
-    html
-  end
-  
-  tag "requested_month" do |tag|
-    Date::MONTHNAMES[calendar_month.to_i] if respond_to?(:calendar_month) && calendar_month
-  end
-  
-  tag "requested_year" do |tag|
-    calendar_year if respond_to?(:calendar_year) && calendar_year
   end
   
 private
@@ -1084,22 +912,6 @@ private
     ef = ef.approved if Radiant::Config['event_calendar.require_approval']
     ef = ef.in_calendars(tag.locals.calendars) if tag.locals.calendars
     ef
-  end
-
-  def get_continuing_events(tag, paginate=false)
-    Ical.check_refreshments
-    tag.locals.period ||= set_period(tag)
-    tag.locals.calendars ||= set_calendars(tag)
-    ef = Event.unfinished(tag.locals.period.start)
-    ef = ef.approved if Radiant::Config['event_calendar.require_approval']
-    ef = ef.in_calendars(tag.locals.calendars) if tag.locals.calendars
-    tag.attr[:by] ||= 'title'
-    tag.attr[:order] ||= 'asc'
-    if paginate
-      ef.paginate(standard_find_options(tag).merge(pagination))
-    else
-      ef.find(:all, standard_find_options(tag))
-    end
   end
 
   def get_calendar(tag)

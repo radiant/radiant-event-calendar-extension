@@ -15,10 +15,9 @@ class EventCalendarExtension < Radiant::Extension
     end
     # map.resources :events, :only => :index, :path_prefix => 'calendar'
     map.calendar "/calendar", :controller => 'events', :action => 'index'
-    map.events "/calendar/events", :controller => 'events', :action => 'index'
-    map.events "/calendar/events/:year", :controller => 'events', :action => 'index'
-    map.events "/calendar/events/:year/:month", :controller => 'events', :action => 'index'
-    map.events "/calendar/events/:year/:month/:day", :controller => 'events', :action => 'index'
+    map.calendar_year "/calendar/:year", :controller => 'events', :action => 'index'
+    map.calendar_month "/calendar/:year/:month", :controller => 'events', :action => 'index'
+    map.calendar_day "/calendar/:year/:month/:mday", :controller => 'events', :action => 'index'
   end
   
   extension_config do |config|

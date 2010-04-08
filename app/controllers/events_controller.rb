@@ -2,7 +2,9 @@ class EventsController < ApplicationController
   require 'rss/maker'
   require "uri"
   helper_method :events, :continuing_events, :period, :calendars, :list_description
-
+  helper_method :url_for_date, :url_for_month, :url_without_period, :month_name, :short_month_name, :day_names
+  before_filter :numerical_parameters
+  
   radiant_layout { |controller| controller.layout_for :calendar }
   no_login_required
 
@@ -34,8 +36,8 @@ class EventsController < ApplicationController
   def period
     return @period if @period
     this = Date.today
-    if params[:day]
-      start = Date.civil(params[:year] || this.year, params[:month] || this.month, params[:day])
+    if params[:mday]
+      start = Date.civil(params[:year] || this.year, params[:month] || this.month, params[:mday])
       @period = CalendarPeriod.between(start, start.to_datetime.end_of_day)
     elsif params[:month]
       start = Date.civil(params[:year] || this.year, params[:month])
@@ -79,9 +81,9 @@ class EventsController < ApplicationController
   def continuing_events
     return @continuing_events if @continuing_events
     if period && period.start
-      @continuing_events = Event.unfinished(period.start)
+      @continuing_events = Event.unfinished(period.start).by_end_date
     else
-      @continuing_events = []
+      @continuing_events = Event.unfinished(Time.now).by_end_date
     end
   end
   
@@ -90,39 +92,78 @@ class EventsController < ApplicationController
     parts = []
     parts << period.description if period
     parts << "in #{calendars.to_sentence}" if calendars
-    @description = parts.any? ? parts.join(' ') : "All future events"
+    @description = parts
   end
-  
-  def list_url
-    host = request.host
-    path = list_path
-    URI::HTTP.build(:host => request.host, :path => path.join('/'))
-  end
-  
-  def list_path
-    path = []
-    path << Radiant::Config['event_calendar.calendar_page'] || "calendar"
-    [:category, :slug, :year, :month].each do |p|
-      path << params[p] unless params[p].blank?
-    end
-    path
-  end
-  
-  def list_filename
-    prefix = Radiant::Config['event_calendar.filename_prefix'] || "events"
-    name = [prefix]
-    [:category, :slug, :year, :month].each do |p|
-      name << params[p] unless params[p].blank?
-    end
-    name.join('_')
-  end
-  
+      
   def url_for_date(date)
-    
+    url_for(url_parts.merge({
+      :mday => date.mday,
+      :month => month_name(date.month).downcase,
+      :year => date.year
+    }))
   end
   
   def url_for_month(date)
-    
+    url_for(url_parts.merge({
+      :mday => nil,
+      :month => month_name(date.month).downcase,
+      :year => date.year
+    }))
+  end
+  
+  def url_without_period
+    url_for(url_parts.merge({
+      :mday => nil,
+      :month => nil,
+      :year => nil
+    }))
+  end
+  
+  # this is a chain point for other extensions that add more ways to filter
+  # ie, to start with, taggable_events
+  
+  def url_parts
+    params.slice(:year, :month, :mday, :category, :slug, :calendar_id)   # Hash#slice is defined in will_paginate/lib/core_ext
+  end
+  
+  def month_name(month)
+    month_names[month]
+  end
+  
+  def short_month_name(month)
+    short_month_names[month]
+  end
+  
+  def day_names
+    return @day_names if @day_names
+    @day_names ||= Date::DAYNAMES.dup
+    @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.  
+    @day_names
+  end
+  
+protected
+  
+  def short_month_names
+    @short_month_names ||= Date::ABBR_MONTHNAMES.dup
+  end
+  
+  def month_names
+    @month_names ||= Date::MONTHNAMES.dup
+  end
+  
+  # months can be passed around either as names or numbers
+  # any date part can be 'now' or 'next' for ease of linking
+  # and everything is converted to_i to save clutter later
+  
+  def numerical_parameters
+    if params[:month] && month_names.include?(params[:month].titlecase)
+      params[:month] = month_names.index(params[:month].titlecase)
+    end
+    [:year, :month, :mday].select{|p| params[p] }.each do |p|
+      params[p] = Date.today.send(p) if params[p] == 'now'
+      params[p] = (Date.today + 1.send(p == :mday ? :day : p)).send(p) if params[p] == 'next'
+      params[p] = params[p].to_i
+    end
   end
   
 end

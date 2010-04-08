@@ -2,7 +2,7 @@
   - if events = @venue_events[venue.id]
     .map_venue
       - if events.length == 1
-        = render :partial => 'event', :object => events.first
+        = render :partial => 'map_event', :object => events.first
       - else
         %h3
           Events at

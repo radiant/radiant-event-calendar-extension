@@ -1,20 +1,26 @@
-- without_title ||= false
+- no_date ||= false
 
 - if event
-  .map_event
-    - unless without_title
-      %h3.event
+  - event_master_id = event.master_id || event.id
+  - repeating = true if @seen_events[event_master_id]
+  - @seen_events[event_master_id] = true;
+
+  .event
+    - unless no_date
+      .dateholder
+        %span.month
+          = event.short_month
+        %span.dom
+          = event.mday
+    .detail
+      %h3
         = link_to event.title, event.url
-  
-    %p.date
-      %strong
+      %p.venue
         = event.summarise_period
         - if event.event_venue
-          at 
+          %br
           = link_to event.event_venue.title, event.event_venue.url
-        - else
-          at
-          = event.location
+          = event.event_venue.address
 
-    %p.description
-      = event.short_description
+      - unless repeating
+        = event.description_paragraph
