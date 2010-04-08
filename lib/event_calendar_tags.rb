@@ -885,18 +885,14 @@ private
   # combines all the scopes that have been set 
   # and returns a list of events
   
-  def get_events(tag, paginate=true)
+  def get_events(tag)
     Ical.check_refreshments
     tag.locals.period ||= set_period(tag)
     tag.locals.calendars ||= set_calendars(tag)
     ef = event_finder(tag)
     tag.attr[:by] ||= 'start_date'
     tag.attr[:order] ||= 'asc'
-    if paginate
-      ef.paginate(standard_find_options(tag).merge(pagination))
-    else
-      ef.find(:all, standard_find_options(tag))
-    end
+    ef.find(:all, standard_find_options(tag))
   end
   
   # other extensions - eg taggable_events - will chain the event_finder to add more scopes

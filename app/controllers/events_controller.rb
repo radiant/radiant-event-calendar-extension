@@ -1,6 +1,8 @@
 class EventsController < ApplicationController
   require 'rss/maker'
   require "uri"
+  include ResourcePagination
+  
   helper_method :events, :continuing_events, :period, :calendars, :list_description
   helper_method :url_for_date, :url_for_month, :url_without_period, :month_name, :short_month_name, :day_names
   before_filter :numerical_parameters
@@ -75,7 +77,7 @@ class EventsController < ApplicationController
     end
     @events = @events.approved if Radiant::Config['event_calendar.require_approval']
     @events = @events.in_calendars(calendars) if calendars
-    @events = @events.paginate(pagination)
+    @events = @events.paginate(pagination_options)
   end
   
   def continuing_events
@@ -139,6 +141,18 @@ class EventsController < ApplicationController
     @day_names ||= Date::DAYNAMES.dup
     @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.  
     @day_names
+  end
+  
+  def layout_for(area = :event_calendar)
+    if defined? Site && current_site && current_site.respond_to?(:layout_for)
+      current_site.layout_for(area)
+    elsif area_layout = Radiant::Config["#{area}.layout"]
+      area_layout
+    elsif main_layout = Layout.find_by_name('Main')
+      main_layout.name
+    elsif any_layout = Layout.first
+      any_layout.name
+    end
   end
   
 protected
