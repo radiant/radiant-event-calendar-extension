@@ -145,11 +145,11 @@ For clickable thumbnails of coming months.
 
 ## Notes
 
-This is developing quite quickly at the moment but it's in production use on a couple of small sites and seems stable enough.
+This is developing quite quickly at the moment but it's in production use on one big and several small sites. If there are bugs they will be fixed immediately.
 
 ### Compatibility
 
-I've tested this with Darwin Calendar Server (on Ubuntu), with Google Calendar and with feeds published from iCal on a mac. It work just as well with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities.
+I've tested this with Darwin Calendar Server (on Ubuntu), with Google Calendar and with feeds published from iCal on a mac. It should work just as well with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities.
 
 ### Connecting to Google Calendar
 
@@ -159,7 +159,7 @@ Click on 'calendar settings' from the drop-down menu next to the name of the pub
 
 ### Connecting to CalDAV
 
-We aren't really doing CalDAV properly here, but taking advantage of a compatibility with the simpler ical standard. A simple GET to addresses under /calendar will return a file in ical format, which is what we get and parse. As a passive display client, that's all we need, but it does mean that so far we can't display groups properly, or interact with principals, or take proper advantage of the more collaborative functions of CalDAV.
+We aren't really doing CalDAV properly here, but taking advantage of its compatibility with the simpler ical standard. A simple GET to addresses under /calendar will return a file in ical format, which is what we get and parse. As a passive display client, that's all we need, but it does mean that so far we can't display groups properly, or interact with principals, or take proper advantage of the more collaborative functions of CalDAV.
 
 The address for your calendar will either look like this:
 
@@ -203,9 +203,7 @@ OS X 10.6 promises to handle all this a lot better. On Windows you're pretty muc
 
 ## Author & Copyright
 
-Originally created by Loren Johnson: see www.hellovenado.com
-
-Currently maintained by spanner. Contact Will on will at spanner.org or through github.
+Originally created by Loren Johnson - see www.hellovenado.com - and then taken over by the radiant team. Currently maintained by Will at spanner.org.
 
 Released under the same terms as Radiant and/or Rails.
 
