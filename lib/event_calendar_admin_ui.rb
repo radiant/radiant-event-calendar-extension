@@ -45,8 +45,8 @@ module EventCalendarAdminUI
           end
           event.index = Radiant::AdminUI::RegionSet.new do |index|
             index.top.concat %w{help_text}
-            index.thead.concat %w{date_header title_header time_header location_header modify_header}
-            index.tbody.concat %w{date_cell title_cell time_cell location_cell modify_cell}
+            index.thead.concat %w{date_header title_header calendar_header time_header location_header modify_header}
+            index.tbody.concat %w{date_cell title_cell calendar_cell time_cell location_cell modify_cell}
             index.bottom.concat %w{buttons}
           end
           event.remove = event.index

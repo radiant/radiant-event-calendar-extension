@@ -1,4 +1,4 @@
-- include_stylesheet 'admin/calendar'
+- include_stylesheet 'admin/event_calendar'
 = render_region :top 
 
 #calendars_table.outset
@@ -53,5 +53,6 @@
 - render_region :bottom do |bottom|
   - bottom.buttons do
     #actions
+      = will_paginate @calendars
       %ul
         %li= link_to image('plus') + " " + "new calendar", new_admin_calendar_url

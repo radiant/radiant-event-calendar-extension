@@ -37,8 +37,12 @@
             = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
             = f.label :description, "Description"
             = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
-          %p.asset
-            an image-chooser will appear here.
+          %p.calendar
+            = f.label :calendar_id, "Calendar"
+            = f.select :calendar_id, Calendar.all.map {|c| [c.name, c.id]}, {:include_blank => true}, :class => 'textbox'
+            %span.note
+              This is optional but can be used to mix local events into a subscribed calendar.
+              
       - form.edit_date do
         .date
           %p.start_date

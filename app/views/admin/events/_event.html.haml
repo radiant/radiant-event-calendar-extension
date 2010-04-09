@@ -27,6 +27,9 @@
             %strong
               tags: 
             = event.keywords
+    - tbody.calendar_cell do
+      %td.calendar
+        = link_to event.calendar.name, admin_calendar_url(event.calendar) if event.calendar
     - tbody.time_cell do
       %td.time
         = event.summarize_period
