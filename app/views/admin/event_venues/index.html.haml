@@ -32,5 +32,7 @@
 
 - render_region :bottom do |bottom|
   - bottom.buttons do
-    %p
-      = link_to image('new-venue', :alt => 'New Location'), new_admin_event_venue_url
+    #actions
+      = will_paginate @event_venues
+      %ul
+        %li= link_to image('plus') + " " + "new venue", new_admin_event_venue_url

@@ -1,3 +1,10 @@
+- include_stylesheet "admin/event_calendar"
+- include_javascript "admin/event_calendar"
+- if defined? TinyMceFilter
+  - include_javascript "tiny_mce/tiny_mce"
+  - include_javascript "tiny_mce/tiny_mce_settings"
+  - include_javascript "tiny_mce/application"
+
 - or_choose ||= false
 - event_venue ||= EventVenue.new
 
@@ -28,7 +35,7 @@
   = f.label :postcode, "Postcode or grid reference"
   = f.text_field :postcode, :class => 'textbox place'
   %span.note
-    This will not be displayed: it's used to place your event on the map and to let people know how far away it is.
+    This is only required if your address is unusual or you want these events to show on a map in a particular place.
 
 %p.venue_description
   = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => "toggle[event_venue_#{event_venue.id}_description]"
