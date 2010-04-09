@@ -221,7 +221,7 @@ class Event < ActiveRecord::Base
     end
   end
   
-  def summarise_period
+  def summarize_period
     period = []
     if one_day?
       period << "all day on #{date}"

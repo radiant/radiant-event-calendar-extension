@@ -29,10 +29,7 @@
             = event.keywords
     - tbody.time_cell do
       %td.time
-        = event.starts
-        - if event.end_date
-          to
-          = event.finishes
+        = event.summarize_period
     - tbody.location_cell do
       %td.location
         = event.location
