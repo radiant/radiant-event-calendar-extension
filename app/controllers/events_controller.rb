@@ -15,6 +15,12 @@ class EventsController < SiteController
     @seen_events = {}
     respond_to do |format|
       format.html {
+        if Radiant::Config['event_calendar:cached?']
+          timeout = Radiant::Config['event_calendar:cache_timeout'] || self.class.cache_timeout
+          expires_in timeout.to_i, :public => true, :private => false
+        else
+          expires_now
+        end
       }
       format.js {
         render :json => events.to_json

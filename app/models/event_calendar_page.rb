@@ -12,8 +12,7 @@ class EventCalendarPage < Page
   end
 
   def cache?
-    # true
-    ENV['RAILS_ENV'] == 'production'
+    true
   end
 
   def find_by_url(url, live = true, clean = false)
