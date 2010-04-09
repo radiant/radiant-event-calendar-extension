@@ -651,7 +651,7 @@ module EventCalendarTags
     <pre><code><r:event:period [format=""] [separator=""] /></code></pre>
   }
   tag "event:period" do |tag|
-    tag.locals.event.summarise_period
+    tag.locals.event.summarize_period
   end
 
   desc %{ 
