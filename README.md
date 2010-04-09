@@ -38,12 +38,14 @@ Should be straightforward:
 
 ## Configuration
 
-There are only a few config settings:
+There are a few optional config settings:
 
 * `event_calendar.icals_path` is the directory (under /public/) holding the calendar subscription files. Default is `icals`.
 * `event_calendar.default_refresh_interval` is the period, in seconds, after which the calendar subscriptions are refreshed. Default is one hour. Set to zero to refresh only in the admin interface. 
 * `event_calendar.layout` is the name of the layout that EventsController will use (see below)
 * `event_calendar.filename_prefix` is an optional prefix for ics filenames
+* `event_calendar.cached?` determines whether the EventsController pages are cached by Rack::Cache. EventCalendarPages are always cached like other pages.
+* `event_calendar.cache_duration` determines for how long.
 
 Each calendar subscription will have its own address and authentication settings.
 
