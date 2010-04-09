@@ -1,0 +1,43 @@
+- date ||= Date.today
+- month = date.month
+- month_events = Event.coincident_with(date.beginning_of_month, date.end_of_month)
+
+- first_shown = date.beginning_of_month.beginning_of_week
+- last_shown = date.end_of_month.end_of_week
+- before = date.beginning_of_month - 1.day
+- after = date.end_of_month + 1.day
+
+%table.minimonth
+  %thead
+    %tr
+      %th.month_link
+        = link_to '&lt;', url_for_month(before), :title => "#{month_name(before.month)} #{before.year}"
+      %th.month_link{:colspan => 5}
+        = link_to_unless_current month_name(month), url_for_month(date)
+      %th.month_link
+        = link_to '&gt;', url_for_month(after), :title => "#{month_name(after.month)} #{after.year}"
+    %tr
+      - day_names.each do |d|
+        %th.day_name{:scope => 'col'}
+          = d.first
+  %tbody
+    - weeks = {}
+    - first_shown.upto(last_shown) do |day|
+      - events_today = month_events.select{ |e| e.start_date <= day + 1.day && (e.end_date.nil? || e.end_date >= day) }
+      - cell_class = "day"
+      - cell_class += " other_month" if day.month != date.month
+      - cell_class += " today" if day == ::Date.current
+      - if events_today.any?
+        - cell_class += " eventful"
+        - date_label = %{<a href="#{url_for_date(day)}">#{day.mday}</a>}
+      - else
+        - cell_class += " uneventful"
+        - date_label = day.mday
+      - weeks[day.cweek] ||= []
+      - weeks[day.cweek].push({:class => cell_class, :label => date_label})
+
+    - weeks.sort.each do |week, weekdays|
+      %tr
+        - weekdays.each do |d|
+          %td{:class => d[:class]}
+            = d[:label]

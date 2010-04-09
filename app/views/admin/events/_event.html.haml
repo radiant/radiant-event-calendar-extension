@@ -1,6 +1,8 @@
 - master_event = event.occurrence? ? event.master : event
+- cssclass = "node level-1"
+- cssclass << " continuing" if event.continuing?
 
-%tr{:class => ".node.level-1"}
+%tr{:class => cssclass}
   - render_region :tbody do |tbody|
     - tbody.date_cell do
       %td.datemark
@@ -37,6 +39,7 @@
     - tbody.modify_cell do
       %td.remove
         - if event.editable?
-          = link_to image('remove', :alt => 'Remove event'), remove_admin_event_url(event)
+          = link_to "remove", remove_admin_event_url(event)
         - else
-          = image('no-remove', :alt => 'Subscribed event is not removable')
+          %span.note
+            not editable

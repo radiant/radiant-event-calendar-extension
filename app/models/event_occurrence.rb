@@ -4,7 +4,7 @@ class EventOccurrence < ActiveRecord::Base
   belongs_to :calendar          # for efficient retrieval
   belongs_to :event_venue       # we can just grab occurrences
   
-  is_site_scoped if respond_to? :is_site_scoped
+  has_site if respond_to? :has_site
 
   delegate :title, :description, :location, :postcode, :url, :keywords, :contact, :all_day, :one_day?, :within_day?, :to => :event
 

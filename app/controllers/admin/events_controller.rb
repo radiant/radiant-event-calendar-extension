@@ -1,7 +1,8 @@
 class Admin::EventsController < Admin::ResourceController
 
   def load_models
-    self.models = params[:all] ? Event.all : Event.future
+    finder = params[:all] ? Event.all : Event.future_and_current
+    self.models = finder.paginate(pagination_options)
   end
 
 end

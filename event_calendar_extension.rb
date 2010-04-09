@@ -1,6 +1,6 @@
 class EventCalendarExtension < Radiant::Extension
-  version "0.83"
-  description "An event calendar extension which draws events from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
+  version "0.91"
+  description "An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
   url "http://radiant.spanner.org/event_calendar"
 
   EXT_ROOT = '/admin/event_calendar'
@@ -13,7 +13,10 @@ class EventCalendarExtension < Radiant::Extension
       cal.resources :event_venues, :member => {:remove => :post}
       cal.calendars_home '/', :controller => 'events', :action => 'index'
     end
-    map.resources :events, :only => :index, :path_prefix => 'calendar'
+    map.calendar "/calendar.:format", :controller => 'events', :action => 'index'
+    map.calendar_year "/calendar/:year", :controller => 'events', :action => 'index'
+    map.calendar_month "/calendar/:year/:month", :controller => 'events', :action => 'index'
+    map.calendar_day "/calendar/:year/:month/:mday", :controller => 'events', :action => 'index'
   end
   
   extension_config do |config|
@@ -24,15 +27,15 @@ class EventCalendarExtension < Radiant::Extension
   end
   
   def activate
-    # Mime::Type.register "text/calendar", :ics
-
-    CalendarPeriod                                                          # a handy way of describing the window in time that we want to display
+    CalendarPeriod                                                          # defines the window in time that we want to display
     EventCalendarPage                                                       # the main calendar viewer: takes period, chooses events, shows page
-    PaginationLinkRenderer                                                  # removes all the viewhelper calls from the pagination so that it works in a model
+    Radiant::LinkRenderer                                                   # removes all the viewhelper calls from the pagination so that it works in a model
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events
-    ApplicationController.send :include, ApplicationControllerExtensions    # adds exclude_stylesheet and exclude_javascript
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
     UserActionObserver.instance.send :add_observer!, Calendar               # adds ownership and update hooks to the calendar data
+    EventsController.send :include, ResourcePagination
+    Admin::ResourceController.send :include, ResourcePagination
+    
     
     if Radiant::Config.table_exists? && !Radiant::Config["event_calendar.icals_path"]
       Radiant::Config["event_calendar.icals_path"] = "icals"
@@ -47,16 +50,11 @@ class EventCalendarExtension < Radiant::Extension
     
     if respond_to?(:tab)
       tab("Content") do
-        add_item("Calendar", EXT_ROOT)
+        add_item("Events", EXT_ROOT)
+        add_item("Calendars", EXT_ROOT + '/calendars')
       end
     else
       admin.tabs.add "Calendar", EXT_ROOT, :after => "Snippets", :visibility => [:all]
-      if admin.tabs["Calendar"].respond_to?(:add_link)   # that is, if the submenu extension is installed
-        admin.tabs["Calendar"].add_link "events", EXT_ROOT
-        admin.tabs["Calendar"].add_link "calendars", EXT_ROOT + "/calendars"
-        admin.tabs["Calendar"].add_link "places", EXT_ROOT + "/event_venues"
-        admin.tabs["Calendar"].add_link "refresh subscriptions", EXT_ROOT + "/icals/refresh_all"
-      end
     end
 
   end

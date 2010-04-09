@@ -1,0 +1,55 @@
+- content_for :title do
+  - if period
+    Events
+    = list_description
+  - else
+    Events Calendar
+
+- content_for :events do
+  = render :partial => 'event', :collection => events
+
+  - if events.length < 5 && continuing_events.any?
+    - if events.any?
+      %h2.listheader
+        Continuing events
+    = render :partial => 'event', :collection => continuing_events
+
+  - if events.empty? && continuing_events.empty?
+    - if period
+      %h2
+        Sorry: there are no events
+        = render :partial => 'events/defacet'
+    - else
+      %h2
+        Sorry: there are no events coming up
+        
+- content_for :continuing_events do
+  - if continuing_events.any? && events.length >= 5
+    #continuing
+      %h3
+        Continuing events
+      %ul
+        - continuing_events.each do |event|
+          %li
+            = link_to event.title, event.url, :class => 'title'
+            %span.detail
+              runs until 
+              = event.last_day
+              at
+              = link_to event.event_venue.title, event.event_venue.url
+
+- content_for :calendar do
+  #calendar
+    = render :partial => "events/minicalendar", :locals => {:date => period ? period.start : Date.today}
+
+- content_for :pagination do
+  - if events.next_page || events.previous_page
+    .pagination
+      = will_paginate(events, :container => false)
+      %span.summary
+        = page_entries_info(events, :entry_name => 'event')
+
+- content_for :faceting do
+  = render :partial => 'faceting'
+
+= render :partial => 'other_page_parts'

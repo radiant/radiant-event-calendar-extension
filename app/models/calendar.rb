@@ -3,7 +3,7 @@ class Calendar < ActiveRecord::Base
   has_many :events, :dependent => :destroy
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  is_site_scoped if respond_to? :is_site_scoped
+  has_site if respond_to? :has_site
 
   validates_presence_of :name
   validates_uniqueness_of :name

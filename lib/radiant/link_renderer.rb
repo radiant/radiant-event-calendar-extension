@@ -2,7 +2,7 @@
 # and originally came from Ultrasphinx
 # it saves us a lot of including and bodging to make will_paginate's template calls work in the Page model
 
-class PaginationLinkRenderer < WillPaginate::LinkRenderer
+class Radiant::LinkRenderer < WillPaginate::LinkRenderer
   def initialize(tag)
     @tag = tag
   end
