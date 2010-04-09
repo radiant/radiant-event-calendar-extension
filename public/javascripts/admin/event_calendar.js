@@ -60,6 +60,119 @@ Toggle.MCE = Behavior.create(Toggle.LinkBehavior, {
   }
 });
 
+DateInputBehavior.Calendar.addMethods({
+  _setDate: function(source) {
+    if (source.innerHTML.strip() != '') {
+      this.date.setDate(parseInt(source.innerHTML, 10));    // nb. only sets the day of month. 
+      $A(this.element.getElementsByClassName('selected')).invoke('removeClassName', 'selected');
+      source.parentNode.addClassName('selected');
+      if (this.selector.element.hasClassName('time')) {
+        this._showTime();
+      } else {
+        this.selector.setDate(this.date);
+      }
+    }
+  },
+  _createTimeChooser : function() {
+    this.date_chooser = this.element.select('table.calendar').first();
+    var timer = this.element.select('div.clock_control').first() || $div({'class': 'clock_control'});
+    this.element.insert(timer);
+    timer.clonePosition(this.date_chooser);
+    timer.setStyle({position: 'relative', left: 0, top: 0, width: this.date_chooser.getWidth(), height: 'auto'});
+    this.time_chooser = new DateInputBehavior.Clock(timer, this);
+  },
+  _showTime: function () {
+    this._createTimeChooser();
+    this.date_chooser.hide();
+    this.time_chooser.show();
+  },
+  _hideTime: function () {
+    this.time_chooser.hide();
+    this.date_chooser.show();
+  },
+  _setTime: function (h,m) {
+    this.date.setHours(h);
+    this.date.setMinutes(m);
+    this.date.setSeconds(0);
+    this.selector.setDate(this.date);
+  }
+});
+
+Date.prototype.getPaddedMonth = function() {
+  var m = (this.getMonth() + 1).toString();
+  return (m.length > 1) ? m : "0" + m;
+};
+
+Date.prototype.getPaddedDate = function() {
+  var d = this.getDate().toString();
+  return (d.length > 1) ? d : "0" + d;
+};
+
+Date.prototype.getPaddedMinutes = function() {
+  var m = this.getMinutes().toString();
+  return (m.length > 1) ? m : "0" + m;
+};
+
+Date.prototype.getPaddedSeconds = function() {
+  var s = this.getSeconds().toString();
+  return (s.length > 1) ? s : "0" + s;
+};
+
+DateInputBehavior.Clock = Behavior.create({
+  initialize: function(calendar) {
+    this.calendar = calendar;
+    this.date = calendar.date;
+    this.redraw();
+  },
+  redraw: function () {
+    this.form = new Element('form', {'class': 'clock'});
+    this.element.update(this.form);
+
+    this.h = new Element('input', {'type' : 'text', 'class': 'hours', name: 'hours'}).setValue(this.date.getHours());
+    this.m = new Element('input', {'type' : 'text', 'class': 'minutes', name: 'minutes'}).setValue(this.date.getPaddedMinutes());
+    this.button = new Element('input', {'type' : 'button', 'class': 'set_time', name: 'set'}).setValue('set');
+    this.cancel = new Element('a', {'href': '#', 'class': 'cancel'}).update('change date');
+
+    this.form.insert(new Element('h4', {'class': 'date'}).update(this.date.getDate() + ' ' + DateInputBehavior.Calendar.MONTHS[this.date.getMonth()].label + ', ' + this.date.getFullYear() + ' at:'));
+    this.form.insert(this.h);
+    this.form.insert(new Element('span', {'class': 'colon'}).update(':'));
+    this.form.insert(this.m);
+    this.form.insert(new Element('br'));
+    this.form.insert(this.button);
+    this.form.insert(new Element('br'));
+    this.form.insert(this.cancel);
+  },
+  onclick: function (event) {
+    event.stop();
+    if ($(event.target).hasClassName('set_time')) this.submit();
+    if ($(event.target).hasClassName('cancel')) this.goback();
+  },
+  submit: function () {
+    this.calendar._setTime(this.h.getValue(), this.m.getValue());
+  },
+  goback: function () {
+    this.calendar._hideTime();
+  },
+  show: function () {
+    this.element.show();
+  },
+  hide: function () {
+    this.element.hide();
+  }
+});
+
+DateInputBehavior.DEFAULTS = {
+  setter: function(date) {
+    return  date.getFullYear() + '-' + date.getPaddedMonth() + '-' + date.getPaddedDate() + ' ' + date.getHours() + ':' + date.getPaddedMinutes() + ':' + date.getPaddedSeconds();
+  },
+  getter: function(value) {
+    var p = value.split(/\D+/g);
+    if (!p[0]) return null;
+    var date = new Date(p[0],p[1]-1,p[2],p[3],p[4],p[5]);
+    return date;
+  }
+};
+
 Event.addBehavior({ 
   "input.toggle": Toggle.CheckboxBehavior,
   "a.swapper" : Toggle.SwapperBehavior({effect : 'appear'}),

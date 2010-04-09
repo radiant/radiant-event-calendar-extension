@@ -12,12 +12,13 @@
     - if events.any?
       %h2.listheader
         Continuing events
-    = render :partial => 'event', :collection => continuing_events, :locals => {:no_date => true}
+    = render :partial => 'event', :collection => continuing_events
 
   - if events.empty? && continuing_events.empty?
     - if period
       %h2
-        Sorry: there are no events in this period
+        Sorry: there are no events
+        = render :partial => 'events/defacet'
     - else
       %h2
         Sorry: there are no events coming up
@@ -50,3 +51,5 @@
 
 - content_for :faceting do
   = render :partial => 'faceting'
+
+= render :partial => 'other_page_parts'

@@ -15,7 +15,6 @@ class EventsController < SiteController
     @seen_events = {}
     respond_to do |format|
       format.html {
-        response.last_modified = events.map(&:created_at).max
       }
       format.js {
         render :json => events.to_json

@@ -46,6 +46,8 @@
             = f.text_field :start_date, :class => 'textbox date time'
             = f.check_box :all_day
             = f.label :all_day, 'All-day event?', :class => 'minor'
+            %span.note
+              (times will be ignored)
           %p.end_date
             = f.label :end_date, "end date and time"
             = f.text_field :end_date, :class => 'textbox date time'
