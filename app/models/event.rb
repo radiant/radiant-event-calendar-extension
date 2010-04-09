@@ -6,7 +6,7 @@ class Event < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :calendar
-  is_site_scoped if respond_to? :is_site_scoped
+  has_site if respond_to? :has_site
 
   belongs_to :event_venue
   accepts_nested_attributes_for :event_venue, :reject_if => proc { |attributes| attributes.all? {|k,v| v.blank?} } # radiant 0.8.1 is using rails 2.3.4, which doesn't include the :all_blank sugar

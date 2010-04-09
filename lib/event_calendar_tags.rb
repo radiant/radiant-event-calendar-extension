@@ -125,6 +125,79 @@ module EventCalendarTags
     result
   end
 
+  desc %{
+    Renders a friendly description of the period currently being displayed and any other filters that have been applied.
+
+    *Usage:* 
+    <pre><code><r:events:summary [pageinated="true"]/></code></pre>
+  }
+  tag "events:summary" do |tag|
+    use_pagination = tag.attr['paginated'] != "false"
+    tag.locals.events ||= get_events(tag)
+    total_events = tag.locals.events.length
+    filters = filters_applied(tag)
+    html = %{<p class="list_summary">}
+    html << %{Showing #{total_events} #{pluralize(total_events, "event")} #{filters.join(" ")}} if filters.any?
+    html << %{</p>}
+    html
+  end
+
+  desc %{
+    Renders a partially modified link to the current set of events. 
+    Supply a part to override it: all other parts will be carried over.
+    Only works on a calendar page.
+
+    *Usage:* 
+    <pre><code>
+    <r:events:link stem="/map">These events on a map</r:events:link>  (applies the present set of filters to a different page)
+    <r:events:link year="2011" month="">All events in 2011</r:events:link>
+    <r:events:link month="3" year="2010">All events next march</r:events:link>
+    <r:events:link slug="public">All events next march</r:events:link>
+    </code></pre>
+  }
+
+  tag "events:link" do |tag|
+    options = tag.attr.dup
+    overrides = {}
+    url_parts.keys.each do |part|
+      overrides[part] = tag.attr[part.to_s] unless tag.attr[part.to_s].nil?
+    end
+    text = tag.double? ? tag.expand : "link"
+    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    
+    logger.warn ">>  events:link: overrides are #{overrides.inspect}"
+    
+    %{<a href="#{tag.locals.page.url(overrides)}#{anchor}" #{attributes}>#{text}</a>}
+  end
+
+  desc %{
+    Renders a feed link that will continue to apply the rules that have been applied to 
+    get events for this page. Periods, calendars, tags (if you're using them) and other
+    filters that apply to the page carrying the link will also apply to the feed.
+
+    *Usage:* 
+    <pre><code>
+    <r:events:feedlink format="rss" />
+    <r:events:feedlink format="ics" protocal="webcal" />
+    </code></pre>
+  }
+
+  tag "events:feedlink" do |tag|
+    options = tag.attr.dup
+    format = options.delete('format') || 'rss'
+    protocol = options.delete('protocol') || request.protocol
+    protocol += "://" unless protocol.match /\:\/\/$/
+    parameters = url_parts
+    parameters.delete(:path)
+    parameters[:format] = format.to_sym
+    parameters[:host] = request.host
+    parameters[:protocol] = protocol
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    url = calendar_url(parameters)
+    text = tag.double? ? tag.expand : format
+    %{<a href="#{url}" #{attributes}>#{text}</a>}
+  end
 
   #### Calendars:* tags
   #### iterate over the set of calendars

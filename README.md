@@ -1,11 +1,17 @@
 # Event Calendar (iCal) Extension for Radiant
 
-This extension lets your radiant site present calendar data. It was originally designed to display calendar data from subscriptions but I've recently added an administrative interface for adding events directly. A reader_events glue extension will soon let your readers submit events too. For most purposes you're better off with a CalDAV subscription (so you can use your desktop client to add and edit events), but people have asked for more direct control.
+This extension lets your radiant site present calendar data. It was originally designed to display calendar data from subscriptions but I've recently added an administrative interface for adding events directly. For most purposes you're better off with a CalDAV subscription (so you can use your desktop client to add and edit events), but people have asked for more direct control.
 
 Event feeds can come from a Google calendar, from a published ical file or from any CalDAV-compatible calendar server.
 
+Events can be displayed by the EventsController (which takes over /calendar) or on an EventCalendarPage. The controller is generally the better option, and is seeing much more development, but for simple uses the page display might suffice.
+
+See the `event_map` extension for googlemapping of event_calendar events and `taggable_events` for more tagging and retrieval options.
+
 ## Recent changes
 
+* Updated for radiant 0.9, including a time-picker for the date widget
+* EventsController added: can serve RSS, Ical, JSON and html
 * We now use `ri_cal` instead of `vpim` so you need to check your gems. Only tested with `ri_cal` version 0.85
 * Tests added for timezone support and all-day events to make sure they import correctly
 * There is support for event status, in the same way as radiant pages have status (and using the same mechanism), so it should be much easier to add events or allow them to be submitted
@@ -16,36 +22,89 @@ Event feeds can come from a Google calendar, from a published ical file or from 
 
 ## Requirements
 
-Radiant 0.8.1 and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
+Radiant 0.9, share_layouts and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
 
 	sudo rake gems:install
+	
+This is compatible with `multi_site` and with the sites extension. With the latter everything will be site-scoped.
+
+There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
 
 ## Installation
 
 Should be straightforward:
 
 	script/extension install event_calendar
-	rake radiant:extensions:event_calendar:migrate
-	rake radiant:extensions:event_calendar:update
-	
-event_calendar is multi-site aware and if used with spanner's fork, will scope calendars to sites.
 
 ## Configuration
 
-There are only two config settings at the moment:
+There are only a few config settings:
 
 * `event_calendar.icals_path` is the directory (under /public/) holding the calendar subscription files. Default is `icals`.
 * `event_calendar.default_refresh_interval` is the period, in seconds, after which the calendar subscriptions are refreshed. Default is one hour. Set to zero to refresh only in the admin interface. 
+* `event_calendar.layout` is the name of the layout that EventsController will use (see below)
+* `event_calendar.filename_prefix` is an optional prefix for ics filenames
 
 Each calendar subscription will have its own address and authentication settings.
 
 ## Usage
 
+### Subscribing to a calendar
+
 1. Create a calendar source. You can do that by publishing a feed from your desktop calendar application, by making a google calendar public or by setting up a CalDAV calendar and persuading all the right people to subscribe to it.
 2. Find the ical subscription address of your calendar.
 3. Choose 'new calendar' in the radiant admin menu and enter the address and any authentication information you need to get at it. See below for notes about connecting to CalDAV. In the case of an ical file or google calendar you should only need an address. Give the calendar a slug, just as you would for a page, and optionally a category. Let's say you call it 'test'.
 4. Your calendar should appear in the subscription list. Click through to browse its events and make sure everything is as it should be.
-5. Set up a new page at /calendar/ with the type 'EventCalendar'. To show a pageable calendar view of the current month, all you need is this:
+
+### Adding events manually
+
+Should be obvious. There are a few points to remember:
+
+* Event venues are expected to be reused, so they present as a list with the option to add a new one. 
+* The postcode field is a convenience for geocoding purposes. You can leave it blank unless you're mapping and your locations are a bit odd.
+* Recurrence is for the repetition of identical separate events. A single event that spans several days only needs to have the right start and end times.
+* End times are optional: an event with just a start time is just listed where it begins.
+
+### Displaying events with the EventsController
+
+The events controller uses `share_layouts` to define various page parts that your layout can bring in. To use it, create a layout with any or all of these parts:
+
+* `title` is the page title and can also be shown with `r:title`
+* `events` is a formatted list of events with date stamps and descriptions
+* `continuing_events` is a compact list of events that have already begun but which continue into the period being shown
+* `calendar` is a usual calendar block with links to months and days. Days without events are not linked.
+* `pagination` is the usual will_paginate block.
+* `faceting` here only gives the option to remove any date filters that have been applied. If you add the `taggable_events` extension it gets more useful.
+
+You will find minimal styling of some of these parts in `/stylesheets/sass/calendar.sass`,
+
+Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got.
+
+Here's a basic sample layout that should just work:
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+	<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	  <head>
+	    <title><r:title /></title>
+		<link rel="stylesheet" href="/stylesheets/event_calendar.css" />
+	  </head>
+	  <body>
+        <h1 id="pagetitle"><r:title /></h1>
+		<r:content part="faceting" />
+        <r:content part="calendar" />
+        <r:content part="events" />
+        <r:content part="continuing_events" />
+		<r:content part="pagination" />
+	  </body>
+	</html>
+
+One quirk that might go away: at the moment if there are few new events then the continuing events are moved into the events page part. Most layouts work better that way.
+
+### Displaying events with an EventCalendar page
+
+Set up a new page at /events/ with the type 'EventCalendar'. To show a pageable calendar view of the current month, all you need is this:
 
 	<r:events:as_calendar month="now" month_links="true" />
 	

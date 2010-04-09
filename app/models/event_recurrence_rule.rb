@@ -4,7 +4,7 @@ class EventRecurrenceRule < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :event
-  is_site_scoped if respond_to? :is_site_scoped
+  has_site if respond_to? :has_site
   
   def active
     new_record? ? false : read_attribute(:active)
