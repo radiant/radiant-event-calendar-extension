@@ -41,7 +41,7 @@
         - if event.editable?
           - confirmation = "Are you sure you want to delete entirely the event '#{event.title}'"
           - confirmation << " and all its recurrences" if event.recurs?
-          = link_to "remove", remove_admin_event_url(event.master || event), :confirm => "#{confirmation}?"
+          = link_to "remove", admin_event_url(event.master || event), :confirm => "#{confirmation}?", :method => 'delete'
         - else
           %span.ineditable{:title => "subscribed events can't be removed here"}
             remove
