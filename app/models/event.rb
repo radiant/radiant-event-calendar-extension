@@ -274,9 +274,14 @@ class Event < ActiveRecord::Base
     status != Status[:imported]
   end
   
+  def recurs?
+    master || occurrences.any?
+  end
+  
   def status
     Status.find(self.status_id)
   end
+  
   def status=(value)
     self.status_id = value.id
   end

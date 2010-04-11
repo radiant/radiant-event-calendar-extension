@@ -74,10 +74,19 @@ table#events
       p.keywords 
         :margin 4px 0
         :font-size 80%
-    td.time, td.location, td.keywords, td.recurrence 
+    td.time, td.location, td.keywords, td.recurrence
       :font-size 80%
       :padding-top 28px
       :vertical-align top
+    td.remove
+      :padding-top 28px
+      :vertical-align top
+      span.ineditable
+        :color #666
+        :font-size 80%
+        :background url(/images/admin/minus.png) no-repeat scroll 4px 0 
+        :padding-left 20px
+        :opacity 0.3
   tr.continuing
     td.datemark
       a
@@ -133,6 +142,7 @@ table#event_venues
       p
         input.textbox, select.textbox, textarea
           +standard_input
+          :margin-top 0.3em
       p.note 
         +grid(4)
         :padding-top 1.7em
@@ -161,7 +171,7 @@ table#event_venues
         +grid(8)
         textarea
           :height 16em
-      p.asset
+      p.calendar
         +grid(4)
 
     div.ical

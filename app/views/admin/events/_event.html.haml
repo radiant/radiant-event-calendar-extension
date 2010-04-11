@@ -39,7 +39,9 @@
     - tbody.modify_cell do
       %td.remove
         - if event.editable?
-          = link_to "remove", remove_admin_event_url(event)
+          - confirmation = "Are you sure you want to delete entirely the event '#{event.title}'"
+          - confirmation << " and all its recurrences" if event.recurs?
+          = link_to "remove", remove_admin_event_url(event.master || event), :confirm => "#{confirmation}?"
         - else
-          %span.note
-            not editable
+          %span.ineditable{:title => "subscribed events can't be removed here"}
+            remove

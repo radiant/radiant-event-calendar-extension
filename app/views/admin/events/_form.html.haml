@@ -34,14 +34,15 @@
 
         .description
           %p.description
-            = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
+            - if defined? TinyMceFilter
+              = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
             = f.label :description, "Description"
             = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
           %p.calendar
             = f.label :calendar_id, "Calendar"
             = f.select :calendar_id, Calendar.all.map {|c| [c.name, c.id]}, {:include_blank => true}, :class => 'textbox'
             %span.note
-              This is optional but can be used to mix local events into a subscribed calendar.
+              This is optional but can be used to file your events or to mix local events into a subscribed calendar.
               
       - form.edit_date do
         .date

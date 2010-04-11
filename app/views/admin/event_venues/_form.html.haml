@@ -38,6 +38,7 @@
     This is only required if your address is unusual or you want these events to show on a map in a particular place.
 
 %p.venue_description
-  = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => "toggle[event_venue_#{event_venue.id}_description]"
+  - if defined? TinyMceFilter
+    = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => "toggle[event_venue_#{event_venue.id}_description]"
   = f.label :description, "Description"
   = f.text_area :description, :class => 'textarea', :id => "event_venue_#{event_venue.id}_description"
