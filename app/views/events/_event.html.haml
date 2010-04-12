@@ -15,7 +15,10 @@
           = event.mday
     .detail
       %h3
-        = link_to event.title, event.url
+        - if event.url
+          = link_to event.title, event.url, :class => 'title'
+        - else
+          = event.title
       %p.venue
         = event.summarize_period
         - if event.event_venue

@@ -51,13 +51,10 @@ class Ical < ActiveRecord::Base
             if event = Event.find_by_uuid(cal_event.uid)
               if cal_event.dtstamp > event.updated_at
                 event.update_from(cal_event) 
-                logger.warn "!!  updated event #{cal_event.summary}"
               else
-                logger.warn "!!  matching event #{cal_event.summary} needs no update"
               end
               event_count += 1
             else
-              logger.warn "!!  new event #{cal_event.summary}"
               event = Event.create_from(cal_event)
               event.site = self.calendar.site if event.respond_to? :site=
               self.calendar.events << event
@@ -71,7 +68,7 @@ class Ical < ActiveRecord::Base
       end
     rescue => error
       logger.error "RiCal parse error with: #{self.calendar.name}: #{error}."
-      raise
+      flash[:error] = "RiCal parse error with: #{self.calendar.name}: #{error}."
     end 
   end
   

@@ -10,29 +10,31 @@ describe Ical do
   describe "reading an ics file with GMT times" do
     before do
       lambda {@ical.parse_file(File.dirname(__FILE__) + "/../files/dummy.ics")}.should_not raise_error
+      @test = @ical.calendar.events.find_by_title("Test Event")
+      @allday = @ical.calendar.events.find_by_title("All Day")
+      @repeating = @ical.calendar.events.find_by_title("Repeating Event")
     end
 
     it "should import events" do
       @ical.calendar.events.should_not be_empty
-      @ical.calendar.events.first.title.should == "Test Event"
-      @ical.calendar.events.last.title.should == "All Day"
+      @test.title.should_not be_nil
+      @allday.title.should_not be_nil
     end
     
     it "should record timed events (with GMT times)" do
-      @ical.calendar.events.first.start_date.should == DateTime.civil(2009, 2, 24, 9, 0, 0)
-      @ical.calendar.events.first.all_day?.should be_false
+      @test.start_date.should == DateTime.civil(2009, 2, 24, 9, 0, 0)
+      @test.all_day?.should be_false
     end
 
     it "should record all-day events (with GMT times set to midnight)" do
-      @ical.calendar.events.last.start_date.should == DateTime.civil(2009, 2, 24)
-      @ical.calendar.events.last.end_date.should == DateTime.civil(2009, 2, 24)
-      @ical.calendar.events.last.all_day?.should be_true
+      @allday.start_date.should == DateTime.civil(2009, 2, 24)
+      @allday.end_date.should == DateTime.civil(2009, 2, 24)
+      @allday.all_day?.should be_true
     end
 
     it "should record repeating events" do
-      event = @ical.calendar.events.find_by_title("Repeating Event")
-      event.recurrence_rules.should_not be_empty
-      rrule = event.recurrence_rules.first
+      @repeating.recurrence_rules.should_not be_empty
+      rrule = @repeating.recurrence_rules.first
       rrule.period.downcase.should == 'daily'
       rrule.interval.should == 1
       rrule.limiting_date.should == DateTime.civil(2009, 2, 28, 4, 59, 59)

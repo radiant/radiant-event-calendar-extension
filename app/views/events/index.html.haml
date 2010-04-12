@@ -3,7 +3,7 @@
     Events
     = list_description
   - else
-    Events Calendar
+    Calendar
 
 - content_for :events do
   = render :partial => 'event', :collection => events
@@ -31,7 +31,10 @@
       %ul
         - continuing_events.each do |event|
           %li
-            = link_to event.title, event.url, :class => 'title'
+            - if event.url
+              = link_to event.title, event.url, :class => 'title'
+            - else
+              = event.title
             %span.detail
               runs until 
               = event.last_day

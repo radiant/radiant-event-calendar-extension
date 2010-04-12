@@ -29,6 +29,8 @@
       - cell_class += " today" if day == ::Date.current
       - if events_today.any?
         - cell_class += " eventful"
+        - if calendar_event = events_today.find {|e| e.calendar }
+          - cell_class += e.calendar.slug
         - date_label = %{<a href="#{url_for_date(day)}">#{day.mday}</a>}
       - else
         - cell_class += " uneventful"

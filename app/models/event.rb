@@ -229,6 +229,8 @@ class Event < ActiveRecord::Base
       period << "#{start_time}"
       period << "to #{end_time}" if end_time
       period << "on #{date}"
+    elsif one_day?
+      period << "all day on #{date}"
     elsif all_day?
       period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
     else
@@ -243,7 +245,7 @@ class Event < ActiveRecord::Base
   end
   
   def within_day?
-    (!end_date || start_date.to_date.jd == end_date.to_date.jd)
+    (!end_date || start_date.to_date.jd == end_date.to_date.jd || end_date == start_date + 1.day)
   end
   
   # sometimes we need to filter an existing list to get the day's events
