@@ -4,8 +4,9 @@
   - event_master_id = event.master_id || event.id
   - repeating = true if @seen_events[event_master_id]
   - @seen_events[event_master_id] = true;
+  - cssclass = event.calendar ? "event #{event.calendar.slug}" : "event"
 
-  .event
+  %div{:class => cssclass}
     - unless no_date
       .dateholder
         %span.month
