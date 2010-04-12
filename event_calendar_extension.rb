@@ -33,6 +33,7 @@ class EventCalendarExtension < Radiant::Extension
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
     UserActionObserver.instance.send :add_observer!, Calendar               # adds ownership and update hooks to the calendar data
+    UserActionObserver.instance.send :add_observer!, Event                  # adds ownership and update hooks to the event data
     EventsController.send :include, ResourcePagination
     Admin::ResourceController.send :include, ResourcePagination
     

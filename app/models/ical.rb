@@ -42,19 +42,27 @@ class Ical < ActiveRecord::Base
   def parse_file(thisfile=filename)
     begin
       Ical.transaction do
-        self.calendar.events.imported.delete_all
         self.last_refresh_count = 0
         event_count = 0
         File.open(thisfile, "r") do |file|
           components = RiCal.parse(file)
           cal = components.first
-          event_count = 0
           cal.events.each do |cal_event|
-            event = Event.from(cal_event)
-            event.site = self.calendar.site if event.respond_to? :site=
-            self.calendar.events << event
-            event.save!
-            event_count += 1
+            if event = Event.find_by_uuid(cal_event.uid)
+              if cal_event.dtstamp > event.updated_at
+                event.update_from(cal_event) 
+                logger.warn "!!  updated event #{cal_event.summary}"
+              else
+                logger.warn "!!  matching event #{cal_event.summary} needs no update"
+              end
+              event_count += 1
+            else
+              logger.warn "!!  new event #{cal_event.summary}"
+              event = Event.create_from(cal_event)
+              event.site = self.calendar.site if event.respond_to? :site=
+              self.calendar.events << event
+              event.save!
+            end
           end
         end
         self.last_refresh_count = event_count

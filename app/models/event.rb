@@ -311,7 +311,7 @@ class Event < ActiveRecord::Base
     self.to_ri_cal.to_s
   end
   
-  def self.from(cal_event)
+  def self.create_from(cal_event)
     event = new({
       :uuid => cal_event.uid,
       :title => cal_event.summary,
@@ -320,7 +320,8 @@ class Event < ActiveRecord::Base
       :url => cal_event.url,
       :start_date => cal_event.dtstart,
       :end_date => cal_event.dtend,
-      :all_day => !cal_event.dtstart.is_a?(DateTime)
+      :all_day => !cal_event.dtstart.is_a?(DateTime),
+      :created_at => cal_event.dtstamp
     })
     event.status = Status[:imported]
     cal_event.rrule.each { |rule| event.add_recurrence(rule) }
@@ -329,6 +330,25 @@ class Event < ActiveRecord::Base
     logger.error "Event import error: #{error}."
     raise
   end
+  
+  def update_from(cal_event)
+    self.update_attributes({
+      :title => cal_event.summary,
+      :description => cal_event.description,
+      :location => cal_event.location,
+      :url => cal_event.url,
+      :start_date => cal_event.dtstart,
+      :end_date => cal_event.dtend,
+      :all_day => !cal_event.dtstart.is_a?(DateTime)
+    })
+    self.status = Status[:imported]
+    cal_event.rrule.each { |rule| self.add_recurrence(rule) }
+    self
+  rescue => error
+    logger.error "Event update error: #{error}."
+    raise
+  end
+  
   
 protected
 
