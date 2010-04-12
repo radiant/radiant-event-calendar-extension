@@ -220,19 +220,27 @@ class Event < ActiveRecord::Base
       end_time
     end
   end
+
+  def summarize_start
+    if one_day?
+      "all day on #{date}"
+    elsif all_day?
+      period << "all day from #{date}"
+    else
+      "#{start_time} on #{date}"
+    end
+  end
   
   def summarize_period
     period = []
     if one_day?
       period << "all day on #{date}"
+    elsif all_day?
+      period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
     elsif within_day?
       period << "#{start_time}"
       period << "to #{end_time}" if end_time
       period << "on #{date}"
-    elsif one_day?
-      period << "all day on #{date}"
-    elsif all_day?
-      period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
     else
       period << "#{start_time} on #{date}"
       period << "to #{end_time} on #{end_date.to_datetime.strftime(date_format)}"
