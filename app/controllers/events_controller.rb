@@ -1,5 +1,4 @@
 class EventsController < SiteController
-  require 'rss/maker'
   require "uri"
   
   helper_method :events, :continuing_events, :period, :calendars, :list_description
@@ -62,7 +61,7 @@ class EventsController < SiteController
   end
   
   def events
-    @events ||= event_finder.paginate(pagination_options)
+    @events ||= event_finder.paginate(pagination_parameters)
   end
   
   def event_finder

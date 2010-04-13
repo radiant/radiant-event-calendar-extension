@@ -24,11 +24,9 @@ class Event < ActiveRecord::Base
   after_save :update_occurrences
   
   default_scope :order => 'start_date ASC', :include => :event_venue
-  
   named_scope :imported, { :conditions => ["status_id = ?", Status[:imported].to_s] }
   named_scope :submitted, { :conditions => ["status_id = ?", Status[:submitted].to_s] }
   named_scope :approved, { :conditions => ["status_id >= (?)", Status[:published].to_s] }
-
   named_scope :primary, { :conditions => "master_id IS NULL" }
   named_scope :recurrent, { :conditions => "master_id IS NOT NULL" }
   
@@ -295,7 +293,7 @@ class Event < ActiveRecord::Base
   def status=(value)
     self.status_id = value.id
   end
-  
+
   def recurrence
     recurrence_rules.first.to_s
   end
@@ -369,7 +367,7 @@ protected
   def set_default_status
     self.status ||= Status[:Published]
   end
-  
+
   # doesn't yet observe exceptions
   def update_occurrences
     occurrences.destroy_all

@@ -68,7 +68,7 @@ class Ical < ActiveRecord::Base
       end
     rescue => error
       logger.error "RiCal parse error with: #{self.calendar.name}: #{error}."
-      flash[:error] = "RiCal parse error with: #{self.calendar.name}: #{error}."
+      raise
     end 
   end
   

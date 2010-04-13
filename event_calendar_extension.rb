@@ -27,16 +27,10 @@ class EventCalendarExtension < Radiant::Extension
   end
   
   def activate
-    CalendarPeriod                                                          # defines the window in time that we want to display
-    EventCalendarPage                                                       # the main calendar viewer: takes period, chooses events, shows page
-    Radiant::LinkRenderer                                                   # removes all the viewhelper calls from the pagination so that it works in a model
-    Status.send :include, EventStatuses                                     # adds support for draft and submitted events
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
+    Status.send :include, EventStatuses                                     # adds support for draft and submitted events
     UserActionObserver.instance.send :add_observer!, Calendar               # adds ownership and update hooks to the calendar data
     UserActionObserver.instance.send :add_observer!, Event                  # adds ownership and update hooks to the event data
-    EventsController.send :include, ResourcePagination
-    Admin::ResourceController.send :include, ResourcePagination
-    
     
     if Radiant::Config.table_exists? && !Radiant::Config["event_calendar.icals_path"]
       Radiant::Config["event_calendar.icals_path"] = "icals"

@@ -132,7 +132,6 @@ module EventCalendarTags
     <pre><code><r:events:summary [pageinated="true"]/></code></pre>
   }
   tag "events:summary" do |tag|
-    use_pagination = tag.attr['paginated'] != "false"
     tag.locals.events ||= get_events(tag)
     total_events = tag.locals.events.length
     filters = filters_applied(tag)
@@ -978,7 +977,6 @@ private
     else
       ef = Event.before(tag.locals.period.finish)
     end
-    ef = ef.approved if Radiant::Config['event_calendar.require_approval']
     ef = ef.in_calendars(tag.locals.calendars) if tag.locals.calendars
     ef
   end
