@@ -3,7 +3,7 @@
     Events
     = list_description
   - else
-    Calendar
+    = Radiant::Config['event_calendar.title'] || "Calendar"
 
 - content_for :events do
   = render :partial => 'event', :collection => events

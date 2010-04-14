@@ -223,7 +223,7 @@ class Event < ActiveRecord::Base
     if one_day?
       "all day on #{date}"
     elsif all_day?
-      period << "all day from #{date}"
+      "from #{date}"
     else
       "#{start_time} on #{date}"
     end
@@ -234,7 +234,7 @@ class Event < ActiveRecord::Base
     if one_day?
       period << "all day on #{date}"
     elsif all_day?
-      period << "all day from #{date} to #{end_date.to_datetime.strftime(date_format)}"
+      period << "from #{date} to #{end_date.to_datetime.strftime(date_format)}"
     elsif within_day?
       period << "#{start_time}"
       period << "to #{end_time}" if end_time
