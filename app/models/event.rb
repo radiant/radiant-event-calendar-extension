@@ -372,9 +372,9 @@ protected
   def update_occurrences
     occurrences.destroy_all
     if recurrence_rules.any?
-      recurrence_horizon = Time.now + (Radiant::Config['event_calendar.recurrence_limit'] || 10).to_i.years
+      recurrence_horizon = Time.now + (Radiant::Config['event_calendar.recurrence_horizon'] || 10).to_i.years
       to_ri_cal.occurrences(:before => recurrence_horizon).each do |occ|
-        occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil))
+        occurrences.create!(self.attributes.merge(:start_date => occ.dtstart, :end_date => occ.dtend, :uuid => nil)) unless occ.dtstart == self.start_date
       end
     end
   end
