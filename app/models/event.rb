@@ -394,5 +394,9 @@ protected
   def round_time_format
     Radiant::Config['event_calendar.round_time_format'] || "%-1I%p"
   end
+  
+  def dates_are_in_order
+    
+  end
 
 end

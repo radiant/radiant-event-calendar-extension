@@ -60,6 +60,29 @@ Toggle.MCE = Behavior.create(Toggle.LinkBehavior, {
   }
 });
 
+// We can't rely on padding-right so hard-code the width of the icon instead
+
+DateInputBehavior.addMethods({
+  _isOverWidget: function(event) {
+    var positionedOverWidget = null;
+    if (Prototype.Browser.IE) {
+      var widgetLeft = this.element.cumulativeOffset().left;
+      var widgetRight = this.element.cumulativeOffset().left + this.element.getDimensions().width;
+      positionedOverWidget = (event.pointerX() >= widgetLeft && event.pointerX() <= widgetRight);
+    } else {
+      var calendarIconWidth = 40;
+      var widgetLeft = this.element.cumulativeOffset().left + this.element.getDimensions().width - calendarIconWidth;
+      positionedOverWidget = (event.pointerX() >= widgetLeft);
+    }
+    return positionedOverWidget;
+  }
+});
+
+// Override the usual Calendar to add a time-picker if the input field also has class 'time'
+// and to tweak the positioning of the calendar
+
+var calendar_displacement = {x: 16, y: 16};
+
 DateInputBehavior.Calendar.addMethods({
   _setDate: function(source) {
     if (source.innerHTML.strip() != '') {
@@ -95,6 +118,36 @@ DateInputBehavior.Calendar.addMethods({
     this.date.setMinutes(m);
     this.date.setSeconds(0);
     this.selector.setDate(this.date);
+  },
+  show: function() {
+    DateInputBehavior.Calendar.instances.invoke('hide');
+    this.date = this.selector.getDate();
+    this.redraw();
+    this.element.setStyle({
+      'top': this.getVerticalOffset(this.selector.element) + 'px',
+      'left': this.getHorizontalOffset(this.selector.element) + 'px',
+      'z-index': 10001
+    });
+    this.element.show();
+    this.active = true;
+  },
+  getVerticalOffset: function(selector){
+    var defaultOffset = this.selector.element.cumulativeOffset().top + this.selector.element.getHeight() + 2;
+    var height = this.element.getHeight();
+    var top = 0;
+    if (document.viewport.getHeight() > defaultOffset + height) {
+      top = defaultOffset - calendar_displacement.y;
+    } else {
+      top = (defaultOffset - height - selector.getHeight() - 6 + calendar_displacement.y);
+    }
+    if (top < document.viewport.getScrollOffsets().top) {
+      top = document.viewport.getScrollOffsets().top;
+    }
+    
+    return top;
+  },
+  getHorizontalOffset: function (element) {
+    return element.cumulativeOffset().left + element.getWidth() - calendar_displacement.x;
   }
 });
 
@@ -106,6 +159,11 @@ Date.prototype.getPaddedMonth = function() {
 Date.prototype.getPaddedDate = function() {
   var d = this.getDate().toString();
   return (d.length > 1) ? d : "0" + d;
+};
+
+Date.prototype.getPaddedHours = function() {
+  var m = this.getHours().toString();
+  return (m.length > 1) ? m : "0" + m;
 };
 
 Date.prototype.getPaddedMinutes = function() {
@@ -128,7 +186,7 @@ DateInputBehavior.Clock = Behavior.create({
     this.form = new Element('form', {'class': 'clock'});
     this.element.update(this.form);
 
-    this.h = new Element('input', {'type' : 'text', 'class': 'hours', name: 'hours'}).setValue(this.date.getHours());
+    this.h = new Element('input', {'type' : 'text', 'class': 'hours', name: 'hours'}).setValue(this.date.getPaddedHours());
     this.m = new Element('input', {'type' : 'text', 'class': 'minutes', name: 'minutes'}).setValue(this.date.getPaddedMinutes());
     this.button = new Element('input', {'type' : 'button', 'class': 'set_time', name: 'set'}).setValue('set');
     this.cancel = new Element('a', {'href': '#', 'class': 'cancel'}).update('change date');
