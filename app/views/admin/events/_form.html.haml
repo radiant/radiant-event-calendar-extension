@@ -86,22 +86,24 @@
                   = rf.text_field :limiting_count, :class => 'textbox short'
 
       - form.edit_venue do
-        - toggle_precedence = (@venues.any? && (!@event.event_venue.new_record? && @event.new_record?)) ? "venue,new_venue" : "new_venue,venue"
+        - prefer_new = @venues.empty? || @event.event_venue.new_record?
+        - toggle_precedence = prefer_new ? "new_venue,venue" : "venue,new_venue"
         
-        #venue
-          %p#existing_venue
-            = f.label :event_venue_id, "Choose a place"
-            = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
-            = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence}]"
-          %p.note
-            You can 
-            = link_to "edit the venue list", admin_event_venues_url
-            to update addresses and directions for all relevant events.
+        - if @venues.any?
+          #venue
+            %p#existing_venue
+              = f.label :event_venue_id, "Choose a place"
+              = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
+              = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence}]"
+            %p.note
+              You can 
+              = link_to "edit the venue list", admin_event_venues_url
+              to update addresses and directions for all relevant events.
 
         #new_venue
           - event_venue = @event.event_venue.new_record? ? @event.event_venue : EventVenue.new
           - f.fields_for :event_venue, event_venue do |ef|
-            = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => true, :compact => true}
+            = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => @venues.any?, :compact => true}
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_timestamp do
