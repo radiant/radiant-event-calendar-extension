@@ -3,6 +3,7 @@ Toggle.SwapperBehavior = Behavior.create(Toggle.LinkBehavior, {
     $super(options);
     this.plan_a = this.toggleWrappers.shift();
     this.plan_b = this.toggleWrappers;
+    this.toggle();
   },
   toggle: function() {
     if (this.plan_a.visible()) {
