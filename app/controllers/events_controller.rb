@@ -162,18 +162,6 @@ class EventsController < SiteController
     @day_names
   end
   
-  def layout_for(area = :event_calendar)
-    if defined? Site && current_site && current_site.respond_to?(:layout_for)
-      current_site.layout_for(area)
-    elsif area_layout = Radiant::Config["#{area}.layout"]
-      area_layout
-    elsif main_layout = Layout.find_by_name('Main')
-      main_layout.name
-    elsif any_layout = Layout.first
-      any_layout.name
-    end
-  end
-  
 protected
   
   def short_month_names
