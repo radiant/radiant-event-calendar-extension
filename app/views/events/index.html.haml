@@ -48,7 +48,7 @@
 - content_for :pagination do
   - if events.next_page || events.previous_page
     .pagination
-      = will_paginate(events, :container => false)
+      = will_paginate(events, :container => false, :param_name => :p)
       %span.summary
         = page_entries_info(events, :entry_name => 'event')
 

@@ -28,7 +28,7 @@
       - if more_pages
         %br
         - if events.previous_page
-          = link_to "&laquo; Previous", url_for(:page => events.previous_page)
+          = link_to "&laquo; Previous", url_for(:p => events.previous_page)
           &middot;
         Page 
         = events.current_page
@@ -36,6 +36,6 @@
         = events.total_pages
         - if events.next_page
           &middot;
-          = link_to "Next &raquo;", url_for(:page => events.next_page)
+          = link_to "Next &raquo;", url_for(:p => events.next_page)
 
       = render :partial => 'events/views'
