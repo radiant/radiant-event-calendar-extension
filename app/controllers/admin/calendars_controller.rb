@@ -1,5 +1,5 @@
 class Admin::CalendarsController < Admin::ResourceController
-
+  paginate_models
   before_filter :check_refreshments, :only => [:index, :show]
 
   def show

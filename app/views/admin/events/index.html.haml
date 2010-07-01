@@ -16,7 +16,7 @@
   - render_region :bottom do |bottom|
     - bottom.buttons do
       #actions
-        = will_paginate @events
+        = pagination_for @events
         %ul
           %li= link_to image('plus') + " " + "new event", new_admin_event_url
           %li= link_to "list of calendars", admin_calendars_url
