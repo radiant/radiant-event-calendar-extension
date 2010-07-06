@@ -1,24 +1,10 @@
-# Event Calendar (iCal) Extension for Radiant
+# Event Calendar Extension for Radiant
 
-This extension lets your radiant site present calendar data. It was originally designed to display calendar data from subscriptions but I've recently added an administrative interface for adding events directly. For most purposes you're better off with a CalDAV subscription (so you can use your desktop client to add and edit events), but people have asked for more direct control.
+This extension lets your radiant site present calendar events in various useful ways. The events can be administered directly or retrieved by subscription to ical and caldav services including Google Calendar, and can be served as RSS, Ical or JSON feeds as well as through a broad set of radius tags on your normal pages. This extension supports a wide range of uses from a basic display of forthcoming events through to a full calendar aggregation and mapping service.
 
-Event feeds can come from a Google calendar, from a published ical file or from any CalDAV-compatible calendar server.
+The calendaring functionality comes from [ri_cal](http://github.com/rubyredrick/ri_cal) and supports proper recurrence and duration. We also recognise all-day events and pass through notes and urls: the ical subscription and redistribution should be fully RFC2445 compliant. It is not yet a full CalDAV client, and we don't have proper support for principals, groups or availability. 
 
-Events can be displayed by the EventsController (which takes over /calendar) or on an EventCalendarPage. The controller is generally the better option, and is seeing much more development, but for simple uses the page display might suffice.
-
-See the `event_map` extension for googlemapping of event_calendar events and `taggable_events` for more tagging and retrieval options.
-
-## Recent changes
-
-* Updated for radiant 0.9, including a time-picker for the date widget
-* EventsController added: can serve RSS, Ical, JSON and html
-* We now use `ri_cal` instead of `vpim` so you need to check your gems. Only tested with `ri_cal` version 0.85
-* Tests added for timezone support and all-day events to make sure they import correctly
-* There is support for event status, in the same way as radiant pages have status (and using the same mechanism), so it should be much easier to add events or allow them to be submitted
-* The radius tag structure has changed. Those few people who have old event_calendar pages will need to tweak them to use the new `r:calendar` and `r:event` namespaces, of which more below.
-* column names have been simplified now that the ical can be dealt with as a nested model
-* standard ownership columns have been added to calendar 
-* tested with google calendar
+See the [event_map](http://github.com/spanner/radiant-event_map-extension) extension for googlemapping of events and [taggable_events](http://github.com/spanner/radiant-taggable_events-extension) for more fine-grained tagging and retrieval options. A `reader_events` extension is also in the works for reader-submitted calendar events, but [reader](http://github.com/spanner/radiant-reader-extension) will need to be updated for 0.9 first.
 
 ## Requirements
 
@@ -26,7 +12,7 @@ Radiant 0.9, share_layouts and the `ri_cal` gem to handle iCal data. It's declar
 
 	sudo rake gems:install
 	
-This is compatible with `multi_site` and with the sites extension. With the latter everything will be site-scoped.
+This is compatible with `multi_site` and with the [sites](http://github.com/spanner/radiant-event_map-extension "spanner's radiant-event_map-extension at master - GitHub") extension. With the latter everything will be site-scoped.
 
 There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
 
