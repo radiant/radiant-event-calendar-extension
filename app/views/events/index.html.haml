@@ -38,8 +38,12 @@
             %span.detail
               runs until 
               = event.last_day
-              at
-              = link_to event.event_venue.title, event.event_venue.url
+              - if event.event_venue
+                at
+                = link_to event.event_venue.title, event.event_venue.url
+              - elsif event.location
+                at
+                = event.location
 
 - content_for :calendar do
   #calendar
