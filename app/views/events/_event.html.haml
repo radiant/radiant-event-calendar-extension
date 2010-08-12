@@ -8,18 +8,18 @@
 
   %div{:class => cssclass}
     - unless no_date
-      .dateholder
-        %span.month
+      .datemark
+        .mon
           = event.short_month
-        %span.dom
+        .dom
           = event.mday
-    .detail
-      %h3
+    .summary
+      %h2
         - if event.url
           = link_to event.title, event.url, :class => 'title'
         - else
           = event.title
-      %p.venue
+      %p.practicalities
         = event.summarize_start
         - if event.event_venue
           %br

@@ -1,9 +1,6 @@
 - content_for :title do
-  - if period
-    Events
-    = list_description
-  - else
-    = Radiant::Config['event_calendar.title'] || "Calendar"
+  Events
+  = list_description
 
 - content_for :events do
   = render :partial => 'event', :collection => events
@@ -51,10 +48,7 @@
 
 - content_for :pagination do
   - if events.next_page || events.previous_page
-    .pagination
-      = will_paginate(events, :container => false, :param_name => :p)
-      %span.summary
-        = page_entries_info(events, :entry_name => 'event')
+    = will_paginate(events, :param_name => :p)
 
 - content_for :faceting do
   = render :partial => 'faceting'

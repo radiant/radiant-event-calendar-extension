@@ -94,9 +94,9 @@ class EventsController < SiteController
   def list_description
     return @description if @description
     parts = []
-    parts << period.description if period
+    parts << (period ? period.description : "coming up")
     parts << "in #{calendars.to_sentence}" if calendars
-    @description = parts
+    @description = parts.join(' ')
   end
       
   def url_for_date(date)
@@ -185,6 +185,13 @@ protected
       params[p] = (Date.today + 1.send(p == :mday ? :day : p)).send(p) if params[p] == 'next'
       params[p] = params[p].to_i
     end
+  end
+  
+  def pagination_parameters
+    {
+      :page => (params[:p] || 1).to_i, 
+      :per_page => (params[:pp] || Radiant::Config['event_calendar.per_page'] || 10).to_i
+    }
   end
   
 end

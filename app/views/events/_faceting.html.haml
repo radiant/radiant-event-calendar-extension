@@ -24,18 +24,4 @@
         = pluralize(continuing_events.count, "event") 
         
       = render :partial => 'events/defacet'
-
-      - if more_pages
-        %br
-        - if events.previous_page
-          = link_to "&laquo; Previous", url_for(:p => events.previous_page)
-          &middot;
-        Page 
-        = events.current_page
-        of
-        = events.total_pages
-        - if events.next_page
-          &middot;
-          = link_to "Next &raquo;", url_for(:p => events.next_page)
-
       = render :partial => 'events/views'
