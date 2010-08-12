@@ -9,10 +9,8 @@
   %div{:class => cssclass}
     - unless no_date
       .datemark
-        .mon
-          = event.short_month
-        .dom
-          = event.mday
+        .mon= event.short_month
+        .dom= event.mday
     .summary
       %h2
         - if event.url
