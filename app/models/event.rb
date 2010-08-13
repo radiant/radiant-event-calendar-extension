@@ -357,7 +357,6 @@ class Event < ActiveRecord::Base
     raise
   end
   
-  
 protected
 
   def set_uuid

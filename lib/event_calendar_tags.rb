@@ -407,7 +407,7 @@ module EventCalendarTags
     end
   end
 
-  [:id, :title, :description, :short_description, :location, :url].each do |attribute|
+  [:id, :title, :description, :short_description, :location].each do |attribute|
     desc %{ 
       Renders the #{attribute} attribute of the current event.
 
@@ -436,6 +436,19 @@ module EventCalendarTags
     }
     tag "event:unless_#{attribute}" do |tag|
       tag.expand unless tag.locals.event.send(attribute)
+    end
+  end
+
+  desc %{ 
+    Renders the url attribute of the current event, with some cleaning.
+
+    Usage:
+    <pre><code><r:event:url /></code></pre> 
+  }
+  tag "event:url" do |tag|
+    if url = tag.locals.event.url
+      url = "http://#{url}" unless url =~ /^(http:\/){0,1}\//
+      clean_url(url)
     end
   end
 
