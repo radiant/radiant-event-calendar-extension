@@ -448,7 +448,7 @@ module EventCalendarTags
   tag "event:url" do |tag|
     if url = tag.locals.event.url && !url.blank?
       url = "http://#{url}" unless url =~ /^(http:\/){0,1}\//
-      url.trim
+      url.strip
     end
   end
 
