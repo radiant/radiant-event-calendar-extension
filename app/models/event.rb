@@ -245,7 +245,15 @@ class Event < ActiveRecord::Base
     end
     period.join(' ')
   end
-    
+  
+  def url
+    if url = read_attribute(:url)
+      return nil if url.blank?
+      url = "http://#{url}" unless url =~ /^(http:\/){0,1}\//
+      url.strip
+    end
+  end
+  
   def one_day?
     all_day? && within_day?
   end
