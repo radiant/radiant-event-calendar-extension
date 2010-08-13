@@ -1,7 +1,7 @@
 class EventsController < SiteController
   require "uri"
   
-  helper_method :events, :continuing_events, :period, :calendars, :list_description
+  helper_method :events, :all_events, :continuing_events, :period, :calendars, :list_description
   helper_method :url_for_date, :url_for_month, :url_without_period, :calendar_parameters, :month_name, :short_month_name, :day_names
   before_filter :numerical_parameters
   
@@ -62,6 +62,10 @@ class EventsController < SiteController
   
   def events
     @events ||= event_finder.paginate(pagination_parameters)
+  end
+  
+  def all_events
+    @all_events ||= event_finder.all
   end
   
   def event_finder
