@@ -1,38 +1,33 @@
 - include_stylesheet "admin/event_calendar"
 
-%h1 
-  Event locations
-
-- render_region :top do |top|
-  - top.help_text do
-    %p 
-      Venues are shared between events, so any changes you make here will update all the relevant events at once.
-      
-%table#event_venues.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
-  %thead
-    %tr
-      - render_region :thead do |thead|
-        - thead.title_header do
-          %th.event 
-            %strong Place
-        - thead.location_header do
-          %th.location Address
-        - thead.url_header do
-          %th.keywords Website
-        - thead.modify_header do
-          %th.modify Modify
-  %tbody
-    - if @event_venues.any?
-      - @event_venues.each do |event_venue|
-        = render :partial => 'event_venue', :object => event_venue
-    - else
+#event_venues_table.outset      
+  %table#event_venues.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
+    %thead
       %tr
-        %td.note{:colspan => admin.event_venue.index.tbody.length} 
-          No places in the system yet. You can create one here or when you add an event. 
+        - render_region :thead do |thead|
+          - thead.title_header do
+            %th.event 
+              %strong Place
+          - thead.location_header do
+            %th.location Address
+          - thead.url_header do
+            %th.keywords Website
+          - thead.modify_header do
+            %th.modify Modify
+    %tbody
+      - if @event_venues.any?
+        - @event_venues.each do |event_venue|
+          = render :partial => 'event_venue', :object => event_venue
+      - else
+        %tr
+          %td.note{:colspan => admin.event_venue.index.tbody.length} 
+            No places in the system yet. You can create one here or when you add an event. 
 
-- render_region :bottom do |bottom|
-  - bottom.buttons do
-    #actions
-      = will_paginate @event_venues
-      %ul
-        %li= link_to image('plus') + " " + "new venue", new_admin_event_venue_url
+  - render_region :bottom do |bottom|
+    - bottom.buttons do
+      #actions
+        = pagination_for @event_venues
+        %ul
+          %li= link_to image('plus') + " " + "new venue", new_admin_event_venue_url
+          %li= link_to "évent list", admin_events_url
+          %li= link_to "calendar list", admin_calendars_url
