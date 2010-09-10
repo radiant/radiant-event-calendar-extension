@@ -5,27 +5,6 @@ class EventCalendarExtension < Radiant::Extension
 
   EXT_ROOT = '/admin/event_calendar'
 
-  define_routes do |map|
-    map.namespace :admin, :path_prefix => EXT_ROOT do |cal|
-      cal.resources :calendars
-      cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
-      cal.resources :events, :member => {:remove => :get}
-      cal.resources :event_venues, :member => {:remove => :get}
-      cal.calendars_home '/', :controller => 'events', :action => 'index'
-    end
-    map.calendar "/calendar.:format", :controller => 'events', :action => 'index'
-    map.calendar_year "/calendar/:year", :controller => 'events', :action => 'index'
-    map.calendar_month "/calendar/:year/:month", :controller => 'events', :action => 'index'
-    map.calendar_day "/calendar/:year/:month/:mday", :controller => 'events', :action => 'index'
-  end
-  
-  extension_config do |config|
-    config.gem 'ri_cal', :source => 'http://gemcutter.org'
-    config.gem 'chronic', :source => 'http://gemcutter.org'
-    config.gem 'uuidtools', :source => 'http://gemcutter.org'
-    config.gem 'will_paginate', :source => 'http://gemcutter.org'
-  end
-  
   def activate
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events
