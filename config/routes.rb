@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.namespace :admin, :path_prefix => EXT_ROOT do |cal|
+  map.namespace :admin, :path_prefix => '/admin/event_calendar' do |cal|
     cal.resources :calendars
     cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
     cal.resources :events, :member => {:remove => :get}

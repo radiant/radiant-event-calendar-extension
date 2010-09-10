@@ -1,9 +1,7 @@
 class EventCalendarExtension < Radiant::Extension
-  version "0.91"
+  version "1.0.0"
   description "An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
   url "http://radiant.spanner.org/event_calendar"
-
-  EXT_ROOT = '/admin/event_calendar'
 
   def activate
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
@@ -24,10 +22,10 @@ class EventCalendarExtension < Radiant::Extension
     
     if respond_to?(:tab)
       tab("Content") do
-        add_item("Calendar", EXT_ROOT)
+        add_item("Calendar", '/admin/event_calendar')
       end
     else
-      admin.tabs.add "Calendar", EXT_ROOT, :after => "Snippets", :visibility => [:all]
+      admin.tabs.add "Calendar", '/admin/event_calendar', :after => "Snippets", :visibility => [:all]
     end
 
   end
