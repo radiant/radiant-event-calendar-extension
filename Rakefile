@@ -7,10 +7,11 @@ begin
     gem.email = "will@spanner.org"
     gem.homepage = "http://github.com/radiant/radiant-event_calendar-extension"
     gem.authors = ["spanner"]
-    gem.add_dependency "radiant", ">= 0.9.0"
     gem.add_dependency "ri_cal"
     gem.add_dependency "chronic"
     gem.add_dependency "uuidtools"
+    gem.add_dependency "radiant", ">= 0.9.0"
+    gem.add_dependency "radiant-layouts-extension"
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. This is only required if you plan to package event_calendar as a gem."

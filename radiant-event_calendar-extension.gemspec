@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-09-10}
+  s.date = %q{2010-09-21}
   s.description = %q{An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
     ".gitmodules",
      "README.md",
      "Rakefile",
+     "VERSION",
      "app/controllers/admin/calendars_controller.rb",
      "app/controllers/admin/event_venues_controller.rb",
      "app/controllers/admin/events_controller.rb",
@@ -91,6 +92,7 @@ Gem::Specification.new do |s|
      "lib/event_search.rb",
      "lib/event_statuses.rb",
      "lib/tasks/event_calendar_extension_tasks.rake",
+     "pkg/radiant-event_calendar-extension-1.0.0.gem",
      "public/icals/blank",
      "public/images/admin/calendar.png",
      "public/images/event_calendar/calendarlinkbg.png",
@@ -104,6 +106,7 @@ Gem::Specification.new do |s|
      "public/stylesheets/sass/admin/modules/_grid.sass",
      "public/stylesheets/sass/constants.sass",
      "public/stylesheets/sass/event_calendar.sass",
+     "radiant-event_calendar-extension.gemspec",
      "spec/datasets/calendar_events_dataset.rb",
      "spec/datasets/calendar_pages_dataset.rb",
      "spec/datasets/calendar_sites_dataset.rb",
@@ -143,21 +146,24 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<radiant>, [">= 0.9.0"])
       s.add_runtime_dependency(%q<ri_cal>, [">= 0"])
       s.add_runtime_dependency(%q<chronic>, [">= 0"])
       s.add_runtime_dependency(%q<uuidtools>, [">= 0"])
+      s.add_runtime_dependency(%q<radiant>, [">= 0.9.0"])
+      s.add_runtime_dependency(%q<radiant-layouts-extension>, [">= 0"])
     else
-      s.add_dependency(%q<radiant>, [">= 0.9.0"])
       s.add_dependency(%q<ri_cal>, [">= 0"])
       s.add_dependency(%q<chronic>, [">= 0"])
       s.add_dependency(%q<uuidtools>, [">= 0"])
+      s.add_dependency(%q<radiant>, [">= 0.9.0"])
+      s.add_dependency(%q<radiant-layouts-extension>, [">= 0"])
     end
   else
-    s.add_dependency(%q<radiant>, [">= 0.9.0"])
     s.add_dependency(%q<ri_cal>, [">= 0"])
     s.add_dependency(%q<chronic>, [">= 0"])
     s.add_dependency(%q<uuidtools>, [">= 0"])
+    s.add_dependency(%q<radiant>, [">= 0.9.0"])
+    s.add_dependency(%q<radiant-layouts-extension>, [">= 0"])
   end
 end
 

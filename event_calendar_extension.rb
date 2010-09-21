@@ -1,7 +1,7 @@
 class EventCalendarExtension < Radiant::Extension
-  version "1.0.0"
+  version "1.0.1"
   description "An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
-  url "http://radiant.spanner.org/event_calendar"
+  url "http://github.com/radiant/radiant-event_calendar-extension"
 
   def activate
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages

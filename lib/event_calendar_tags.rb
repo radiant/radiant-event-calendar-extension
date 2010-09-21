@@ -820,7 +820,7 @@ module EventCalendarTags
       if events_today.any?
         cell_class += " eventful"
         cell_class += " eventful_weekend" if weekend?(day)
-        cell_class += events_today.map{|e| " #{e.calendar.slug}"}.join
+        cell_class += events_today.map{|e| " #{e.slug}"}.join
         event_list << %{<ul>} << events_today.map { |e| %{<li><span class="time">#{e.nice_start_time}:</span> #{e.title}</li>} }.join << "</ul>"
       else
         cell_class += " uneventful"
