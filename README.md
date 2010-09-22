@@ -8,11 +8,11 @@ See the [event_map](http://github.com/spanner/radiant-event_map-extension) exten
 
 ## Requirements
 
-Radiant 0.9, share_layouts and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
+Radiant 0.9, `layouts` or `share_layouts` and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
 
 	sudo rake gems:install
 	
-This is compatible with `multi_site` and with the [sites](http://github.com/spanner/radiant-event_map-extension "spanner's radiant-event_map-extension at master - GitHub") extension. With the latter everything will be site-scoped.
+This is compatible with `multi_site` and with the [sites](http://github.com/spanner/radiant-sites-extension) extension. With the latter everything will be site-scoped.
 
 There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
 
@@ -21,6 +21,14 @@ There is a 0.81 tag in the repository for the last version good with radiant 0.8
 Should be straightforward:
 
 	script/extension install event_calendar
+
+or as a gem:
+
+	sudo gem install radiant-event_calendar-extension
+
+with this in your environment.rb:
+
+	config.gem 'radiant-event_calendar-extension', :lib => false
 
 ## Configuration
 
