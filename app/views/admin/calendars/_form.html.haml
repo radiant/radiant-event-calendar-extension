@@ -1,50 +1,65 @@
+- @calendar.build_ical unless @calendar.ical
+
 #calendar_form.form-area
   = render_region :form_top
   = error_messages_for :calendar
 
-  - render_region :form do |form|
-    - form.edit_name do
-      .title
-        %p.calendar_title
-          = f.label :name
-          = f.text_field :name, :class => "textbox"
-        %p.calendar_category
-          = f.label :category
-          = f.text_field :category, :class => "textbox"
-        %p.calendar_slug
-          = f.label :slug
-          = f.text_field :slug, :class => "textbox"
-        %p.note
-          The category and slug are used create a url in the form /[calendar page]/category/slug showing only the events of this calendar.
+  .primary
+    - render_region :form do |form|
+      - form.edit_name do
+        .title
+          %p.calendar_title
+            = f.label :name
+            = f.text_field :name, :class => "textbox"
 
-      .description
-        %p.description
-          = f.label :description, "Description"
-          = f.text_area 'description', :size => '40x6', :class => "textarea"
-
-    - @calendar.build_ical unless @calendar.ical
-    - form.edit_ical do
-
-      - f.fields_for :ical do |ical_f| 
-        .ical
+      - form.edit_ical do
+        - f.fields_for :ical do |ical_f| 
           %p.url
             = ical_f.label :url, "Subscription url (optional)"
             = ical_f.text_field :url, :class => "textbox"
-            = ical_f.check_box :refresh_interval
-            = ical_f.label :refresh_interval, 'Refresh automatically?', :class => 'minor'
 
-          %p.username
-            = ical_f.label :username
-            = ical_f.text_field :username, :class => "textbox"
+          .drawer
+            .drawer_contents#subscription
 
-          %p.password
-            = ical_f.label :password
-            = ical_f.text_field :password, :class => "textbox"
+              %p.username
+                = ical_f.label :username, 'Username', :class => 'minor'
+                = ical_f.text_field :username, :class => "textbox"
 
-          %p.note
-            The url should be a complete http(s) address that works in your browser.
+              %p.password
+                = ical_f.label :password, 'Password', :class => 'minor'
+                = ical_f.text_field :password, :class => "textbox"
+
+              %p.refreshment
+                = ical_f.check_box :refresh_interval
+                = ical_f.label :refresh_interval, 'Refresh automatically?', :class => 'minor'
+                
+            .drawer_handle
+              %a.toggle{:href=>'#subscription', :rel=>"toggle[subscription]", :class=>"more"}
+                more
+
+      - form.edit_filing do
+        .filing
+          %p.calendar_category
+            = f.label :category
+            = f.text_field :category, :class => "textbox"
+          %p.calendar_slug
+            = f.label :slug
+            = f.text_field :slug, :class => "textbox"
+
+      - form.edit_description do
+        .description
+          %p.description
+            = f.label :description, "Description"
+            = f.text_area 'description', :size => '40x6', :class => "textarea"
 
   - render_region :form_bottom do |form_bottom|
+    - form_bottom.edit_metadata do
+      .secondary
+        .metadata
+          %p.calendar_keywords
+            = f.label :keywords
+            = f.text_field :keywords, :class => "textbox"
+
     - form_bottom.edit_timestamp do
       = updated_stamp @calendar  
 

@@ -5,7 +5,7 @@ class EventsController < SiteController
   helper_method :url_for_date, :url_for_month, :url_without_period, :calendar_parameters, :month_name, :short_month_name, :day_names
   before_filter :numerical_parameters
   
-  radiant_layout { |controller| controller.layout_for :event_calendar }
+  radiant_layout { Radiant::Config['event_calendar.layout'] }
   no_login_required
 
   # delivers designated lists of events in minimal formats

@@ -17,13 +17,17 @@
           = link_to event.title, event.url, :class => 'title'
         - else
           = event.title
+        - event.attached_tags.each do |tag|
+          %span.tag
+            = tag.name
+          
       %p.practicalities
         = event.summarize_start
         - if event.event_venue
-          %br
           = link_to event.event_venue.title, event.event_venue.url
           = event.event_venue.address
-
+        - elsif event.location
+          = event.location
       - unless repeating
         = event.description_paragraph
     

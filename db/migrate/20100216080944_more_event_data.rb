@@ -7,7 +7,7 @@ class MoreEventData < ActiveRecord::Migration
     add_column :events, :keywords, :string
     add_column :events, :contact, :string
     add_column :events, :postcode, :string
-    add_column :events, :lock_version, :integer
+    add_column :events, :lock_version, :integer, :default => 0
     add_column :events, :created_by_id, :integer
     add_column :events, :created_at, :datetime
     add_column :events, :updated_by_id, :integer

@@ -154,7 +154,7 @@ class Event < ActiveRecord::Base
   def postcode
     event_venue ? event_venue.postcode : read_attribute(:postcode)
   end
-
+  
   def date
     start_date.to_datetime.strftime(date_format)
   end
@@ -284,6 +284,10 @@ class Event < ActiveRecord::Base
   
   def continuing?
     end_date && start_date < Time.now && end_date > Time.now
+  end
+
+  def finished?
+    start_date < Time.now && (!end_date || end_date < Time.now)
   end
   
   def editable?

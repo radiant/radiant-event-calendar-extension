@@ -1,6 +1,7 @@
 - master_event = event.occurrence? ? event.master : event
-- cssclass = "node level-1"
+- cssclass = "node"
 - cssclass << " continuing" if event.continuing?
+- cssclass << " past" if event.finished?
 
 %tr{:class => cssclass}
   - render_region :tbody do |tbody|
@@ -11,15 +12,17 @@
             %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
             %span.day= event.start_date.mday
         - else
-          %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
-          %span.day= event.start_date.mday
+          %span.ineditable
+            %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
+            %span.day= event.start_date.mday
     - tbody.title_cell do
       %td.event
         %h3.title
           - if event.editable?
             = link_to event.title, edit_admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'
           - else
-            = event.title
+            %span.ineditable
+              = event.title
         %p.description
           = truncate(event.description, 128)
         - unless event.keywords.blank?
