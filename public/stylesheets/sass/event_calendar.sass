@@ -1,203 +1,279 @@
-!page = #fff
-!text = #000
-!pale = #999
-!paler = #ccc
-!verypale = #eee
-!link = #900
-!hover = #c00
+@import compass/css3
+@import 960/grid
 
-=functionalfonts
-  :font-family helvetica, arial, sans-serif
-  :letter-spacing -0.03em
-=blurred(!color=!verypale)
-  :text-shadow #{!color} 0 0 2px
+=standard_input
+  width: 100%
+  padding: 6px 0
+  border: 1px solid #666666
+  font-family: Monaco, "Courier New", Courier, monospace
+  font-size: 95%
 
-#events
-  .event
-    :position relative
-    :margin-bottom 20px
-    .dateholder
-      :position absolute
-      :left 15px
-      :top 2px
-      :padding 5px 5px 0 5px
-      :border 0
-      +functionalfonts
-      :text-align center
-      :line-height 1.05
-      :background-color = !page
-      :border
-        :style solid
-        :width 1px
-        :color = !verypale
-      span.month, span.dow 
-        :display block
-        :font-weight lighter
-        :font-size 80%
-        :text-transform uppercase
-      span.day, span.dom
-        :display block
-        :font-weight bold
-        :font-size 160%
-    .detail
+=quiet
+  font-family: helvetica, arial, sans-serif
+  font-weight: lighter
+  font-size: 85%
+  color: #cccccc
+  line-height: 1.3
+  text-shadow: none
+
+=flatbottom
+  margin-bottom: 0
+
+$radiant_red: #cc0000
+
+//calendars index
+
+table.index
+  td.subscription-title
+    font-size: 115%
+    font-weight: bold
+
+span.calendar_actions
+  img
+    opacity: 0.5
+  a
+    img
+      opacity: 1
+
+//events index
+
+table#events
+  tr
+    td.datemark
+      width: 40px
+      vertical-align: top
+      text-align: center
+      line-height: 1
+      a
+        text-decoration: none
+      span.month
+        display: block
+        margin-top: 5px
+        font-family: helvetica, arial, sans-serif
+        font-weight: lighter
+        font-size: 80%
+        text-transform: uppercase
+      span.day
+        display: block
+        font-family: helvetica, arial, sans-serif
+        font-weight: bold
+        font-size: 160%
+    td.event
+      width: 40%
+      vertical-align: top
       h3
-        :margin 0
-        :font-size 180%
-      p 
-        :margin-top 0
-        :font-size 90%
-        :line-height 1.4
-      p.venue 
-        :font-style italic
-        :margin-bottom 6px
-      p.description 
-        :margin-bottom 16px
+        margin: 0
+        line-height: 1.2
+        a
+          text-decoration: none
+      p.description
+        margin: 4px 0
+        font-size: 80%
+        color: #999999
+      p.keywords
+        margin: 4px 0
+        font-size: 80%
+    td.time, td.location, td.keywords, td.recurrence
+      font-size: 80%
+      padding-top: 28px
+      vertical-align: top
+    td.remove
+      padding-top: 28px
+      vertical-align: top
+      span.ineditable
+        color: #666666
+        font-size: 80%
+        background: url(/images/admin/minus.png) no-repeat scroll 4px 0
+        padding-left: 20px
+        opacity: 0.3
+  tr.continuing, tr.past
+    td
+      color: #b2aaa4
+      a, span
+        color: #b2aaa4
+  tr.deleted
+    td.datemark
+      a, span
+        color: #cccccc
+    td.event
+      h3
+        a, span
+          color: #cccccc
+          font-decoration: line-through
 
-#continuing
-  h3
-    +functionalfonts
-    :font-weight bold
-    :font-size 1.2em
-    :margin-bottom 0
-  ul
-    +functionalfonts
-    :font-size 90%
-    :line-height 1.2
-    :padding-left 0
-    li
-      :margin-top 10px
-      :font-style normal
-      a.title
-        :font-weight bold
-      span.detail
-        :font-size 80%
+// venues index
 
-#faceting  
-  a.defilter
-    :padding-left 14px
-    :background transparent url(/images/furniture/detag.png) no-repeat top left
-    :color #c00
+table#event_venues
+  td.event_venue
+    width: 40%
+    vertical-align: top
+    h3
+      margin: 0
+      line-height: 1.2
+      a
+        text-decoration: none
+    p.description
+      margin: 4px 0
+      font-size: 80%
+      color: #999999
+  td.location, td.url
+    font-size: 80%
+    vertical-align: top
 
-table.minimonth
-  +functionalfonts
-  :font-size 80%
-  :font-style normal
-  :border-collapse collapse
-  :border
-    :style solid
-    :width 1px
-    :color = !verypale
-  :color = !text
-  :margin 5px 0
-  a 
-    :display block
-    :color = !link
-    :font-weight lighter
-    :text-decoration none
-  a:hover 
-    :background-color = !hover
-    :color = !page
-  th, td 
-    :font-weight normal
-    :border
-      :style solid
-      :width 1px
-      :color = !verypale
-    :vertical-align top
-    :text-align center
-    :height 30px
-    :width 28px
-    :line-height 30px
-    :padding 0
-    :overflow hidden
-  th.month_link 
-    :font-size 120%
-  th.day_name 
-    :color = !verypale
-  td.other_month 
-    :color = !pale
-    a 
-      :color = !pale
-    a:hover
-      :color = !page
-  td.today
-    :background-color = !page
-  td.eventful
-  td.uneventful
-    +blurred
-    :color = !verypale
-  td.today 
-    :font-weight bold
-  td.past
-    :opacity 0.75
+// event and calendar forms
 
-p.help
-  +functionalfonts
-  :color = !pale
-  :font-size 80%
+#content
+  #calendar_form
+    .primary
+      position: relative
+      width: 73%
+      margin-right: 2%
+      float: left
+      overflow: hidden
+      input.textbox, textarea
+        width: 99%
+      .title
+        p.calendar_title
+          margin-top: 0
+          margin-bottom: 1em
+          input
+            font-family: Georgia, Palatino, "Times New Roman", Times, serif
+            font-size: 200%
+      #subscription
+        width: 98%
+        overflow: hidden
+        p
+          margin: 0.5em 2% 0.5em 2%
+          width: 46%
+          float: left
+      .drawer_handle
+        clear: both
+      .filing
+        p
+          margin-top: 0
+        p.calendar_category
+          width: 47%
+          float: left
+          margin-right: 4%
+        p.calendar_slug
+          width: 48%
+          float: left
+      .description
+        
+    .secondary
+      position: relative
+      width: 25%
+      float: left
+      overflow: hidden
+      .metadata
+        position: relative
+        p.calendar_keywords
+          margin-top: 0
+          margin-bottom: 1em
+          input
+            font-family: Georgia, Palatino, "Times New Roman", Times, serif
+            font-size: 200%
+            color: #c00
+    p.updated_line
+      clear: left
+    .buttons
+      clear: both
 
-#view_control
-  p
-    +functionalfonts
-    :color = !paler
-    :margin 0 0 10px 0
-    :line-height 30px
-    :height 25px
-    :overflow hidden
-    :font
-      :size 80%
-    a 
-      :color = !pale
-      :padding-top 4px
-    a.fg 
-      :color = !text
-    a:hover
-      :color = !hover
-  p.views
-    :font-size 100%
-    a.map
-      :padding 7px 3px 3px 17px
-      :background transparent url(/images/event_calendar/maplinkbg.png) no-repeat top left      
-    a.calendar
-      :padding 7px 3px 3px 20px
-      :background transparent url(/images/event_calendar/calendarlinkbg.png) no-repeat top left      
-  p.feeds
-    a.rss, a.ical
-      :padding 3px 3px 3px 17px
-      :height 24px
-    a.rss
-      :background transparent url(/images/icons/rss.png) no-repeat top left
-    a.ical
-      :background transparent url(/images/icons/ical.png) no-repeat top left
 
-div.pagination 
-  +functionalfonts
-  :color = !text
-  :line-height 2
-  :margin-top 50px
-  :margin-bottom 20px
-  a, span.current, span.disabled
-    :padding 6px 7px 3px 7px
-    :border
-      :style solid
-      :width 1px
-      :color = !link
-  a:hover
-    :border-color = !hover
-  .next_page, .prev_page
-  span.current 
-    :color = !text
-    :font-weight bold
-    :border-color = !text
-  span.separator
-    :visibility hidden
-  span.disabled 
-    :display none
-    :color = !verypale
-    :border-color = !verypale
-    +blurred
-  span.summary 
-    :padding 6px
-    :font-size 75%
-    :color = !verypale
-    :margin-left 10px
+  #calendar_form, #event_form, #venue_form
+    div.date
+      clear: left
+      p.start_date, p.end_date
+        +grid(4)
+        margin-bottom: 0
+      p.problematic
+        color: $radiant_red
+        
+    div.recurrence
+      clear: left
+      p.recurrence
+        margin-top: 0
+        span.recurrence_detail
+          display: block
+        span#recurrence_interval
+          +grid(2)
+        span#recurrence_period
+          +grid(2)
+        span#recurrence_basis
+          +grid(2)
+        span#recurrence_limit
+          +grid(2)
+          +omega
+        span#recurrence_count
+          +grid(2)
+          +omega
+    div.venue, div.newvenue
+      overflow: auto
+    div#venue
+      clear: left
+      p#existing_venue
+        +grid(8)
+    div#new_venue
+      clear: left
+      p.venue_title
+        +grid(8)
+      p.url
+        clear: left
+        +grid(8)
+      p.venue_location
+        +grid(8)
+        textarea
+          height: 5em
+      p.venue_postcode
+        +grid(4)
+        span.note
+          display: block
+          margin-top: 4px
+      p.venue_description
+        +grid(12)
+        clear: both
+        textarea
+          height: 5em
+    .note, label.minor
+      +quiet
+      display: inline
+    label.inline
+      display: inline
+    .hidden
+      display: none
+
+a.toggleMCE
+  display: block
+  width: 24px
+  height: 24px
+  padding-left: 24px
+  float: right
+
+.calendar_popup
+  div.clock_control
+    position: relative
+    display: block
+    width: 300px
+    height: 200px
+    form
+      text-align: center
+      h4
+        margin: 10px
+        color: #999999
+        font-weight: lighter
+      input.hours, input.minutes
+        width: 60px
+        border: 1px solid #cccccc
+        padding: 4px
+        font-size: 40px
+      span.colon
+        padding: 4px
+        font-size: 40px
+        color: #333333
+        width: 10px
+      input.set_time
+        font-size: 30px
+        width: 114px
+        margin: 20px 0
+      a.cancel
+        cursor: pointer
