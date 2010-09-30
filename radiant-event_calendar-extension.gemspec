@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.1.0"
+  s.version = "1.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
@@ -97,6 +97,7 @@ Gem::Specification.new do |s|
      "pkg/radiant-event_calendar-extension-1.0.0.gem",
      "pkg/radiant-event_calendar-extension-1.0.1.gem",
      "pkg/radiant-event_calendar-extension-1.0.2.gem",
+     "pkg/radiant-event_calendar-extension-1.1.0.gem",
      "public/icals/blank",
      "public/images/admin/calendar.png",
      "public/images/event_calendar/calendarlinkbg.png",
@@ -107,9 +108,6 @@ Gem::Specification.new do |s|
      "public/images/event_calendar/several_events.png",
      "public/javascripts/admin/event_calendar.js",
      "public/stylesheets/sass/admin/event_calendar.sass",
-     "public/stylesheets/sass/admin/modules/_grid.sass",
-     "public/stylesheets/sass/constants.sass",
-     "public/stylesheets/sass/event_calendar.sass",
      "radiant-event_calendar-extension.gemspec",
      "spec/datasets/calendar_events_dataset.rb",
      "spec/datasets/calendar_pages_dataset.rb",
