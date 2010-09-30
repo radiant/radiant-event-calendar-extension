@@ -7,22 +7,13 @@
   - render_region :tbody do |tbody|
     - tbody.date_cell do
       %td.datemark
-        - if event.editable?
-          %a{:href => admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'}
-            %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
-            %span.day= event.start_date.mday
-        - else
-          %span.ineditable
-            %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
-            %span.day= event.start_date.mday
+        %a{:href => admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'}
+          %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
+          %span.day= event.start_date.mday
     - tbody.title_cell do
       %td.event
         %h3.title
-          - if event.editable?
-            = link_to event.title, edit_admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'
-          - else
-            %span.ineditable
-              = event.title
+          = link_to event.title, edit_admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'
         %p.description
           = truncate(event.description, 128)
         - unless event.keywords.blank?
@@ -38,7 +29,8 @@
         = event.summarize_period
     - tbody.location_cell do
       %td.location
-        = event.location
+        - if event.event_venue
+          = event.event_venue.title
     - tbody.modify_cell do
       %td.remove
         - if event.editable?

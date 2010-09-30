@@ -4,11 +4,11 @@
   = render_region :form_top
   = error_messages_for :calendar
 
-  .primary
+  .main
     - render_region :form do |form|
       - form.edit_name do
         .title
-          %p.calendar_title
+          %p.title
             = f.label :name
             = f.text_field :name, :class => "textbox"
 
@@ -21,15 +21,15 @@
           .drawer
             .drawer_contents#subscription
 
-              %p.username
+              %div.username
                 = ical_f.label :username, 'Username', :class => 'minor'
                 = ical_f.text_field :username, :class => "textbox"
 
-              %p.password
+              %div.password
                 = ical_f.label :password, 'Password', :class => 'minor'
                 = ical_f.text_field :password, :class => "textbox"
 
-              %p.refreshment
+              %div.refreshment
                 = ical_f.check_box :refresh_interval
                 = ical_f.label :refresh_interval, 'Refresh automatically?', :class => 'minor'
                 
@@ -54,11 +54,10 @@
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_metadata do
-      .secondary
-        .metadata
-          %p.calendar_keywords
-            = f.label :keywords
-            = f.text_field :keywords, :class => "textbox"
+      .metadata
+        %p.keywords
+          = f.label :keywords
+          = f.text_field :keywords, :class => "textbox"
 
     - form_bottom.edit_timestamp do
       = updated_stamp @calendar  

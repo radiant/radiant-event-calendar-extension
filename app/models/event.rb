@@ -123,6 +123,22 @@ class Event < ActiveRecord::Base
     calendar.slug if calendar
   end
   
+  def location
+    if event_venue
+      event_venue.to_s
+    else
+      read_attribute(:location)
+    end
+  end
+  
+  def address
+    event_venue.address if event_venue
+  end
+
+  def postcode
+    event_venue.postcode if event_venue
+  end
+  
   def description_paragraph
     if description =~ /\<p/
       description
@@ -141,18 +157,6 @@ class Event < ActiveRecord::Base
   
   def occurrence?
     !master?
-  end
-
-  def location
-    event_venue ? event_venue.to_s : read_attribute(:location)
-  end
-  
-  def address
-    event_venue ? event_venue.address : read_attribute(:location)
-  end
-
-  def postcode
-    event_venue ? event_venue.postcode : read_attribute(:postcode)
   end
   
   def date
@@ -336,7 +340,6 @@ class Event < ActiveRecord::Base
       :uuid => cal_event.uid,
       :title => cal_event.summary,
       :description => cal_event.description,
-      :location => cal_event.location,
       :url => cal_event.url,
       :start_date => cal_event.dtstart,
       :end_date => cal_event.dtend,
@@ -344,6 +347,7 @@ class Event < ActiveRecord::Base
       :created_at => cal_event.dtstamp
     })
     event.status = Status[:imported]
+    event.set_venue_from_location(cal_event.location)
     cal_event.rrule.each { |rule| event.add_recurrence(rule) }
     event
   rescue => error
@@ -352,21 +356,29 @@ class Event < ActiveRecord::Base
   end
   
   def update_from(cal_event)
+    #TODO handle and merge local updates
     self.update_attributes({
       :title => cal_event.summary,
       :description => cal_event.description,
-      :location => cal_event.location,
       :url => cal_event.url,
       :start_date => cal_event.dtstart,
       :end_date => cal_event.dtend,
       :all_day => !cal_event.dtstart.is_a?(DateTime)
     })
     self.status = Status[:imported]
+    self.set_venue_from_location(cal_event.location)
     cal_event.rrule.each { |rule| self.add_recurrence(rule) }
+    self.save!
     self
   rescue => error
     logger.error "Event update error: #{error}."
     raise
+  end
+  
+  def set_venue_from_location(location='')
+    unless location.blank?
+      self.event_venue = EventVenue.find_by_title(location) || EventVenue.find_or_create_by_location(location)
+    end
   end
   
 protected

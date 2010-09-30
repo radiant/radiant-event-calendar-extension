@@ -12,7 +12,7 @@
     - tbody.url_cell do
       %td.url
         - if event_venue.url
-          = link_to event_venue.url
+          = link_to truncate(event_venue.url, 48), event_venue.url
     - tbody.modify_cell do
       %td.remove
         = link_to 'remove', remove_admin_event_venue_url(event_venue)

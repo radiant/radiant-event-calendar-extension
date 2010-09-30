@@ -13,8 +13,9 @@ class Ical < ActiveRecord::Base
   
   def refresh
     retrieve_file
-    parse_file
+    updated = parse_file
     logger.info self.calendar.category + "/" + self.calendar.name + " - iCalendar subscription refreshed on " + Time.now.strftime("%m/%d at %H:%M")
+    updated
   end
 
   def retrieve_file
@@ -40,6 +41,7 @@ class Ical < ActiveRecord::Base
   end
 
   def parse_file(thisfile=filename)
+    affected = []
     begin
       Ical.transaction do
         self.last_refresh_count = 0
@@ -50,7 +52,7 @@ class Ical < ActiveRecord::Base
           cal.events.each do |cal_event|
             if event = Event.find_by_uuid(cal_event.uid)
               if cal_event.dtstamp > event.updated_at
-                event.update_from(cal_event) 
+                affected.push event.update_from(cal_event) 
               else
               end
               event_count += 1
@@ -59,12 +61,14 @@ class Ical < ActiveRecord::Base
               event.site = self.calendar.site if event.respond_to? :site=
               self.calendar.events << event
               event.save!
+              affected.push event
             end
           end
         end
         self.last_refresh_count = event_count
         self.last_refresh_date = Time.now.utc
         self.save!
+        affected
       end
     rescue => error
       logger.error "RiCal parse error with: #{self.calendar.name}: #{error}."

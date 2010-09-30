@@ -24,7 +24,11 @@
       %p.practicalities
         = event.summarize_start
         - if event.event_venue
-          = link_to event.event_venue.title, event.event_venue.url
+          at
+          - if event.event_venue.url
+            = link_to event.event_venue.title, event.event_venue.url
+          - else
+            = event.event_venue.title
           = event.event_venue.address
         - elsif event.location
           = event.location

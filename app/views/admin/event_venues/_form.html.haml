@@ -1,44 +1,48 @@
-- include_stylesheet "admin/event_calendar"
-- include_javascript "admin/event_calendar"
-- if defined? TinyMceFilter
-  - include_javascript "tiny_mce/tiny_mce"
-  - include_javascript "tiny_mce/tiny_mce_settings"
-  - include_javascript "tiny_mce/application"
-
 - or_choose ||= false
 - event_venue ||= EventVenue.new
 
-.title
-  %p.venue_title
+.main
+  %p.title
     = f.label :title, "Venue or location title"
     = f.text_field :title, :class => 'textbox'
     - if or_choose && @venues.any?
       = link_to "choose an existing place", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
-
-%p.note
+    - else
+      %span.note
+        We remember these details for you, so changes here affect every event occurring in this place
+      
   - if or_choose && @venues.any?
-    If you've used this place before, please 
-    = link_to "choose it from the list", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
-    so that you can update it globally
-  - else
-    Next time you add an event you'll be able to choose this venue from a list
+    %p.note
+      If you've used this place before, please 
+      = link_to "choose it from the list", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
+      so that you can update it globally
 
-%p.url
-  = f.label :url, "Venue website"
-  = f.text_field :url, :class => 'textbox'
+.metadata
+  %p.keywords
+    = f.label :keywords
+    = f.text_field :keywords, :class => "textbox"
 
-%p.venue_location
-  = f.label :address, "Address or location"
-  = f.text_area :address, :class => 'textarea'
+.main
+  %p.location
+    = f.label :location, "Location tag"
+    = f.text_field :location, :class => "textbox", :disabled => true
+    %span.note
+      This is used to recognise the venue in a calendar feed. It can be postcode, grid reference or any distinctive string.
 
-%p.venue_postcode
-  = f.label :postcode, "Postcode or grid reference"
-  = f.text_field :postcode, :class => 'textbox place'
-  %span.note
-    This is only required if your address is unusual or you want these events to show on a map in a particular place.
+  %p.address
+    - if defined? TinyMceFilter
+      = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => (@event ? "toggle[event_event_venue_attributes_address]" : "toggle[event_venue_address]")
+    = f.label :address, "Address or directions"
+    = f.text_area :address, :class => 'textarea'
 
-%p.venue_description
-  - if defined? TinyMceFilter
-    = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => "toggle[event_venue_#{event_venue.id}_description]"
-  = f.label :description, "Description"
-  = f.text_area :description, :class => 'textarea', :id => "event_venue_#{event_venue.id}_description"
+.metadata
+  %p.venue_postcode
+    = f.label :postcode, "Postcode or grid reference"
+    = f.text_field :postcode, :class => 'textbox place'
+    %span.note
+      This is only required if your address is unusual or you want these events to show on a map in a particular place.
+
+  %p.url
+    = f.label :url, "Venue url"
+    = f.text_field :url, :class => 'textbox'
+

@@ -1,17 +1,15 @@
 class EventVenue < ActiveRecord::Base
   has_many :events, :dependent => :nullify
   has_site if respond_to? :has_site
-  validates_presence_of :title, :address
   default_scope :order => 'title asc'
   
   def to_s
-    %{#{title}, #{address}}
+    title
   end
   
-  def location
-    address
+  # location is the string read in automatically from ical subscriptions
+  def title
+    read_attribute(:title) || location
   end
-  def location=(location)
-    address = location
-  end
+  
 end

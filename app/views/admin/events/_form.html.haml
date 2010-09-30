@@ -1,6 +1,3 @@
-- include_stylesheet "admin/event_calendar"
-- include_javascript "admin/event_calendar"
-
 - if defined? TinyMceFilter
   - include_javascript "tiny_mce/tiny_mce"
   - include_javascript "tiny_mce/tiny_mce_settings"
@@ -10,104 +7,111 @@
 - @event.event_venue ||= EventVenue.new
 - @event.recurrence_rules.build unless @event.recurrence_rules.any?
 
-- form_for [:admin, @event] do |f|
-  = f.hidden_field :lock_version
-  = render_region :form_top
+- imported = @event.status == Status[:imported]
 
-  #event_form.form-area.container_12
+- if imported
+  %p 
+    This event comes from a calendar subscription, but you can add keywords here and give more information about its location. 
+    Please note that changes to the location will affect any other events linked to the same place.
+
+= render_region :form_top
+
+#event_form.form-area
+  .main
     - render_region :form do |form|
-
       - form.edit_event do
-        .title
-          %p.event_title
-            = f.label :title, "Title"
-            = f.text_field :title, :class => 'textbox'
-          %p.keywords
-            = f.label :keywords, "Tags"
-            = f.text_field :keywords, :class => 'textbox'
-
-        .url
-          %p.url
-            = f.label :url, "Link to"
-            = f.text_field :url, :class => 'textbox'
-
-        .description
-          %p.description
-            - if defined? TinyMceFilter
-              = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
-            = f.label :description, "Description"
-            = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;"
-          %p.calendar
-            = f.label :calendar_id, "Calendar"
-            = f.select :calendar_id, Calendar.all.map {|c| [c.name, c.id]}, {:include_blank => true}, :class => 'textbox'
-            %span.note
-              This is optional but can be used to file your events or to mix local events into a subscribed calendar.
-              
+        %p.title
+          = f.label :title, "Title"
+          = f.text_field :title, :class => 'textbox', :disabled => imported
+            
       - form.edit_date do
-        .date
-          %p.start_date
-            = f.label :start_date, "Start date and time"
-            = f.text_field :start_date, :class => 'textbox date time'
-            = f.check_box :all_day
-            = f.label :all_day, 'All-day event?', :class => 'minor'
-            %span.note
-              (times will be ignored)
-          %p.end_date
-            = f.label :end_date, "end date and time"
-            = f.text_field :end_date, :class => 'textbox date time'
-          %p#event_note.note
-            If you specify an end date and later change the start date, the end will shift to preserve the event's duration.
+        %p.start_date
+          = f.label :start_date, "Start date and time"
+          = f.text_field :start_date, :class => 'textbox date time', :disabled => imported
+          = f.check_box :all_day, :disabled => imported
+          = f.label :all_day, 'All-day event?', :class => 'minor'
+        %p.end_date
+          = f.label :end_date, "end date and time"
+          = f.text_field :end_date, :class => 'textbox date time', :disabled => imported
 
         .recurrence
           - f.fields_for :recurrence_rules do |rf|
-            
+          
             %p.recurrence
-              = rf.check_box 'active', :class => 'toggle', :rel => "toggle[recurrence_detail]", :style => 'margin-left: 15px;'
+              = rf.check_box 'active', :class => 'toggle', :rel => "toggle[recurrence_detail]", :disabled => imported
               = rf.label :active, 'Repeats', :class => 'minor'
               %span.note
                 (this is for separate similar events. For events that span several days you only need to set the start and end.)
-              
-              %span#recurrence_detail
-                %span#recurrence_interval
-                  = rf.label :interval, "Every"
-                  = rf.text_field :interval, :class => 'textbox short'
-                %span#recurrence_period
-                  = rf.label :period, "&nbsp;"
-                  = rf.select :period, [['day', 'daily'], ['week', 'weekly'], ['month', 'monthly'], ['year', 'yearly']], {}, :class => 'textbox'
-                %span#recurrence_basis
-                  = rf.label :basis, "&nbsp;"
-                  = rf.select :basis, [['forever', 'unbounded'],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox basis'
-                %span#recurrence_unbounded
-                %span#recurrence_limit
-                  = rf.label :limiting_date, "&nbsp;"
-                  = rf.text_field :limiting_date, :class => 'textbox date'
-                %span#recurrence_count
-                  = rf.label :limiting_count, "this many times:", :class => 'inline'
-                  = rf.text_field :limiting_count, :class => 'textbox short'
 
-      - form.edit_venue do
-        - prefer_new = @venues.empty? || @event.event_venue.new_record?
-        - toggle_precedence = prefer_new ? "new_venue,venue" : "venue,new_venue"
-        
-        - if @venues.any?
-          #venue
-            %p#existing_venue
-              = f.label :event_venue_id, "Choose a place"
-              = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox'
-              = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence}]"
-            %p.note
-              You can 
-              = link_to "edit the venue list", admin_event_venues_url
-              to update addresses and directions for all relevant events.
+            %p#recurrence_detail
+              %span#recurrence_interval
+                = rf.label :interval, "Repeats every"
+                = rf.text_field :interval, :class => 'textbox short'
+              %span#recurrence_period
+                = rf.label :period, "&nbsp;"
+                = rf.select :period, [['day', 'daily'], ['week', 'weekly'], ['month', 'monthly'], ['year', 'yearly']], {}, :class => 'textbox'
+              %span#recurrence_basis
+                = rf.label :basis, "&nbsp;"
+                = rf.select :basis, [['forever', 'unbounded'],['until', 'limit'], ['for', 'count']], {}, :class => 'textbox basis'
+              %span#recurrence_unbounded
+              %span#recurrence_limit
+                = rf.label :limiting_date, "&nbsp;"
+                = rf.text_field :limiting_date, :class => 'textbox date'
+              %span#recurrence_count
+                = rf.label :limiting_count, "this many times:", :class => 'inline'
+                = rf.text_field :limiting_count, :class => 'textbox short'
 
-        #new_venue
-          - event_venue = @event.event_venue.new_record? ? @event.event_venue : EventVenue.new
-          - f.fields_for :event_venue, event_venue do |ef|
-            = render :partial => 'admin/event_venues/form', :locals => {:event_venue => event_venue, :f => ef, :or_choose => @venues.any?, :compact => true}
+      - form.edit_description do
+        %p.description
+          - if !imported && defined? TinyMceFilter
+            = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[event_description]'
+          = f.label :description, "Description"
+          = f.text_area :description, :class => 'textarea', :style => "width: 100%; height: 8em;", :disabled => imported
 
   - render_region :form_bottom do |form_bottom|
+    - form_bottom.edit_metadata do
+      .metadata
+        %p.keywords
+          = f.label :keywords
+          = f.text_field :keywords, :class => "textbox"
+        %p.calendar
+          = f.label :calendar_id, "Calendar"
+          = f.select :calendar_id, Calendar.all.map {|c| [c.name, c.id]}, {:include_blank => true}, :class => 'textbox', :disabled => imported
+          %br
+          %span.note
+            This is optional but can be used to file your events or to mix local events into a subscribed calendar.
+        %p.url
+          = f.label :url, "Event url"
+          = f.text_field :url, :class => 'textbox', :disabled => imported
+
+    - form_bottom.edit_venue do
+      - toggle_precedence = %w{venue new_venue}
+      - toggle_precedence.reverse! if @venues.empty? || @event.event_venue.new_record?
+  
+      - if imported
+        - f.fields_for :event_venue, @event.event_venue do |ef|
+          = render :partial => 'admin/event_venues/form', :locals => {:event_venue => @event.event_venue, :f => ef, :or_choose => false, :compact => true}
+
+      - else
+        -if @venues.any?
+          #venue.main
+            %p#existing_venue
+              = f.label :event_venue_id, "Choose a place"
+              = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox', :disabled => imported
+              - if imported
+                = link_to "edit this location", admin_event_venue_url(@event.event_venue)
+                to add title, description and directions
+              - else
+                = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence.join(',')}]"
+        #new_venue
+          - @event.build_event_venue unless @event.event_venue
+          - f.fields_for :event_venue, @event.event_venue do |ef|
+            = render :partial => 'admin/event_venues/form', :locals => {:event_venue => @event.event_venue, :f => ef, :or_choose => @venues.any?, :compact => true}
+
+
     - form_bottom.edit_timestamp do
       = updated_stamp @event
+      
     - form_bottom.edit_buttons do
       %p.buttons
         = save_model_button(@event)

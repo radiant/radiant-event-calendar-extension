@@ -1,6 +1,11 @@
+- include_stylesheet "admin/event_calendar"
+- include_javascript "admin/event_calendar"
+
 - render_region :main do |main|
   - main.edit_header do
     %h1 
       Edit Event
+
   - main.edit_form do
-    = render :partial => 'form'
+    - form_for :event, @event, :url => admin_event_path(@calendar), :html => { :method => "put", :multipart => true } do |f|
+      = render :partial => 'form', :locals => { :f => f }
