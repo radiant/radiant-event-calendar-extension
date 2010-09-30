@@ -13,7 +13,7 @@ class Event < ActiveRecord::Base
   
   belongs_to :master, :class_name => 'Event'
   has_many :occurrences, :class_name => 'Event', :foreign_key => 'master_id', :dependent => :destroy
-  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy, :conditions => {:active => 1}
+  has_many :recurrence_rules, :class_name => 'EventRecurrenceRule', :dependent => :destroy, :conditions => {:active => true}
   accepts_nested_attributes_for :recurrence_rules, :allow_destroy => true, :reject_if => lambda { |attributes| attributes['active'].to_s != '1' }
 
   validates_presence_of :uuid, :title, :start_date, :status_id
