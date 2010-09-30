@@ -53,5 +53,5 @@ class Calendar < ActiveRecord::Base
   def to_ical
     self.to_ri_cal.to_s
   end
-
+  
 end

@@ -15,8 +15,8 @@ class Admin::IcalsController < Admin::ResourceController
   
   def refresh
     ical = Ical.find(params[:id])
-    if events = ical.refresh
-      flash[:notice] = ical.calendar.name + " calendar refreshed from iCal subscription."
+    if response = ical.refresh
+      flash[:notice] = ical.calendar.name + " calendar refreshed. #{response}"
     else
       flash[:notice] = "Error parsing " + ical.calendar.name + " calendar from iCal subscription."
     end

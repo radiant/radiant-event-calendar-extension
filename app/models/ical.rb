@@ -5,6 +5,7 @@ require 'date'
 require 'ftools'
 
 class Ical < ActiveRecord::Base
+  include ActionView::Helpers::TextHelper
   belongs_to :calendar
   validates_presence_of :url
   has_site if respond_to? :has_site
@@ -45,7 +46,8 @@ class Ical < ActiveRecord::Base
     begin
       Ical.transaction do
         self.last_refresh_count = 0
-        event_count = 0
+        count = { :created => 0, :updated => 0, :deleted => 0 }
+        uuids_seen = []
         File.open(thisfile, "r") do |file|
           components = RiCal.parse(file)
           cal = components.first
@@ -53,22 +55,30 @@ class Ical < ActiveRecord::Base
             if event = Event.find_by_uuid(cal_event.uid)
               if cal_event.dtstamp > event.updated_at
                 affected.push event.update_from(cal_event) 
+                count[:updated] += 1
               else
               end
-              event_count += 1
             else
               event = Event.create_from(cal_event)
               event.site = self.calendar.site if event.respond_to? :site=
               self.calendar.events << event
               event.save!
-              affected.push event
+              count[:created] += 1
             end
+            uuids_seen.push(cal_event.uid)
           end
         end
-        self.last_refresh_count = event_count
+        self.last_refresh_count = uuids_seen.length
         self.last_refresh_date = Time.now.utc
         self.save!
-        affected
+        
+        self.calendar.events.except_these(uuids_seen).each do |event| 
+          event.destroy 
+          count[:deleted] += 1
+        end
+        response = [:created, :updated, :deleted].collect { |counter| 
+          "#{pluralize(count[counter], 'event')} #{counter}. "
+        }.join('')
       end
     rescue => error
       logger.error "RiCal parse error with: #{self.calendar.name}: #{error}."

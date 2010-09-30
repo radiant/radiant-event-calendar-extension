@@ -68,6 +68,10 @@ class Event < ActiveRecord::Base
   named_scope :at_venue, lambda { |venue| # EventVenue object
     { :conditions => ["event_venue_id = ?", venue.id] }
   }
+  
+  named_scope :except_these, lambda { |uuids| # array of uuid strings
+    { :conditions => ["uuid not in (#{uuids.map{'?'}.join(',')})", *uuids] }
+  }
 
   def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
     finish = Time.now
