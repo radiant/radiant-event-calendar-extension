@@ -72,8 +72,6 @@ The events controller uses `share_layouts` to define various page parts that you
 * `pagination` is the usual will_paginate block.
 * `faceting` here only gives the option to remove any date filters that have been applied. If you add the `taggable_events` extension it gets more useful.
 
-You will find minimal styling of some of these parts in `/stylesheets/sass/calendar.sass`,
-
 Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got.
 
 Here's a basic sample layout that should just work:

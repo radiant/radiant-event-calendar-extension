@@ -1,266 +1,279 @@
-@import modules/rounded.sass
-@import modules/opacity.sass
-@import modules/grid.sass
+@import compass/css3
+@import 960/grid
 
 =standard_input
-  :width 100%
-  :padding 6px 0
-  :font-family Monaco,"Courier New",Courier,monospace
-  :font-size 95%
+  width: 100%
+  padding: 6px 0
+  border: 1px solid #666666
+  font-family: Monaco, "Courier New", Courier, monospace
+  font-size: 95%
 
 =quiet
-  :font-family helvetica, arial, sans-serif
-  :font-weight lighter
-  :font-size 85%
-  :color #ccc
-  :line-height 1.3
-  :text-shadow none
+  font-family: helvetica, arial, sans-serif
+  font-weight: lighter
+  font-size: 85%
+  color: #cccccc
+  line-height: 1.3
+  text-shadow: none
 
 =flatbottom
-  :margin-bottom 0
+  margin-bottom: 0
 
-!radiant_red = #c00
+$radiant_red: #cc0000
 
-//calendars index 
+.note
+  +quiet
 
-table.index 
-  td.subscription-title 
-    :font-size 115%
-    :font-weight bold
+table.index
+  td.subscription-title
+    font-size: 115%
+    font-weight: bold
+  th
+    a
+      color: #ccc
+      text-decoration: none
+      &:hover
+        color: white
 
 span.calendar_actions
-  img 
-    :opacity 0.5
-  a 
-    img 
-      :opacity 1
+  img
+    opacity: 0.5
+  a
+    img
+      opacity: 1
 
-//events index 
+//events index
 
 table#events
   tr
     td.datemark
-      :width 40px
-      :vertical-align top
-      :text-align center
-      :line-height 1
+      width: 40px
+      vertical-align: top
+      text-align: center
+      line-height: 1
       a
-        :text-decoration none
+        text-decoration: none
       span.month
-        :display block
-        :margin-top 5px
-        :font-family helvetica, arial, sans-serif
-        :font-weight lighter
-        :font-size 80%
-        :text-transform uppercase
+        display: block
+        margin-top: 5px
+        font-family: helvetica, arial, sans-serif
+        font-weight: lighter
+        font-size: 90%
+        text-transform: uppercase
       span.day
-        :display block
-        :font-family helvetica, arial, sans-serif
-        :font-weight bold
-        :font-size 160%
-    td.event 
-      :width 40%
-      :vertical-align top
-      h3 
-        :margin 0
-        :line-height 1.2
-        a 
-          :text-decoration none
-      p.description 
-        :margin 4px 0
-        :font-size 80%
-        :color #999
-      p.keywords 
-        :margin 4px 0
-        :font-size 80%
+        display: block
+        font-family: helvetica, arial, sans-serif
+        font-weight: bold
+        font-size: 160%
+    td.event
+      width: 40%
+      vertical-align: center
+      h3
+        margin: 2px 0 0
+        line-height: 1
+        a
+          text-decoration: none
+      p.description
+        margin: 0
+        font-size: 80%
+        color: #999
+      p.keywords
+        margin: 4px 0
+        font-size: 80%
     td.time, td.location, td.keywords, td.recurrence
-      :font-size 80%
-      :padding-top 28px
-      :vertical-align top
+      vertical-align: center
     td.remove
-      :padding-top 28px
-      :vertical-align top
+      vertical-align: center
       span.ineditable
-        :color #666
-        :font-size 80%
-        :background url(/images/admin/minus.png) no-repeat scroll 4px 0 
-        :padding-left 20px
-        :opacity 0.3
-  tr.continuing
+        color: #666666
+        font-size: 80%
+        background: url(/images/admin/minus.png) no-repeat scroll 4px 0
+        padding-left: 20px
+        opacity: 0.3
+  tr.continuing, tr.past
+    td
+      color: #b2aaa4
+      a, span
+        color: #b2aaa4
+  tr.deleted
     td.datemark
-      a
-        :color #b2aaa4
+      a, span
+        color: #cccccc
     td.event
       h3
-        a
-          :color #b2aaa4
-        
+        a, span
+          color: #cccccc
+          text-decoration: line-through
+
 // venues index
 
 table#event_venues
   td.event_venue
-    :width 40%
-    :vertical-align top
-    h3 
-      :margin 0
-      :line-height 1.2
-      a 
-        :text-decoration none
-    p.description 
-      :margin 4px 0
-      :font-size 80%
-      :color #999
-  td.location, td.url 
-    :font-size 80%
-    :vertical-align top
+    width: 40%
+    vertical-align: center
+    h3
+      margin: 0
+      line-height: 1.2
+      a
+        text-decoration: none
+    p.description
+      margin: 4px 0
+      font-size: 80%
+      color: #999999
+  td.location, td.url
+    font-size: 80%
+    vertical-align: center
+  td.actions
+    white-space: nowrap
 
-// event and calendar forms 
+// event and calendar forms
 
-#content 
-  #event_form, #calendar_form, #venue_form
-    div
-      p
-        input.textbox, select.textbox, textarea
-          +standard_input
-          :margin-top 0.3em
-      p.note 
-        +grid(4)
-        :padding-top 1.7em
-    div.title
-      :clear left
-      p.event_title, p.calendar_title, p.keywords, p.venue_title
-        :margin-bottom 1em
-        input 
-          :font-family Georgia,Palatino,"Times New Roman",Times,serif
-          :font-size 200%
-      p.event_title
-        +grid(8)
-      p.keywords 
-        +grid(4)
+#content
+  .form-area
+    input[disabled='disabled'], textarea[disabled='disabled']
+      background-color: #dadada
+      border-color: #e7e7e7
+    
+    .main
+      position: relative
+      width: 73%
+      margin-right: 2%
+      float: left
+      overflow: hidden
+      p:first-child
+        margin-top: 0
+      input.textbox, textarea, select
+        width: 99%
+        margin-top: 3px 
+      p.title
+        margin-top: 0
+        margin-bottom: 1em
         input
-          :color = !radiant_red
-      p.calendar_category, p.calendar_slug
-        +grid(4)
-    div.url
-      +grid(12)
-      :clear left
-      
-    div.description
-      :clear left
-      p.description
-        +grid(8)
-        textarea
-          :height 16em
-      p.calendar
-        +grid(4)
+          font-family: Georgia, Palatino, "Times New Roman", Times, serif
+          font-size: 200%
+          
+    .metadata
+      position: relative
+      width: 25%
+      float: left
+      overflow: hidden
+      p:first-child
+        margin-top: 0
+      p.keywords
+        margin-bottom: 1em
+        input
+          margin-top: 4px
+          font-family: Georgia, Palatino, "Times New Roman", Times, serif
+          font-size: 200%
+          color: #c00
+          
+    p.updated_line
+      clear: left
+    .buttons
+      clear: both
+    
+  #calendar_form
+    #subscription
+      overflow: hidden
+      margin-right: 2px
+      div
+        margin: 0.5em 2% 0 1%
+        width: 47%
+        float: left
+        input.textbox
+          +standard_input
+    .drawer_handle
+      clear: both
+    .filing
+      p
+        margin-top: 0
+      p.calendar_category
+        width: 47%
+        float: left
+        margin-right: 4%
+      p.calendar_slug
+        width: 48%
+        float: left
+    .description
 
-    div.ical
-      :clear left
-      p.url
-        +grid(8)
-        :margin-top 0
-      p.username, p.password
-        +grid(4)
-      p.username
-        :margin-right 2%
-
-    div.date
-      :clear left
-      p.start_date, p.end_date 
-        +grid(4)
-        :margin-bottom 0
-      p.problematic 
-        :color = !radiant_red
+  #event_form, #venue_form
+    p.start_date
+      margin: 0
+      width: 25%
+      float: left
+      margin-right: 4%
+    p.end_date
+      margin: 0
+      width: 25%
+      float: left
         
     div.recurrence
-      :clear left
+      clear: left
       p.recurrence
-        :margin-top 0
-        span.recurrence_detail
-          :display block
-        span#recurrence_interval
-          +grid(2)
-        span#recurrence_period
-          +grid(2)
-        span#recurrence_basis
-          +grid(2)
-        span#recurrence_limit
-          +grid(2)
-          +flush_right
-        span#recurrence_count
-          +grid(2)
-          +flush_right
-          
-    div.venue, div.newvenue
-      :overflow auto
-    
+        margin: 0
+      p#recurrence_detail
+        overflow: hidden
+        margin-top: 0
+        span
+          float: left
+          margin-right: 1%
+          width: 24%
+          input, select
+            width: 95%
     div#venue
-      :clear left
-      p#existing_venue
-        +grid(8)
-    div#new_venue
-      :clear left
-      p.venue_title
-        +grid(8)
-      p.url
-        :clear left
-        +grid(8)
-      p.venue_location
-        +grid(8)
-        textarea
-          :height 5em
-      p.venue_postcode
-        +grid(4)
-        span.note
-          :display block
-          :margin-top 4px
-      p.venue_description
-        +grid(12)
-        :clear both
-        textarea
-          :height 5em
-    .note, label.minor
+      select
+        +standard_input
+      
+    p.url
+      clear: both
+    p.description
+      clear: both
+    div.venue, div.newvenue
+      overflow: auto
+      clear: left
+    textarea
+      height: 5em
+      
+    label.minor
       +quiet
-      :display inline
+      display: inline
     label.inline
-      :display inline
-    .hidden 
-      :display none
-
+      display: inline
+    .hidden
+      display: none
 
 a.toggleMCE
-  :display block
-  :width 24px
-  :height 24px
-  :padding-left 24px
-  :float right
+  display: block
+  width: 24px
+  height: 24px
+  padding-left: 24px
+  float: right
 
 .calendar_popup
   div.clock_control
-    :position relative
-    :display block
-    :width 300px
-    :height 200px 
+    position: relative
+    display: block
+    width: 300px
+    height: 200px
     form
-      :text-align center
+      text-align: center
       h4
-        :margin 10px
-        :color #999
-        :font-weight lighter
+        margin: 10px
+        color: #999999
+        font-weight: lighter
       input.hours, input.minutes
-        :width 60px
-        :border 1px solid #ccc
-        :padding 4px
-        :font-size 40px
+        width: 60px
+        border: 1px solid #cccccc
+        padding: 4px
+        font-size: 40px
       span.colon
-        :padding 4px
-        :font-size 40px
-        :color #333
-        :width 10px
+        padding: 4px
+        font-size: 40px
+        color: #333333
+        width: 10px
       input.set_time
-        :font-size 30px
-        :width 114px
-        :margin 20px 0
+        font-size: 30px
+        width: 114px
+        margin: 20px 0
       a.cancel
-        :cursor pointer
-        
+        cursor: pointer

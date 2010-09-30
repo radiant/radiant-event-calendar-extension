@@ -10,16 +10,14 @@
     - unless no_date
       .datemark
         .mon= event.short_month
-        .dom= event.mday
+        .dom= event.mday_padded
     .summary
       %h2
         - if event.url
           = link_to event.title, event.url, :class => 'title'
         - else
           = event.title
-        - event.attached_tags.each do |tag|
-          %span.tag
-            = tag.name
+        = event.keywords
           
       %p.practicalities
         = event.summarize_start

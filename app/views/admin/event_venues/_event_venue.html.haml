@@ -5,7 +5,7 @@
         %h3.title
           = link_to event_venue.title, edit_admin_event_venue_url(event_venue)
         %p.description
-          = truncate(event_venue.description, 128)
+          = link_to "#{event_venue.events.count} #{pluralize(event_venue.events.count, 'event')}", admin_event_venue_events_url(event_venue)
     - tbody.location_cell do
       %td.location
         = event_venue.address
@@ -14,5 +14,6 @@
         - if event_venue.url
           = link_to truncate(event_venue.url, 48), event_venue.url
     - tbody.modify_cell do
-      %td.remove
-        = link_to 'remove', remove_admin_event_venue_url(event_venue)
+      %td.actions
+        - confirmation = "Are you sure you want to delete entirely the event venue '#{event_venue.title}'?"
+        = link_to image('minus') + ' remove', remove_admin_event_venue_url(event_venue), :class => 'action'

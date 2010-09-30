@@ -65,6 +65,10 @@ class Event < ActiveRecord::Base
 
   named_scope :by_end_date,  { :order => "end_date ASC" }
 
+  named_scope :at_venue, lambda { |venue| # EventVenue object
+    { :conditions => ["event_venue_id = ?", venue.id] }
+  }
+
   def self.in_the_last(period)           # seconds. eg calendar.occurrences.in_the_last(1.week)
     finish = Time.now
     start = finish - period
@@ -181,6 +185,10 @@ class Event < ActiveRecord::Base
 
   def mday
     start_date.mday
+  end
+  
+  def mday_padded
+    "%02d" % mday
   end
   
   def short_date
@@ -418,8 +426,4 @@ protected
     Radiant::Config['event_calendar.round_time_format'] || "%-1I%p"
   end
   
-  def dates_are_in_order
-    
-  end
-
 end

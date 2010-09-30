@@ -1,9 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.namespace :admin, :path_prefix => '/admin/event_calendar' do |cal|
-    cal.resources :calendars
+    cal.resources :calendars, :member => {:remove => :get}
     cal.resources :icals, :collection => {:refresh_all => :any}, :member => {:refresh => :put}
     cal.resources :events, :member => {:remove => :get}
-    cal.resources :event_venues, :member => {:remove => :get}
+    cal.resources :event_venues, :member => {:remove => :get}, :has_many => :events
     cal.calendars_home '/', :controller => 'events', :action => 'index'
   end
   map.calendar "/calendar.:format", :controller => 'events', :action => 'index'

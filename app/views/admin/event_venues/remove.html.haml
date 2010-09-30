@@ -1,17 +1,39 @@
-%h1 Remove event
+- include_stylesheet "admin/event_calendar"
+
+%h1 Remove location
 
 %p 
   Are you sure you want to 
   %strong.warning 
     remove permanently
-  the following event?
+  the location
+  = link_to @event_venue.title + '?', edit_admin_event_venue_url(@event_venue)
 
-%table.index#events
-  %tbody
-    = render :partial => 'event', :object => @event
+  - if @event_venue.events.any?
+    %br
+    It is associated with 
+    = @event_venue.events.count
+    = pluralize(@event_venue.events.count, 'event')
+    that will remain in the calendar without a location:
+  - else
+    It has no events.
 
-- form_for [:admin, @event], :html => {:method => :delete} do
+- if @event_venue.events.any?
+  %ul
+    - @event_venue.events.each do |event|
+      %li
+        = link_to event.title, edit_admin_event_url(event)
+        %span.note
+          = event.summarize_start
+        
+- form_for [:admin, @event_venue], :html => {:method => :delete} do
   %p.buttons
-    %input.button{:type=>"submit", :value=>"Delete event"}/
+    %input.button{:type=>"submit", :value=>"Delete location"}
     or
-    = link_to 'Cancel', admin_events_url
+    = link_to 'Cancel', admin_event_venues_url
+
+#actions
+  %ul
+    %li= link_to "event list", admin_events_url
+    %li= link_to "calendar list", admin_calendars_url
+    %li= link_to "venue list", admin_event_venues_url

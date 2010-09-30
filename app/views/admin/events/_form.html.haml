@@ -86,7 +86,7 @@
 
     - form_bottom.edit_venue do
       - toggle_precedence = %w{venue new_venue}
-      - toggle_precedence.reverse! if @venues.empty? || @event.event_venue.new_record?
+      - toggle_precedence.reverse! if @venues.empty?
   
       - if imported
         - f.fields_for :event_venue, @event.event_venue do |ef|
@@ -96,13 +96,13 @@
         -if @venues.any?
           #venue.main
             %p#existing_venue
-              = f.label :event_venue_id, "Choose a place"
+              = f.label :event_venue_id, "Choose a location"
               = f.select :event_venue_id, @venues.map {|v| [v.title, v.id]}, {:include_blank => true}, :class => 'textbox', :disabled => imported
               - if imported
                 = link_to "edit this location", admin_event_venue_url(@event.event_venue)
                 to add title, description and directions
               - else
-                = link_to "add a new place", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence.join(',')}]"
+                = link_to "add a new location", new_admin_event_venue_url, :class => 'swapper', :rel => "toggle[#{toggle_precedence.join(',')}]"
         #new_venue
           - @event.build_event_venue unless @event.event_venue
           - f.fields_for :event_venue, @event.event_venue do |ef|

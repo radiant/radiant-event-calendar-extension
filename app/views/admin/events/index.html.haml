@@ -1,8 +1,34 @@
+- @page_title = 'Events'
+- @page_title += " at #{@event_venue.title}" if @event_venue
+- @page_title += ' - Calendar - ' + default_page_title
+
 - include_stylesheet "admin/event_calendar"
 
 #events_table.outset      
   %table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
-    = render :partial => 'list_head'
+    %thead
+      %tr
+        - render_region :thead do |thead|
+          - thead.date_header do
+            %th.date
+          - thead.title_header do
+            %th.event 
+              %strong 
+                Events
+                - if @event_venue
+                  at 
+                  = @event_venue.title
+                  = link_to "(show all)", admin_events_url
+          - thead.calendar_header do
+            %th.calendar Calendar
+          - thead.time_header do
+            %th.date Time
+          - thead.location_header do
+            %th.location Location
+          - thead.keywords_header do
+            %th.keywords Keywords
+          - thead.modify_header do
+            %th.modify Modify
   
     %tbody
       - if @events.any?
@@ -11,7 +37,7 @@
       - else
         %tr
           %td.note{:colspan => admin.event.index.tbody.length} 
-            No events coming up
+            No events to display
 
   - render_region :bottom do |bottom|
     - bottom.buttons do
