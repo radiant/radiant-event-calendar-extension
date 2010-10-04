@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-09-30}
+  s.date = %q{2010-10-04}
   s.description = %q{An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -98,6 +98,7 @@ Gem::Specification.new do |s|
      "pkg/radiant-event_calendar-extension-1.0.1.gem",
      "pkg/radiant-event_calendar-extension-1.0.2.gem",
      "pkg/radiant-event_calendar-extension-1.1.0.gem",
+     "pkg/radiant-event_calendar-extension-1.1.1.gem",
      "public/icals/blank",
      "public/images/admin/calendar.png",
      "public/images/event_calendar/calendarlinkbg.png",
