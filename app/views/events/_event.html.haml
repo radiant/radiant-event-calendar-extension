@@ -24,7 +24,7 @@
         - if event.event_venue
           at
           - if event.event_venue.url
-            = link_to event.event_venue.title, event.event_venue.url
+            = link_to event.event_venue.title, event.event_venue.url, :class => 'location'
           - else
             = event.event_venue.title
           = event.event_venue.address

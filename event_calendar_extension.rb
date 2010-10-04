@@ -27,8 +27,10 @@ class EventCalendarExtension < Radiant::Extension
     end
     
     if respond_to?(:tab)
-      tab("Content") do
-        add_item("Calendar", '/admin/event_calendar')
+      tab("Calendar") do
+        add_item("Events", '/admin/event_calendar')
+        add_item("Calendars", '/admin/event_calendar/calendars')
+        add_item("Locations", '/admin/event_calendar/event_venues')
       end
     else
       admin.tabs.add "Calendar", '/admin/event_calendar', :after => "Snippets", :visibility => [:all]

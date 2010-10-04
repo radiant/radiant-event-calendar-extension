@@ -442,7 +442,7 @@ module EventCalendarTags
   #todo: venue:* tags
   
   desc %{ 
-    If the current event has a venue, this renders a sensible description and link. If not, it returns the location string.
+    Renders a sensible location string, based on whatever venue information is available.
 
     Usage:
     <pre><code><r:event:venue /></code></pre> 
@@ -450,10 +450,12 @@ module EventCalendarTags
   tag "event:venue" do |tag|
     if venue = tag.locals.event.event_venue
       if venue.url
-        %{<a href="#{venue.url}">#{venue.title}</a>, #{venue.address}}
+        html = %{<a class="location" href="#{venue.url}">#{venue.title}</a>}
       else
-        %{#{venue.title}, #{venue.address}}
+        html = %{<span class="location">venue.title</span>}
       end
+      html << %{, <span class="address">#{venue.address}</span>} unless venue.address.blank?
+      html
     else
       tag.render('event:location')
     end
@@ -520,11 +522,7 @@ module EventCalendarTags
     <pre><code><r:event:time />: <r:event:title /></code></pre> 
   }
   tag "event:time" do |tag|
-    if tag.locals.event.all_day?
-      "All day"
-    else
-      tag.locals.event.start_time
-    end
+    tag.locals.event.summarize_start
   end
 
   [:start, :end].each do |attribute|
