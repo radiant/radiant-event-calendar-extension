@@ -69,6 +69,23 @@ module EventCalendarTags
     end
     result
   end
+
+  desc %{ 
+    Equivalent to calling events:each with a limit of 1. All the usual attributes are passed through.
+    If no events match the specification, nothing is returned.
+    
+    To show the next event in a particular calendar:
+
+    <pre><code><r:events:first calendar="slug"><r:event:summary /></r:events:first></code></pre>
+  }
+
+  tag "events:first" do |tag|
+    tag.locals.events ||= get_events(tag)
+    if tag.locals.event = tag.locals.events.first
+      tag.locals.calendar = tag.locals.event.calendar
+      tag.expand
+    end
+  end
     
   tag "if_events" do | tag|
     tag.locals.events ||= get_events(tag)
@@ -686,7 +703,7 @@ module EventCalendarTags
   
   def _datemark(date=Time.now)
     %{
-      <div class="datemark"><span class="month">#{Date::ABBR_MONTHNAMES[date.month]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
+      <div class="datemark"><span class="mon">#{Date::ABBR_MONTHNAMES[date.month]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
     }
   end
   

@@ -1,3 +1,8 @@
+- content_for :breadhead do
+  - home = Page.find_by_parent_id(nil)
+  = link_to home.breadcrumb, home.url
+  \&gt;
+
 - content_for :title do
   Events
   = list_description
