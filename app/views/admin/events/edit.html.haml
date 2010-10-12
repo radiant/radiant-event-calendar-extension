@@ -1,5 +1,5 @@
 - @page_title = @event.title
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title += ' - ' + t('event_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet "admin/event_calendar"
 - include_javascript "admin/event_calendar"
@@ -7,7 +7,7 @@
 - render_region :main do |main|
   - main.edit_header do
     %h1 
-      Edit Event
+      = t('event_admin.edit.header')
 
   - main.edit_form do
     - form_for :event, @event, :url => admin_event_path(@calendar), :html => { :method => "put", :multipart => true } do |f|

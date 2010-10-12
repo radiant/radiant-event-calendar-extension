@@ -3,46 +3,46 @@
 
 .main
   %p.title
-    = f.label :title, "Venue or location title"
+    = f.label :title, t('event_venues_admin.form.title')
     = f.text_field :title, :class => 'textbox'
     - if or_choose && @venues.any?
-      = link_to "choose an existing place", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
+      = link_to t('event_venues_admin.form.choose'), '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
     - else
       %span.note
-        We remember these details for you, so changes here affect every event occurring in this place
+        = t('event_venues_admin.form.choose_note')
       
   - if or_choose && @venues.any?
     %p.note
-      If you've used this place before, please 
-      = link_to "choose it from the list", '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
-      so that you can update it globally
+      = t('event_venues_admin.form.choose_before')
+      = link_to t('event_venues_admin.form.choose_list'), '#', :class => 'swapper', :rel => 'toggle[venue,new_venue]'
+      = t('event_venues_admin.form.choose_after')
 
 .metadata
   %p.keywords
-    = f.label :keywords
+    = f.label :keywords, t('event_venues_admin.form.keywords')
     = f.text_field :keywords, :class => "textbox"
 
 .main
   %p.location
-    = f.label :location, "Location tag"
+    = f.label :location, t('event_venues_admin.form.location_tag')
     = f.text_field :location, :class => "textbox"
     %span.note
-      This is used to recognise the venue in a calendar feed. It can be postcode, grid reference or any distinctive string.
+      = t('event_venues_admin.form.location_tag_note')
 
   %p.address
     - if defined? TinyMceFilter
       = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => (@event ? "toggle[event_event_venue_attributes_address]" : "toggle[event_venue_address]")
-    = f.label :address, "Address or directions"
+    = f.label :address, t('event_venues_admin.form.address')
     = f.text_area :address, :class => 'textarea'
 
 .metadata
   %p.venue_postcode
-    = f.label :postcode, "Postcode or grid reference"
+    = f.label :postcode, t('event_venues_admin.form.postcode')
     = f.text_field :postcode, :class => 'textbox place'
     %span.note
-      This is only required if your address is unusual or you want these events to show on a map in a particular place.
+      = t('event_venues_admin.form.postcode_note')
 
   %p.url
-    = f.label :url, "Location url"
+    = f.label :url, t('event_venues_admin.form.url')
     = f.text_field :url, :class => 'textbox'
 

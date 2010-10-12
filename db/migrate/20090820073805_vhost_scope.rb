@@ -1,4 +1,4 @@
-class SiteScope < ActiveRecord::Migration
+class VhostScope < ActiveRecord::Migration
   def self.up
     add_column :calendars, :site_id, :integer
     add_column :events, :site_id, :integer

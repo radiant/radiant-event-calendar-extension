@@ -1,6 +1,6 @@
-- @page_title = 'Events'
-- @page_title += " at #{@event_venue.title}" if @event_venue
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title = t('event_admin.index.title')
+- @page_title += t('defaults.at') + "#{@event_venue.title}" if @event_venue
+- @page_title += ' - ' + t('event_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet "admin/event_calendar"
 
@@ -14,21 +14,21 @@
           - thead.title_header do
             %th.event 
               %strong 
-                Events
+                = t('event_admin.index.events')
                 - if @event_venue
                   at 
                   = @event_venue.title
-                  = link_to "(show all)", admin_events_url
+                  = link_to t('event_admin.index.show_all'), admin_events_url
           - thead.calendar_header do
-            %th.calendar Calendar
+            %th.calendar= t('event_admin.index.calendar')
           - thead.time_header do
-            %th.date Time
+            %th.date= t('event_admin.index.time')
           - thead.location_header do
-            %th.location Location
+            %th.location= t('event_admin.index.location')
           - thead.keywords_header do
-            %th.keywords Keywords
+            %th.keywords= t('event_admin.index.keywords')
           - thead.modify_header do
-            %th.modify Modify
+            %th.modify= t('event_admin.index.modify')
   
     %tbody
       - if @events.any?
@@ -37,11 +37,11 @@
       - else
         %tr
           %td.note{:colspan => admin.event.index.tbody.length} 
-            No events to display
+            =t('event_admin.index.no_events')
 
   - render_region :bottom do |bottom|
     - bottom.buttons do
       #actions
         = pagination_for @events
         %ul
-          %li= link_to image('plus') + " " + "new event", new_admin_event_url
+          %li= link_to image('plus') + " " + t('event_admin.index.new'), new_admin_event_url

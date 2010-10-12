@@ -9,54 +9,54 @@
       - form.edit_name do
         .title
           %p.title
-            = f.label :name
+            = f.label :name, t('calendar_admin.form.name')
             = f.text_field :name, :class => "textbox"
 
       - form.edit_ical do
         - f.fields_for :ical do |ical_f| 
           %p.url
-            = ical_f.label :url, "Subscription url (optional)"
+            = ical_f.label :url, t('calendar_admin.form.subscription_url')
             = ical_f.text_field :url, :class => "textbox"
 
           .drawer
             .drawer_contents#subscription
 
               %div.username
-                = ical_f.label :username, 'Username', :class => 'minor'
+                = ical_f.label :username, t('calendar_admin.form.username'), :class => 'minor'
                 = ical_f.text_field :username, :class => "textbox"
 
               %div.password
-                = ical_f.label :password, 'Password', :class => 'minor'
+                = ical_f.label :password, t('calendar_admin.form.password'), :class => 'minor'
                 = ical_f.text_field :password, :class => "textbox"
 
               %div.refreshment
                 = ical_f.check_box :refresh_interval
-                = ical_f.label :refresh_interval, 'Refresh automatically?', :class => 'minor'
+                = ical_f.label :refresh_interval, t('calendar_admin.form.auto_refresh'), :class => 'minor'
                 
             .drawer_handle
               %a.toggle{:href=>'#subscription', :rel=>"toggle[subscription]", :class=>"more"}
-                more
+                = t('calendar_admin.form.more')
 
       - form.edit_filing do
         .filing
           %p.calendar_category
-            = f.label :category
+            = f.label :category, t('calendar_admin.form.category')
             = f.text_field :category, :class => "textbox"
           %p.calendar_slug
-            = f.label :slug
+            = f.label :slug, t('calendar_admin.form.slug')
             = f.text_field :slug, :class => "textbox"
 
       - form.edit_description do
         .description
           %p.description
-            = f.label :description, "Description"
+            = f.label :description, t('calendar_admin.form.description')
             = f.text_area 'description', :size => '40x6', :class => "textarea"
 
   - render_region :form_bottom do |form_bottom|
     - form_bottom.edit_metadata do
       .metadata
         %p.keywords
-          = f.label :keywords
+          = f.label :keywords, t('calendar_admin.form.keywords')
           = f.text_field :keywords, :class => "textbox"
 
     - form_bottom.edit_timestamp do
@@ -66,5 +66,5 @@
       %p.buttons
         = save_model_button @calendar
         = save_model_and_continue_editing_button @calendar
-        or
-        = link_to "Cancel", admin_calendars_url
+        = t('defaults.or')
+        = link_to t('defaults.cancel'), admin_calendars_url

@@ -1,5 +1,5 @@
 - @page_title = @event_venue.title
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title += ' - ' + t('event_venues_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet "admin/event_calendar"
 - include_javascript "admin/event_calendar"
@@ -34,7 +34,7 @@
             = updated_stamp @event_venue
           - form_bottom.edit_buttons do
             %p.buttons
-              = f.submit "Update Venue", :name => "commit", :class => "button"
+              = f.submit t('event_venues_admin.edit.update'), :name => "commit", :class => "button"
               = save_model_and_continue_editing_button(@event_venue)
-              or
-              = link_to 'Cancel', admin_event_venues_url
+              = t('defaults.or')
+              = link_to t('defaults.cancel'), admin_event_venues_url

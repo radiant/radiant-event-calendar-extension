@@ -5,7 +5,7 @@
         %h3.title
           = link_to event_venue.title, edit_admin_event_venue_url(event_venue)
         %p.description
-          = link_to "#{event_venue.events.count} #{pluralize(event_venue.events.count, 'event')}", admin_event_venue_events_url(event_venue)
+          = link_to "#{event_venue.events.count} #{pluralize(event_venue.events.count, t('event_venues_admin.index.event'))}", admin_event_venue_events_url(event_venue)
     - tbody.location_cell do
       %td.location
         = event_venue.address
@@ -16,4 +16,4 @@
     - tbody.modify_cell do
       %td.actions
         - confirmation = "Are you sure you want to delete entirely the event venue '#{event_venue.title}'?"
-        = link_to image('minus') + ' remove', remove_admin_event_venue_url(event_venue), :class => 'action'
+        = link_to image('minus') + " " + t('event_venues_admin.index.remove'), remove_admin_event_venue_url(event_venue), :class => 'action'

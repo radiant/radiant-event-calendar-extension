@@ -169,6 +169,7 @@ class Event < ActiveRecord::Base
   
   def date
     start_date.to_datetime.strftime(date_format)
+   # I18n.l start_date, :format => date_format
   end
   
   def month
@@ -201,6 +202,7 @@ class Event < ActiveRecord::Base
   
   def start_time
     start_date.to_datetime.strftime(start_date.min == 0 ? round_time_format : time_format).downcase
+    #I18n.l start_date, :format => time_format
   end
 
   def end_time

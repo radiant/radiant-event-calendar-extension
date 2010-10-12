@@ -1,5 +1,5 @@
-- @page_title = 'Locations'
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title = t('event_venues_admin.index.title')
+- @page_title += ' - ' + t('event_venues_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet "admin/event_calendar"
 
@@ -10,13 +10,14 @@
         - render_region :thead do |thead|
           - thead.title_header do
             %th.event 
-              %strong Place
+              %strong
+                = t('event_venues_admin.index.place')
           - thead.location_header do
-            %th.location Address
+            %th.location= t('event_venues_admin.index.address')
           - thead.url_header do
-            %th.keywords Website
+            %th.keywords= t('event_venues_admin.index.website')
           - thead.modify_header do
-            %th.modify Modify
+            %th.modify= t('event_venues_admin.index.modify')
     %tbody
       - if @event_venues.any?
         - @event_venues.each do |event_venue|
@@ -24,11 +25,11 @@
       - else
         %tr
           %td.note{:colspan => admin.event_venue.index.tbody.length} 
-            No places in the system yet. You can create one here or when you add an event. 
+            = t('event_venues_admin.index.no_places')
 
   - render_region :bottom do |bottom|
     - bottom.buttons do
       #actions
         = pagination_for @event_venues
         %ul
-          %li= link_to image('plus') + " " + "new venue", new_admin_event_venue_url
+          %li= link_to image('plus') + " " + t('event_venues_admin.index.new'), new_admin_event_venue_url

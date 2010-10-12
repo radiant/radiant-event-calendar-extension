@@ -7,22 +7,22 @@
 
 %div#calendar_help
   %h3
-    subscribe to this calendar
+    t('calendar_admin.show.subscribe')subscribe to this calendar
   %ul
     %li
       %strong
-        address:
+        t('calendar_admin.show.address'):
       = link_to @calendar.ical.url
     %li
       %strong
-        username:
+        t('calendar_admin.show.username'):
       = link_to @calendar.ical.username
     %li
       %strong
-        password:
+        t('calendar_admin.show.password'):
       = link_to @calendar.ical.password
   %p
-    This may be part of a master calendar with several individual calendars. In that case there will be a different address that lets you access all the calendars at once. Consult your site administrator if unsure.
+    t('calendar.show.detail_text')
 
 %table#events.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
   = render :partial => 'events/list_head'
@@ -33,4 +33,4 @@
     - else
       %tr
         %td.note{:colspan => admin.event.index.tbody.length} 
-          No Events
+          t('calendar_admin.show.no_events')

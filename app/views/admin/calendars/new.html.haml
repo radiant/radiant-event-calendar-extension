@@ -1,12 +1,11 @@
-- @page_title = 'New calendar'
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title = t('calendar_admin.new.title')
+- @page_title += ' - ' + t('calendar_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet('admin/event_calendar')
 
 - render_region :main do |main|
   - main.edit_header do
-    %h1 
-      New Calendar
+    %h1= t('calendar_admin.new.header')
 
   - main.edit_form do
     - form_for :calendar, @calendar, :url => admin_calendars_path do |f|
