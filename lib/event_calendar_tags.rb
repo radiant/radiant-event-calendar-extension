@@ -731,6 +731,8 @@ module EventCalendarTags
     with_list = attr[:event_list] == 'true'
     with_subscription = attr[:subscription_link] == 'true'
     day_links = attr[:day_links] == 'true'
+    month_names = Date::MONTHNAMES.dup
+    day_names = Date::DAYNAMES.dup
     
     cal = %(<table class="minimonth"><thead><tr>)
     cal << %(<th class="month_link"><a href="#{tag.locals.page.url(:year => previous.year, :month => previous.month)}" title="#{month_names[previous.month]}" class="previous">&lt;</a></th>) if with_paging
