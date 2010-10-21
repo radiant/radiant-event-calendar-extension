@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.3.3"
+  s.version = "1.3.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
@@ -32,7 +32,6 @@ Gem::Specification.new do |s|
      "app/models/event_recurrence_rule.rb",
      "app/models/event_venue.rb",
      "app/models/ical.rb",
-     "app/views/admin/calendars/_actions.html.haml",
      "app/views/admin/calendars/_form.html.haml",
      "app/views/admin/calendars/edit.html.haml",
      "app/views/admin/calendars/help.html.erb",
@@ -97,6 +96,8 @@ Gem::Specification.new do |s|
      "lib/tasks/event_calendar_extension_tasks.rake",
      "public/icals/blank",
      "public/images/admin/calendar.png",
+     "public/images/admin/redo.png",
+     "public/images/admin/redo_disabled.png",
      "public/images/event_calendar/flag.png",
      "public/images/event_calendar/ical.png",
      "public/javascripts/admin/event_calendar.js",
