@@ -504,7 +504,7 @@ module EventCalendarTags
     Renders a simple list of the keywords attached to this event.
   }
   tag 'event:keywords' do |tag|
-    %{<span class="keywords">#{tag.locals.events.keywords}</span>}
+    %{<span class="keywords">#{tag.locals.event.keywords}</span>}
   end
   
   desc %{ 
