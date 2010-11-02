@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.3.4"
+  s.version = "1.3.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
@@ -16,7 +16,8 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".gitmodules",
+    ".gitignore",
+     ".gitmodules",
      "README.md",
      "Rakefile",
      "VERSION",
@@ -64,6 +65,7 @@ Gem::Specification.new do |s|
      "app/views/events/index.html.haml",
      "app/views/events/index.ics.erb",
      "app/views/events/index.rss.builder",
+     "config/locales/en.yml",
      "config/routes.rb",
      "db/migrate/001_create_calendar_and_events.rb",
      "db/migrate/002_calendar_add_ical_url.rb",
