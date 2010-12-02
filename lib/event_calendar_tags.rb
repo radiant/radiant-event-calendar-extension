@@ -500,6 +500,13 @@ module EventCalendarTags
     end
   end
   
+  desc %{
+    Renders a simple list of the keywords attached to this event.
+  }
+  tag 'event:keywords' do |tag|
+    %{<span class="keywords">#{tag.locals.event.keywords}</span>}
+  end
+  
   desc %{ 
     Renders a standard block listing the event and adding whatever links and descriptions are available.
     
@@ -731,39 +738,42 @@ module EventCalendarTags
     with_list = attr[:event_list] == 'true'
     with_subscription = attr[:subscription_link] == 'true'
     day_links = attr[:day_links] == 'true'
+    month_names = Date::MONTHNAMES.dup
+    day_names = Date::DAYNAMES.dup
     
     cal = %(<table class="minimonth"><thead><tr>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url(:year => previous.year, :month => previous.month)}" title="#{month_names[previous.month]}" class="previous">&lt;</a></th>) if with_paging
-    cal << %(<th colspan="#{with_paging ? 5 : 7}" class="month_name">)
+    cal << %(<td class="m"><a href="#{tag.locals.page.url(:year => previous.year, :month => previous.month)}" title="#{month_names[previous.month]}" class="previous">&lt;</a></td>) if with_paging
+    cal << %(<td colspan="#{with_paging ? 5 : 7}"><h3>)
     cal << %(<a href="#{tag.locals.page.url(:year => first_day.year, :month => first_day.month)}">) if with_paging
     cal << %(#{month_names[first_day.month]} #{first_day.year})
     cal << %(</a>) if with_paging
-    cal << %(</th>)
-    cal << %(<th class="month_link"><a href="#{tag.locals.page.url(:year => following.year, :month => following.month)}" title="#{month_names[following.month]}" class="next">&gt;</a></th>) if with_paging
+    cal << %(</h3></td>)
+    cal << %(<td class="m"><a href="#{tag.locals.page.url(:year => following.year, :month => following.month)}" title="#{month_names[following.month]}" class="next">&gt;</a></td>) if with_paging
     cal << %(</tr><tr>)
     cal << day_names.map { |d| %{<th class="day_name" scope="col">#{d.first}</th>} }.join
     cal << "</tr></thead><tbody>"
 
     first_shown.upto(last_shown) do |day|
       events_today = tag.locals.events.select{ |e| e.on_this_day?(day) }
+      continuing_events = tag.locals.events.select{ |e| e.start_date <= day && e.end_date && e.end_date >= day }
       event_list = cell_text = date_label = ""
-      cell_class = "day"
-      cell_class += " today" if today?(day)
-      cell_class += " past" if day < Date.today
-      cell_class += " future" if day > Date.today
-      cell_class += " other_month" if day.month != first_day.month
+      cell_class = "d"
+      cell_class += " t" if today?(day)
+      cell_class += " p" if day < Date.today
+      cell_class += " f" if day > Date.today
+      cell_class += " o" if day.month != first_day.month
       unless day.month != first_day.month
-        cell_class += " weekend_day" if weekend?(day)
-        cell_class += " weekend_today" if weekend?(day) && today?(day)
+        cell_class += " w" if weekend?(day)
         date_label = day.mday
         if events_today.any?
-          cell_class += " eventful"
-          cell_class += " eventful_weekend" if weekend?(day)
+          cell_class += " e"
           cell_class += events_today.map{|e| " #{e.slug}"}.join
           cell_url = day_links ? url(:day => day) : "#event_#{events_today.first.id}"
           date_label = %{<a href="#{cell_url}">#{date_label}</a>}
+        elsif continuing_events.any?
+          cell_class += " c"
         else
-          cell_class += " uneventful"
+          cell_class += " u"
         end
         cell_text = %{#{date_label}#{event_list}}
       end

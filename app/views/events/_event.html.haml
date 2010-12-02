@@ -17,7 +17,7 @@
           = link_to event.title, event.url, :class => 'title'
         - else
           = event.title
-        = event.keywords
+        = render :partial => 'events/keywords', :locals => {:event => event}
           
       %p.practicalities
         = event.summarize_start

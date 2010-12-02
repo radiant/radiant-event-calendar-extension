@@ -1,6 +1,0 @@
-- calendar ||= @calendar
-%span.calendar_actions
-  - if calendar.ical
-    = link_to_unless_current image('refresh', :alt => t('calendar.actions.refresh')), refresh_admin_ical_url(calendar.ical.id), :method => :put
-    = link_to_unless_current image('edit', :alt => t('calendar.actions.edit')), edit_admin_calendar_path(calendar)
-    = link_to_unless_current image('remove', :alt => t('calendar.actions.delete')), admin_calendar_path(calendar), :confirm => t('calendar.actions.delete') + " #{calendar.name} " + t('calendar') + "?", :method => :delete

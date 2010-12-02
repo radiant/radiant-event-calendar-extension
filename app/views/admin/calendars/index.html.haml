@@ -50,8 +50,15 @@
                 - else
                   n/a
             - tbody.action_cell do
-              %td
-                = render :partial => 'actions', :locals => {:calendar => calendar}
+              %td.actions
+                - if calendar.ical
+                  = link_to image('redo') + ' ' + t('refresh_calendar'), refresh_admin_ical_url(calendar.ical.id), :method => :put, :class => 'action'
+                - else
+                  %span.action.disabled
+                    = image('redo_disabled') + ' ' + t('refresh_calendar')
+                = link_to image('delta') + ' ' + t('edit_calendar'), edit_admin_calendar_path(calendar), :class => 'action'
+                = link_to image('minus') + ' ' + t('delete_calendar'), admin_calendar_path(calendar), :confirm => t('really_delete_calendar', :name => calendar.name), :method => :delete, :class => 'action'
+              
 
 - render_region :bottom do |bottom|
   - bottom.buttons do

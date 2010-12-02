@@ -1,5 +1,9 @@
 ---
 en:
+  refresh_calendar: "refresh calendar"
+  edit_calendar: "edit calendar"
+  delete_calendar: "delete calendar"
+  really_delete_calendar: "Are you sure you want to delete the %{name} calendar?"
   calendar: calendar
   calendars: calendars
   events: events

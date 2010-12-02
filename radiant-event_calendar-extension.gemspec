@@ -5,18 +5,19 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.3.0"
+  s.version = "1.3.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-10-05}
+  s.date = %q{2010-10-21}
   s.description = %q{An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
-    ".gitmodules",
+    ".gitignore",
+     ".gitmodules",
      "README.md",
      "Rakefile",
      "VERSION",
@@ -32,7 +33,6 @@ Gem::Specification.new do |s|
      "app/models/event_recurrence_rule.rb",
      "app/models/event_venue.rb",
      "app/models/ical.rb",
-     "app/views/admin/calendars/_actions.html.haml",
      "app/views/admin/calendars/_form.html.haml",
      "app/views/admin/calendars/edit.html.haml",
      "app/views/admin/calendars/help.html.erb",
@@ -58,12 +58,14 @@ Gem::Specification.new do |s|
      "app/views/events/_event.html.haml",
      "app/views/events/_event_postscript.html.haml",
      "app/views/events/_faceting.html.haml",
+     "app/views/events/_keywords.html.haml",
      "app/views/events/_minicalendar.html.haml",
      "app/views/events/_other_page_parts.html.haml",
      "app/views/events/_views.html.haml",
      "app/views/events/index.html.haml",
      "app/views/events/index.ics.erb",
      "app/views/events/index.rss.builder",
+     "config/locales/en.yml",
      "config/routes.rb",
      "db/migrate/001_create_calendar_and_events.rb",
      "db/migrate/002_calendar_add_ical_url.rb",
@@ -96,12 +98,10 @@ Gem::Specification.new do |s|
      "lib/tasks/event_calendar_extension_tasks.rake",
      "public/icals/blank",
      "public/images/admin/calendar.png",
-     "public/images/event_calendar/calendarlinkbg.png",
-     "public/images/event_calendar/event_shadow.png",
-     "public/images/event_calendar/ical16.png",
-     "public/images/event_calendar/maplinkbg.png",
-     "public/images/event_calendar/one_event.png",
-     "public/images/event_calendar/several_events.png",
+     "public/images/admin/redo.png",
+     "public/images/admin/redo_disabled.png",
+     "public/images/event_calendar/flag.png",
+     "public/images/event_calendar/ical.png",
      "public/javascripts/admin/event_calendar.js",
      "public/stylesheets/sass/admin/event_calendar.sass",
      "radiant-event_calendar-extension.gemspec",

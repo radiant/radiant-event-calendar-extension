@@ -1,5 +1,9 @@
 ---
 de:
+  refresh_calendar: "Kalender refreshen"
+  edit_calendar: "Kalender bearbeiten"
+  delete_calendar: "Kalender löschen"
+  really_delete_calendar: "Sind Sie sicher, dass Sie den Kalender %{name} löschen möchten?"
   calendar: Kalender
   calendars: Kalender
   events: Ereignisse

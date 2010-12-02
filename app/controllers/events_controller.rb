@@ -1,4 +1,4 @@
-class EventsController < ApplicationController
+class EventsController < SiteController
   require "uri"
   
   helper_method :events, :all_events, :continuing_events, :period, :calendars, :list_description

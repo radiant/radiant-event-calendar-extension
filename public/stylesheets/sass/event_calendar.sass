@@ -1,0 +1,99 @@
+@import compass/css3
+
+$red: #b20315
+$darkred: #a80016
+$palered: #db4d5c
+$yellow: #e09a0c
+$darkyellow: #bc7815
+$blue: #004250
+
+$coolgrey0: #f1f0ee
+$coolgrey1: #e2e1dd
+$coolgrey2: #d6d6d4
+$coolgrey3: #cacac8
+$coolgrey4: #bdbdbd
+$coolgrey5: #b3b3b3
+$coolgrey6: #afafaf
+$coolgrey7: #9a9b9d
+$coolgrey8: #8c8d8e
+$coolgrey9: #747679
+$coolgrey10: #616265
+$coolgrey11: #4d4e53
+
+$dark: $coolgrey11
+$mid: $coolgrey8
+$pale: $coolgrey6
+$paler: $coolgrey4
+$verypale: $coolgrey2
+
+$page: white
+$text: $coolgrey11
+$hover: $red
+$tag: $coolgrey8
+$input: $coolgrey11
+
+=inputfonts
+  font-family: Georgia, serif
+  font-size: 1.2em
+  line-height: 1.4
+
+=functionalfonts
+  font-family: helvetica, arial, sans-serif
+
+=blurred($color: $paler)
+  text-shadow: $color 0 0 2px
+
+/*** calendars and maps *******
+
+table.minimonth
+  font-style: normal
+  border-collapse: collapse
+  border:
+    style: solid
+    width: 1px
+    color: $verypale
+  color: $text
+  margin: 5px 0
+  h3
+    font-size: 300%
+    margin: 10px 5px 5px 5px
+  a
+    display: block
+    color: $link
+    font-weight: lighter
+    text-decoration: none
+  a:hover
+    color: $hover
+  th, td
+    font-weight: normal
+    border:
+      style: solid
+      width: 1px
+      color: $verypale
+    vertical-align: top
+    text-align: center
+    height: 32px
+    width: 36px
+    line-height: 32px
+    padding: 0
+    overflow: hidden
+  td.m
+    font-size: 140%
+  td.day_name
+    color: $verypale
+  td.o
+    color: $pale
+    a
+      color: $pale
+    a:hover
+      color: $page
+  td.t
+    background-color: $page
+  td.w
+  td.e
+  td.u
+    +blurred
+    color: $verypale
+  td.t
+    font-weight: bold
+  td.p
