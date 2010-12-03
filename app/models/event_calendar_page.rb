@@ -7,10 +7,6 @@ class EventCalendarPage < Page
 
   description %{ Create a viewer for calendar data. }
 
-  def self.sphinx_indexes
-    []
-  end
-
   def cache?
     true
   end
