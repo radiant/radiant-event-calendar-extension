@@ -1,6 +1,32 @@
 ---
 de:
-  refresh_calendar: "Kalender refreshen"
+  time:
+    formats:
+      calendar_period_description_week: "in der Kalenderwoche %U von %Y"
+      calendar_period_description_month: "im %B %Y"
+      calendar_period_description_year: "im Jahr %Y"
+      calendar_period_describe: "%d. %B"
+      calendar_period_describe_with_year: "%d. %B %Y"
+      calendar_period_describe_detailed: "%H:%M %d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d."
+      event_calendar_time_format: "%H:%M"
+      event_calendar_round_time_format: "%H"
+  date:
+    formats:
+      event_calendar_date_format: "%d %B"
+      event_calendar_short_date_format: "%d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d."
+  refresh_calendar: "Kalender neu laden"
   edit_calendar: "Kalender bearbeiten"
   delete_calendar: "Kalender löschen"
   really_delete_calendar: "Sind Sie sicher, dass Sie den Kalender %{name} löschen möchten?"
@@ -116,11 +142,11 @@ de:
       event: Ereignis
       remove: entfernen
     edit:
-      update: Örtlichkeit aktualisieren
+      update: Ort aktualisieren
     new:
       title: Einen neuen Veranstaltungsort hinzufügen
       text: Sie können auch bei Anlegen eines Ereignisses neue Orte eingeben.
-      create: Örtlichkeit anlegen
+      create: Ort anlegen
     form:
       title: Ortsbezeichnung
       choose: wählen Sie einen bestehenden Ort
@@ -145,3 +171,21 @@ de:
       delete: Ort entfernen
       associated: Es ist mit 
       remain: verknüpft, das im Kalender ohne Ort verbleibt.
+  event_page:
+    coming_up: ""
+    showing: ""
+    in_calendars: "im %{calendars}"
+    description: "Anzeige für Kalender Daten"
+    number_events:
+      one: eine Veranstaltung
+      other:  "%{count} Veranstaltungen"
+    continuing_events:
+      one: eine wiederkehrende Veranstaltung
+      other:  "%{count} wiederkehrende Veranstaltungen"
+  calender_period:
+     description_day: "am %{day}. %{monthname} %{year}"
+     onwards: "ab %{describe_start}"
+     until: "bis %{describe_finish}"
+     between: "zwischen %{describe_start} und %{describe_finish}"
+     inspect: "%{describe_start} bis %{describe_finish}"
+     to_s: "%{distance_of_time_in_words} seit %{start}"

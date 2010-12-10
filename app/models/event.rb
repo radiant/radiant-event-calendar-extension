@@ -115,7 +115,7 @@ class Event < ActiveRecord::Base
     stack = {}
     find(:all).each_with_object({}) do |event, stack|
       y = event.start_date.year
-      m = Date::MONTHNAMES[event.start_date.month]
+      m = (I18n.t 'date.month_names')[event.start_date.month]
       stack[y] ||= {}
       stack[y][m] ||= []
       stack[y][m].push event
@@ -168,16 +168,15 @@ class Event < ActiveRecord::Base
   end
   
   def date
-    start_date.to_datetime.strftime(date_format)
-   # I18n.l start_date, :format => date_format
+    I18n.l start_date, :format => date_format
   end
   
   def month
-    Date::MONTHNAMES[start_date.month]
+    I18n.l start_date, :format => :calendar_month
   end
 
   def short_month
-    Date::ABBR_MONTHNAMES[start_date.month]
+    I18n.l start_date, :format => :calendar_short_month
   end
 
   def year
@@ -185,32 +184,31 @@ class Event < ActiveRecord::Base
   end
 
   def day
-    Date::DAYNAMES[start_date.day]
+    I18n.l start_date, :format => :calendar_day_name
   end
 
   def mday
-    start_date.mday
+    I18n.l start_date, :format => :calendar_day_of_month
   end
   
   def mday_padded
-    "%02d" % mday
+    mday
   end
   
   def short_date
-    start_date.to_datetime.strftime(short_date_format)
+    I18n.l start_date, :format => short_date_format
   end
   
   def start_time
-    start_date.to_datetime.strftime(start_date.min == 0 ? round_time_format : time_format).downcase
-    #I18n.l start_date, :format => time_format
+    (I18n.l start_date, :format => (start_date.min == 0 ? round_time_format : time_format)).downcase
   end
 
   def end_time
-    end_date.to_datetime.strftime(end_date.min == 0 ? round_time_format : time_format).downcase if end_date
+    (I18n.l end_date, :format => (end_date.min == 0 ? round_time_format : time_format)).downcase if end_date
   end
   
   def last_day
-    end_date.to_datetime.strftime(date_format)if end_date
+    I18n.l end_date, :format => date_format if end_date
   end
   
   def duration
@@ -417,19 +415,19 @@ protected
   end
     
   def date_format
-    Radiant::Config['event_calendar.date_format'] || "%-1d %B"
+    Radiant::Config['event_calendar.date_format'] || (I18n.t 'date.formats.event_calendar_date_format')
   end
   
   def short_date_format
-    Radiant::Config['event_calendar.short_date_format'] || "%-1d/%m/%Y"
+    Radiant::Config['event_calendar.short_date_format'] || (I18n.t 'date.formats.event_calendar_short_date_format')
   end
   
   def time_format
-    Radiant::Config['event_calendar.time_format'] || "%-1I:%M%p"
+    Radiant::Config['event_calendar.time_format'] || (I18n.t 'time.formats.event_calendar_time_format')
   end
   
   def round_time_format
-    Radiant::Config['event_calendar.round_time_format'] || "%-1I%p"
+    Radiant::Config['event_calendar.round_time_format'] || (I18n.t 'time.formats.event_calendar_round_time_format')
   end
   
 end

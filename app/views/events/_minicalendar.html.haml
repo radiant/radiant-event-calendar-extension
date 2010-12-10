@@ -11,12 +11,12 @@
   %thead
     %tr
       %td.m
-        = link_to '&lt;', url_for_month(before), :title => "#{month_name(before.month)} #{before.year}", :class => 'previous'
+        = link_to '&lt;', url_for_month(before), :title => (I18n.l before, :format => :calendar_period_minicalendar_title), :class => 'previous'
       %td{:colspan => 5}
         %h3
-          = link_to_unless_current month_name(month), url_for_month(date)
+          = link_to_unless_current I18n.l(date, :format => :calendar_period_minicalendar_month), url_for_month(date)
       %td.m
-        = link_to '&gt;', url_for_month(after), :title => "#{month_name(after.month)} #{after.year}", :class => 'next'
+        = link_to '&gt;', url_for_month(after), :title => (I18n.l after, :format => :calendar_period_minicalendar_title), :class => 'next'
     %tr
       - day_names.each do |d|
         %th.day_name{:scope => 'col'}
