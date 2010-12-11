@@ -18,7 +18,7 @@ de:
       event_calendar_round_time_format: "%H"
   date:
     formats:
-      event_calendar_date_format: "%d %B"
+      event_calendar_date_format: "%d. %B"
       event_calendar_short_date_format: "%d/%m/%Y"
       calendar_period_minicalendar_title: "%B %Y"
       calendar_period_minicalendar_month: "%B"
@@ -142,6 +142,8 @@ de:
       event: Ereignis
       remove: entfernen
     edit:
+      title: Ort bearbeiten
+      description: Bitte beachten Sie, dass eine Änderung des Ortes die Anzeige jedes Ereignisses für diesen Ort beeinflusst
       update: Ort aktualisieren
     new:
       title: Einen neuen Veranstaltungsort hinzufügen
@@ -172,6 +174,20 @@ de:
       associated: Es ist mit 
       remain: verknüpft, das im Kalender ohne Ort verbleibt.
   event_page:
+    stay_up_to_date: "am Laufenden bleiben mit"
+    rss: "RSS"
+    calendar_feed: "Kalender Feed"
+    or: or
+    at: "Ort: "
+    summarize_period_one_day: "den ganzen Tag, am %{date}"
+    summarize_period_all_day: "von %{from_date} bis %{to_date}"
+    summarize_period_within_day: "am %{date}, ab %{start_time} Uhr"
+    summarize_period_within_day_with_end_time: "am %{date}, von %{start_time} bis %{end_time} Uhr"
+    summarize_period_spanning_days: "vom %{date}, %{start_time} Uhr bis %{end_date} %{end_time} Uhr"
+    on_date:  "am %{date}, um %{time} Uhr."
+    from_date: "ab dem %{date}."
+    all_day_on: "den ganzen Tag, am %{date}."
+    all_day: "den ganzen Tag."
     coming_up: ""
     showing: ""
     in_calendars: "im %{calendars}"

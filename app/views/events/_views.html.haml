@@ -1,6 +1,7 @@
 %span.calendar_views
   %br
-  Stay up to date with
-  = link_to("RSS", calendar_url(calendar_parameters.merge(:format => :rss)))
-  or
-  = link_to("calendar feed", calendar_url(calendar_parameters.merge(:format => :ics, :protocol => 'webcal://', :only_path => false)))
+  = t('event_page.stay_up_to_date')
+  = link_to(t('event_page.rss'), calendar_url(calendar_parameters.merge(:format => :rss)))
+  = t('event_page.or')
+  = link_to(t('event_page.calendar_feed'), calendar_url(calendar_parameters.merge(:format => :ics, :protocol => 'webcal://', :only_path => false)))
+

@@ -142,6 +142,8 @@ en:
       event: event
       remove: remove
     edit:
+      title: Edit Location
+      description: Remember that changes you make here will affect the display of every event in this location.
       update: Update Venue
     new:
       title: Add an event location
@@ -172,6 +174,20 @@ en:
       associated: It is associated with
       remain: that will remain in the calendar without a location
   event_page:
+    stay_up_to_date: "stay up to date"
+    rss: "RSS"
+    calendar_feed: "calendar feed"
+    or: or
+    at: at
+    summarize_period_one_day: "all day on %{date}"
+    summarize_period_all_day: "from %{from_date} to %{to_date}"
+    summarize_period_within_day: "%{start_time} on %{date}"
+    summarize_period_within_day_with_end_time: "%{start_time} to %{end_time} on %{date}"
+    summarize_period_spanning_days: "%{start_time} on %{date} to %{end_time} on %{end_date}"
+    on_date:  "%{time} on %{date}"
+    from_date: "from %{date}"
+    all_day_on: "all day on %{date}"
+    all_day: "all day"
     coming_up: "coming up"
     showing: Showing
     in_calendars: "in %{calendars}"

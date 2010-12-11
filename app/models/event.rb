@@ -221,7 +221,7 @@ class Event < ActiveRecord::Base
 
   def starts
     if all_day?
-      "all day"
+      t('event_page.all_day')
     else
       start_time
     end
@@ -229,7 +229,7 @@ class Event < ActiveRecord::Base
   
   def finishes
     if all_day?
-      "all day"
+      t('event_page.all_day')
     else
       end_time
     end
@@ -237,29 +237,36 @@ class Event < ActiveRecord::Base
 
   def summarize_start
     if one_day?
-      "all day on #{date}"
+      I18n.t 'event_page.all_day_on', :date => date
     elsif all_day?
-      "from #{date}"
+      I18n.t 'event_page.from_date', :date => date
     else
-      "#{start_time} on #{date}"
+      I18n.t 'event_page.on_date', :time => start_time, :date => date
     end
   end
-  
+
   def summarize_period
-    period = []
+    period = ""
     if one_day?
-      period << "all day on #{date}"
+      period = (I18n.t 'event_page.summarize_period_one_day', :date => date)
     elsif all_day?
-      period << "from #{date} to #{end_date.to_datetime.strftime(date_format)}"
+      period = (I18n.t 'event_page.summarize_period_all_day',
+                        :from_date => date,
+                        :to_date => (I18n.l end_date, :format => date_format))
     elsif within_day?
-      period << "#{start_time}"
-      period << "to #{end_time}" if end_time
-      period << "on #{date}"
+      if end_time
+        period = (I18n.t 'event_page.summarize_period_within_day_with_end_time',
+          :start_time => start_time, :end_time => end_time, :date => date)
+      else
+        period = (I18n.t 'event_page.summarize_period_within_day',
+          :start_time => start_time, :date => date)
+      end
     else
-      period << "#{start_time} on #{date}"
-      period << "to #{end_time} on #{end_date.to_datetime.strftime(date_format)}"
+      period = (I18n.t 'event_page.summarize_period_spanning_days',
+        :start_time => start_time, :end_time => end_time, :date => date,
+        :end_date => (I18n.l end_date, :format => date_format))
     end
-    period.join(' ')
+    period
   end
   
   def url
