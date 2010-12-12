@@ -4,7 +4,7 @@
   \&gt;
 
 - content_for :title do
-  Events
+  = t('event_page.events')
   = list_description
 
 - content_for :events do
@@ -13,23 +13,23 @@
   - if events.length < 5 && continuing_events.any?
     - if events.any?
       %h2.listheader
-        Continuing events
+        = t('event_page.continuing_events_title')
     = render :partial => 'event', :collection => continuing_events
 
   - if events.empty? && continuing_events.empty?
     - if period
       %h2
-        Sorry: there are no events
+        = t('event_page.sorry_no_events')
         = render :partial => 'events/defacet'
     - else
       %h2
-        Sorry: there are no events coming up
-        
+        = t('event_page.sorry_no_upcoming_events')
+
 - content_for :continuing_events do
   - if continuing_events.any? && events.length >= 5
     #continuing
       %h3
-        Continuing events
+        = t('event_page.continuing_events_title')
       %ul
         - continuing_events.each do |event|
           %li
@@ -38,13 +38,13 @@
             - else
               = event.title
             %span.detail
-              runs until 
+              = t('event_page.runs_until')
               = event.last_day
               - if event.event_venue
-                at
+                = t('event_page.at')
                 = link_to event.event_venue.title, event.event_venue.url
               - elsif event.location
-                at
+                = t('event_page.at')
                 = event.location
 
 - content_for :calendar do
