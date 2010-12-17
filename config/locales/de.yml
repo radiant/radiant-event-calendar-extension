@@ -138,7 +138,7 @@ de:
       website: Webseite
       modify: Ändern
       no_places: Es gibt noch keine Orte im System. Bitte fügen Sie hier (oder beim Anlegen eines Ereignisses) einen neuen Ort hinzu.
-      new: Neue Örtlichkeit anlegen
+      new: Neuen Veranstaltungsort anlegen
       event: Ereignis
       remove: entfernen
     edit:
@@ -157,7 +157,7 @@ de:
       choose_before: Wenn Sie den Ort zuvor bereits verwendet haben, bitte
       choose_after: um ihn überall zu aktualisieren.
       keywords: Stichwörter
-      location_tag: Orts-Tag
+      location_tag: Orts Angabe (wird für Google Maps verwendet!)
       location_tag_note: Wird im Kalender-feed angezeigt. Kann eine Postleitzahl, geografische Position oder eine eindeutige Zeichenkette sein.
       address: Adresse 
       postcode: Postleitzahl oder Koordinaten

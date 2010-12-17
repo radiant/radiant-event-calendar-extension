@@ -11,9 +11,9 @@
 - render_region :main do |main|
   - main.edit_header do
     %h1
-      t('event_venues_admin.edit.title')
+      =t('event_venues_admin.edit.title')
     %p
-      t('event_venues_admin.edit.description')
+      =t('event_venues_admin.edit.description')
 
   - main.edit_form do
     - form_for [:admin, @event_venue] do |f|
