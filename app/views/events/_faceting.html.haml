@@ -8,10 +8,7 @@
         - more_pages = true if paginated && events.total_pages >= 2
         - if paginated
           - if more_pages
-            = events.offset + 1
-            = t('to')
-            = events.offset + events.length
-            = t('of')
+            = t('event_page.more_pages', :start => events.offset + 1,:end => events.offset + events.length )
           = t('event_page.number_events',:count => events.total_entries)
         - else
           = t('event_page.number_events',:count => events.count)
