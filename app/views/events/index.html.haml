@@ -3,10 +3,6 @@
   = link_to home.breadcrumb, home.url
   \&gt;
 
-- content_for :title do
-  Events
-  = list_description
-
 - content_for :events do
   = render :partial => 'event', :collection => events
 
@@ -59,3 +55,18 @@
   = render :partial => 'faceting'
 
 = render :partial => 'events/other_page_parts'
+
+
+
+- content_for :title do
+  Events
+  = list_description
+
+- content_for :sidebar do
+  = yield :calendar
+  = yield :continuing_events
+
+- content_for :body do
+  = yield :faceting
+  #events
+    = yield :events
