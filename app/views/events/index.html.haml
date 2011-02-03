@@ -1,7 +1,4 @@
-- content_for :breadhead do
-  - home = Page.find_by_parent_id(nil)
-  = link_to home.breadcrumb, home.url
-  \&gt;
+= render :partial => 'events/other_page_parts'
 
 - content_for :events do
   = render :partial => 'event', :collection => events
@@ -9,23 +6,23 @@
   - if events.length < 5 && continuing_events.any?
     - if events.any?
       %h2.listheader
-        Continuing events
+        = t('continuing_events')
     = render :partial => 'event', :collection => continuing_events
 
   - if events.empty? && continuing_events.empty?
     - if period
       %h2
-        Sorry: there are no events
+        = t('sorry_no_events')
         = render :partial => 'events/defacet'
     - else
       %h2
-        Sorry: there are no events coming up
+        = t('sorry_no_events')
         
 - content_for :continuing_events do
   - if continuing_events.any? && events.length >= 5
     #continuing
       %h3
-        Continuing events
+        = t('continuing_events')
       %ul
         - continuing_events.each do |event|
           %li
@@ -34,13 +31,13 @@
             - else
               = event.title
             %span.detail
-              runs until 
+              = t('runs_until')
               = event.last_day
               - if event.event_venue
-                at
+                =t('at')
                 = link_to event.event_venue.title, event.event_venue.url
               - elsif event.location
-                at
+                = t('at')
                 = event.location
 
 - content_for :calendar do
@@ -48,25 +45,25 @@
     = render :partial => "events/minicalendar", :locals => {:date => period ? period.start : Date.today}
 
 - content_for :pagination do
-  - if events.next_page || events.previous_page
-    = will_paginate(events, :param_name => :p)
+  = will_paginate events
 
 - content_for :faceting do
   = render :partial => 'faceting'
 
-= render :partial => 'events/other_page_parts'
-
-
-
 - content_for :title do
-  Events
+  = t('pagetitle.calendar')
+  
+- content_for :full_title do
+  = t('events').titlecase
   = list_description
 
 - content_for :sidebar do
   = yield :calendar
   = yield :continuing_events
 
-- content_for :body do
-  = yield :faceting
-  #events
-    = yield :events
+
+= yield :faceting
+#events
+  = yield :pagination if events.previous_page
+  = yield :events
+  = yield :pagination if events.next_page

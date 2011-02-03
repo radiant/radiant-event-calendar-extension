@@ -1,5 +1,11 @@
 en:
+  at: "at"
+  calendar: "calendar"
   refresh_calendar: "refresh calendar"
   edit_calendar: "edit calendar"
   delete_calendar: "delete calendar"
   really_delete_calendar: "Are you sure you want to delete the %{name} calendar?"
+  sorry_no_events: "Sorry: there are no events to display"
+  runs_until: "runs until"
+  events: "events"
+  pagetitle.calendar: "Calendar"

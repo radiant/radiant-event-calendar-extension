@@ -1,5 +1,6 @@
 class EventsController < SiteController
   require "uri"
+  include Radiant::Pagination::Controller
   
   helper_method :events, :all_events, :continuing_events, :period, :calendars, :list_description
   helper_method :url_for_date, :url_for_month, :url_without_period, :calendar_parameters, :month_name, :short_month_name, :day_names
@@ -14,12 +15,8 @@ class EventsController < SiteController
     @seen_events = {}
     respond_to do |format|
       format.html {
-        if Radiant::Config['event_calendar:cached?']
-          timeout = Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout
-          expires_in timeout.to_i, :public => true, :private => false
-        else
-          expires_now
-        end
+        timeout = Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 1.hour
+        expires_in timeout.to_i, :public => true, :private => false
       }
       format.js {
         render :json => events.to_json
@@ -102,6 +99,12 @@ class EventsController < SiteController
     parts << "in #{calendars.to_sentence}" if calendars
     @description = parts.join(' ')
   end
+  
+  # these methods build calendar links by using supplied parameters to amend the current parameter set
+  # anything not mentioned is carried forward unchanged.
+  # this is only slightly worthwhile here but gets much more useful when there are more ways to select events.
+  
+  # this whole mechanism should probably be moved into a helper.
       
   def url_for_date(date)
     url_for(url_parts({
@@ -135,8 +138,8 @@ class EventsController < SiteController
     url_parts.map{|p| params[p] }.join("_")
   end
   
-  # this is broken down to provide chain points for other extensions that add more ways to filter
-  # eg, to start with, taggable_events
+  # this is broken down into minimal parts to provide chain points for other extensions
+  # that add more ways to filter. eg, to start with, taggable_events
 
   def calendar_parameters
     url_parts
@@ -151,31 +154,31 @@ class EventsController < SiteController
     [:year, :month, :mday, :category, :slug, :calendar_id]
   end
   
-  def month_name(month)
-    month_names[month]
-  end
-  
-  def short_month_name(month)
-    short_month_names[month]
-  end
-  
   def day_names
     return @day_names if @day_names
     @day_names ||= Date::DAYNAMES.dup
     @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.  
     @day_names
   end
-  
-protected
-  
-  def short_month_names
-    @short_month_names ||= Date::ABBR_MONTHNAMES.dup
+
+  def month_name(month)
+    month_names[month]
   end
-  
+
   def month_names
     @month_names ||= Date::MONTHNAMES.dup
   end
-  
+
+  def short_month_name(month)
+    short_month_names[month]
+  end
+
+  def short_month_names
+    @short_month_names ||= Date::ABBR_MONTHNAMES.dup
+  end
+
+private
+
   # months can be passed around either as names or numbers
   # any date part can be 'now' or 'next' for ease of linking
   # and everything is converted to_i to save clutter later
@@ -190,12 +193,5 @@ protected
       params[p] = params[p].to_i
     end
   end
-  
-  def pagination_parameters
-    {
-      :page => (params[:p] || 1).to_i, 
-      :per_page => (params[:pp] || Radiant::Config['event_calendar.per_page'] || 10).to_i
-    }
-  end
-  
+    
 end
