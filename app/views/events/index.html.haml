@@ -57,11 +57,6 @@
   = t('events').titlecase
   = list_description
 
-- content_for :sidebar do
-  = yield :calendar
-  = yield :continuing_events
-
-
 = yield :faceting
 #events
   = yield :pagination if events.previous_page
