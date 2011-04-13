@@ -469,7 +469,7 @@ module EventCalendarTags
       if venue.url
         html = %{<a class="location" href="#{venue.url}">#{venue.title}</a>}
       else
-        html = %{<span class="location">venue.title</span>}
+        html = %{<span class="location">#{venue.title}</span>}
       end
       html << %{, <span class="address">#{venue.address}</span>} unless venue.address.blank?
       html
