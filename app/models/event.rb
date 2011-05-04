@@ -196,7 +196,7 @@ class Event < ActiveRecord::Base
   end
   
   def mday_padded
-    "%02d" % mday
+    mday
   end
   
   def short_date
