@@ -225,12 +225,12 @@ module EventCalendarTags
     <pre><code><r:calendars:each>...</r:calendars:each></code></pre>
   }
   tag 'calendars' do |tag|
-    tag.locals.calendars ||= set_calendars(tag)
     tag.expand
   end
   
   tag 'calendars:each' do |tag|
     result = []
+    tag.locals.calendars ||= set_calendars(tag)
     tag.locals.calendars.each do |cal|
       tag.locals.calendar = cal
       result << tag.expand
@@ -846,7 +846,7 @@ module EventCalendarTags
         cell_class += " eventful"
         cell_class += " eventful_weekend" if weekend?(day)
         cell_class += events_today.map{|e| " #{e.slug}"}.join
-        event_list << %{<ul>} << events_today.map { |e| %{<li><span class="time">#{e.nice_start_time}:</span> #{e.title}</li>} }.join << "</ul>"
+        event_list << %{<ul>} << events_today.map { |e| %{<li><span class="time">#{e.start_time}:</span> #{e.title}</li>} }.join << "</ul>"
       else
         cell_class += " uneventful"
       end

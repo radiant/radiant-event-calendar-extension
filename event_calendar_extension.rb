@@ -1,5 +1,5 @@
 class EventCalendarExtension < Radiant::Extension
-  version "1.3.9"
+  version "1.3.10"
   description "An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)"
   url "http://github.com/radiant/radiant-event_calendar-extension"
 
@@ -24,6 +24,12 @@ class EventCalendarExtension < Radiant::Extension
       admin.calendar = Radiant::AdminUI.load_default_calendar_regions
       admin.event = Radiant::AdminUI.load_default_event_regions
       admin.event_venue = Radiant::AdminUI.load_default_event_venue_regions
+    end
+    
+    if admin.respond_to? :dashboard
+      admin.dashboard.index.add :main, "coming_events"
+    else
+      Rails.logger.warn "NO DASHBOARD!"
     end
     
     if respond_to?(:tab)

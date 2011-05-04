@@ -65,6 +65,10 @@ class Event < ActiveRecord::Base
 
   named_scope :by_end_date,  { :order => "end_date ASC" }
 
+  named_scope :limited_to, lambda { |limit|
+    { :limit => limit }
+  }
+  
   named_scope :at_venue, lambda { |venue| # EventVenue object
     { :conditions => ["event_venue_id = ?", venue.id] }
   }
@@ -184,7 +188,7 @@ class Event < ActiveRecord::Base
   end
 
   def day
-    Date::DAYNAMES[start_date.day]
+    Date::DAYNAMES[start_date.wday]
   end
 
   def mday

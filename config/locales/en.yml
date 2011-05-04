@@ -8,4 +8,5 @@ en:
   sorry_no_events: "Sorry: there are no events to display"
   runs_until: "runs until"
   events: "events"
-  pagetitle.calendar: "Calendar"
+  pagetitle:
+    calendar: "Calendar"
