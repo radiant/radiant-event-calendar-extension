@@ -5,11 +5,7 @@ class EventCalendarPage < Page
 
   attr_accessor :filters, :calendar_parameters, :calendar_filters, :calendar_year, :calendar_month, :calendar_page, :calendar_category, :calendar_slug, :calendar_period
 
-  description %{ Create a viewer for calendar data. }
-
-  def self.sphinx_indexes
-    []
-  end
+  description I18n.t 'event_page.description'
 
   def cache?
     true
@@ -37,8 +33,8 @@ class EventCalendarPage < Page
           @calendar_year = part
         elsif part.match(/^\d+$/)
           @calendar_day = part
-        elsif Date::MONTHNAMES.include?(part.titlecase)
-          @calendar_month = Date::MONTHNAMES.index(part.titlecase)
+        elsif (I18n.t 'date.month_names').include?(part.titlecase)
+          @calendar_month = (I18n.t 'date.month_names').index(part.titlecase)
         elsif Calendar.categories.include?(part)
           @calendar_category = part
         elsif Calendar.slugs.include?(part)
@@ -87,12 +83,12 @@ class EventCalendarPage < Page
   alias_method_chain :url, :parts
 
   def month_names
-    @month_names ||= Date::MONTHNAMES.dup
+    @month_names ||= (I18n.t 'date.month_names').dup
   end
   
   def day_names
     unless @day_names
-      @day_names = Date::DAYNAMES.dup
+      @day_names = (I18n.t 'date.day_names').dup
       @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. we've gone for the rails standard.
     end
     @day_names

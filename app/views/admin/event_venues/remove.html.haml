@@ -1,22 +1,23 @@
 - include_stylesheet "admin/event_calendar"
 
-%h1 Remove location
+%h1
+  = t('event_venues_admin.remove.title')
 
 %p 
-  Are you sure you want to 
+  = t('event_venues_admin.remove.confirm')
   %strong.warning 
-    remove permanently
-  the location
+    = t('event_venues_admin.remove.warning')
+  = t('event_venues_admin.remove.the_location')
   = link_to @event_venue.title + '?', edit_admin_event_venue_url(@event_venue)
 
   - if @event_venue.events.any?
     %br
-    It is associated with 
+    = t('event_venues_admin.remove.associated')
     = @event_venue.events.count
-    = pluralize(@event_venue.events.count, 'event')
-    that will remain in the calendar without a location:
+    = pluralize(@event_venue.events.count, t('event_venues_admin.remove.event'))
+    = t('event_venues_admin.remove.remain')
   - else
-    It has no events.
+    = t('event_venues_admin.remove.no_events')
 
 - if @event_venue.events.any?
   %ul
@@ -28,6 +29,6 @@
         
 - form_for [:admin, @event_venue], :html => {:method => :delete} do
   %p.buttons
-    %input.button{:type=>"submit", :value=>"Delete location"}
-    or
-    = link_to 'Cancel', admin_event_venues_url
+    %input.button{:type=>"submit", :value=>t('event_venues_admin.remove.delete')}
+    = t('defaults.or')
+    = link_to t('defaults.cancel'), admin_event_venues_url

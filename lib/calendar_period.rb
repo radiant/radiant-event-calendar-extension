@@ -64,12 +64,15 @@ class CalendarPeriod
   # descriptions
   
   def to_s
-    "#{distance_of_time_in_words(start, finish)} from #{start}"
+    I18n.t 'calendar_period.to_s',
+           :distance_of_time_in_words => distance_of_time_in_words(start, finish),
+           :start => (I18n.l start, :format => :default)
   end
   
   def inspect
-    detailed = "%-1I:%M%p %d/%m/%Y"
-    %{#{describe_start(detailed)} to #{describe_finish(detailed)}}
+    I18n.t 'calendar_period.inspect',
+           :describe_start => describe_start(:calendar_period_describe_detailed),
+           :describe_finish => describe_finish(:calendar_period_describe_detailed)
   end
   
   [:day, :week, :month, :year].each do |period|
@@ -81,36 +84,38 @@ class CalendarPeriod
   def describe_start(date_format=nil)
     if start
       unless date_format
-        date_format = "%d %B"
-        date_format += " %Y" unless start.year == Time.now.year
+        date_format = :calendar_period_describe
+        date_format = :calendar_period_describe_with_year unless start.year == Time.now.year
       end
-      start.to_datetime.strftime(date_format)
+      I18n.l start, :format => date_format
     end
   end
 
   def describe_finish(date_format=nil)
     if finish
       unless date_format
-        date_format = "%d %B"
-        date_format += " %Y" unless finish.year == Time.now.year
+        date_format = :calendar_period_describe
+        date_format = :calendar_period_describe_with_year unless finish.year == Time.now.year
       end
-      finish.to_datetime.strftime(date_format)
+      I18n.l finish, :format => date_format
     end
   end
   
   def description
-    return "on #{start.mday} #{monthname} #{start.year}" if is_day?
-    return "in week #{start.cweek} of #{start.year}" if is_week?
-    return "in #{monthname} #{start.year}" if is_month?
-    return "in #{start.year}" if is_year?
-    return "from #{describe_start} onwards" unless finish
-    return "until #{describe_finish}" unless start
-    "between #{describe_start} and #{describe_finish}"
+    return I18n.t 'calendar_period.description_day',
+             :day => I18n.l(start, :format => "%d"),
+             :monthname => I18n.l(start ? start : finish, :format => "%B"),
+             :year => I18n.l(start, :format => "%Y") if is_day?
+    return I18n.l start, :format => :calendar_period_description_week if is_week?
+    return I18n.l start, :format => :calendar_period_description_month if is_month?
+    return I18n.l start, :format => :calendar_period_description_year if is_year?
+    return I18n.t 'calendar_period.onwards', :describe_start => describe_start unless finish
+    return I18n.t 'calendar_period.until', :describe_finish => describe_finish unless start
+    I18n.t 'calendar_period.between', :describe_finish => describe_finish, :describe_start => describe_start
   end
   
   def monthname
-    i = start ? start.month : finish.month
-    Date::MONTHNAMES[i]
+    I18n.l(start ? start : finish, :format => "%B")
   end
     
   # to expand the period to full calendar months

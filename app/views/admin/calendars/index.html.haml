@@ -1,5 +1,5 @@
-- @page_title = 'Calendars'
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title = t('calendar_admin.index.title')
+- @page_title += ' - ' + t('calendar_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet 'admin/event_calendar'
 = render_region :top 
@@ -10,14 +10,14 @@
       %tr
         - render_region :thead do |thead|
           - thead.name_header do
-            %th Name
+            %th.key= t('calendar_admin.index.name')
 
           - thead.url_header do
-            %th URL (category/slug)
+            %th.key= t('calendar_admin.index.url')
 
           - thead.refresh_header do
-            %th Last Refresh
-            %th Refresh automatically?
+            %th.key= t('calendar_admin.index.last_refresh')
+            %th.key= t('calendar_admin.index.auto_refresh')
 
           - thead.action_header do
             %th 
@@ -30,7 +30,7 @@
               %td.subscription-title
                 = link_to image('calendar', :alt => ''), admin_calendar_url(calendar)
                 = link_to calendar.name, admin_calendar_url(calendar)
-                = "(#{calendar.events.count || '0'} events)"
+                = "(#{calendar.events.count || '0'} " + t('calendar_admin.index.events') + ")"
 
             - tbody.url_cell do
               %td.url
@@ -46,7 +46,7 @@
                   n/a
               %td.autorefresh
                 - if calendar.ical
-                  = calendar.ical.refresh_automatically? ? "yes" : "no"
+                  = calendar.ical.refresh_automatically? ? t('calendar_admin.index.yes') : t('calendar_admin.index.no')
                 - else
                   n/a
             - tbody.action_cell do
@@ -65,4 +65,4 @@
     #actions
       = pagination_for @calendars
       %ul
-        %li= link_to image('plus') + " " + "new calendar", new_admin_calendar_url
+        %li= link_to image('plus') + " " + t('calendar_admin.index.new'), new_admin_calendar_url

@@ -1,12 +1,217 @@
+---
 en:
-  at: "at"
-  calendar: "calendar"
+  time:
+    formats:
+      calendar_period_description_week: "in week %U of %Y"
+      calendar_period_description_month: "in %B %Y"
+      calendar_period_description_year: "in %Y"
+      calendar_period_describe: "%d %B"
+      calendar_period_describe_with_year: "%d %B %Y"
+      calendar_period_describe_detailed: "%I:%M%p %d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d"
+      event_calendar_time_format: "%I:%M%p"
+      event_calendar_round_time_format: "%I%p"
+  date:
+    formats:
+      event_calendar_date_format: "%d %B"
+      event_calendar_short_date_format: "%d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d"
   refresh_calendar: "refresh calendar"
   edit_calendar: "edit calendar"
   delete_calendar: "delete calendar"
   really_delete_calendar: "Are you sure you want to delete the %{name} calendar?"
-  sorry_no_events: "Sorry: there are no events to display"
-  runs_until: "runs until"
-  events: "events"
-  pagetitle:
-    calendar: "Calendar"
+  calendar: calendar
+  calendars: calendars
+  events: events
+  locations: locations
+  defaults:
+    cancel: Cancel
+    or: or
+    at: at
+    day: day
+    week: week
+    month: month
+    year: year
+    forever: forever
+    until: until
+    for: for
+  calendar_admin:
+    defaults:
+      title: Calendar
+    index:
+      title: Calendars
+      new: new calendar
+      name: Name
+      url: URL (category/slug)
+      last_refresh: Last Refresh
+      auto_refresh: Refresh automatically?
+      yes: yes
+      no: no
+      events: events
+    new:
+      title: New calendar
+      header: New Calendar
+    edit:
+      header: Edit Calendar
+    show:
+      subscribe: subscribe to this calendar
+      address: address
+      username: username
+      password: password
+      detail_text: This may be part of a master calendar with several individual calendars. In that case there will be a different address that lets you access all the calendars at once. Consult your site administrator if unsure.
+      no_events: No Events
+    actions:
+      refresh: Refresh calendar
+      edit: Edit calendar
+      delete: Delete calendar
+      confirm: Are you sure you want to delete the
+    form:
+      name: Name
+      subscription_url: Subscription url (optional)
+      username: Username
+      password: Password
+      auto_refresh: Refresh automatically?
+      keywords: Keywords
+      more: more
+      description: Description
+      slug: Slug
+      category: Category
+  event_admin:
+    defaults:
+      title: Calendar
+    index:
+      title: Events
+      new: new event
+      calendar: Calendar
+      time: Time
+      location: Location
+      keywords: Keywords
+      modify: Modify
+      no_events: No events to display
+      show_all: (show all)
+      events: Events
+    new:
+      title: New calendar
+      header: New Calendar
+    edit:
+      header: Edit Event
+    form:
+      new_location: add a new location
+      edit_location: edit this location
+      choose_location: Choose a location
+      description: Description
+      title: Title
+      keywords: Keywords
+      calendar: Calendar
+      start: Start date and time
+      end: end date and time
+      event_url: Event url
+      repeat_note: (this is for separate similar events. For events that span several days you only need to set the start and end.)
+      calendar_note: This is optional but can be used to file your events or to mix local events into a subscribed calendar.
+      all_day: All-day event?
+      repeats: Repeats
+      repeats_every: Repeats every
+      many_time: this many times
+    remove:
+      title: Delete event
+      message: Are you sure you want to
+      submit: Delete
+      warning: permanently remove
+      event: the event
+  event_venues_admin:
+    defaults:
+      title: Calendar
+    index:
+      title: Locations
+      place: Place
+      address: Address
+      website: Website
+      modify: Modify
+      no_places: No places in the system yet. You can create one here or when you add an event.
+      new: new venue
+      event: event
+      remove: remove
+    edit:
+      title: Edit Location
+      description: Remember that changes you make here will affect the display of every event in this location.
+      update: Update Venue
+    new:
+      title: Add an event location
+      text: You can also do this whenever you enter a new event.
+      create: Create Venue
+    form:
+      title: Venue or location title
+      choose: choose an existing place
+      choose_note: We remember these details for you, so changes here affect every event occurring in this place
+      choose_list: choose it from the list
+      choose_before: If you've used this place before, please
+      choose_after: so that you can update it globally
+      keywords: Keywords
+      location_tag: Location tag
+      location_tag_note: This is used to recognise the venue in a calendar feed. It can be postcode, grid reference or any distinctive string.
+      address: Address or directions
+      postcode: Postcode or grid reference
+      postcode_note: This is only required if your address is unusual or you want these events to show on a map in a particular place.
+      url: Location url
+    remove:
+      title: Remove location
+      no_events: It has no events.
+      event: event
+      confirm: Are you sure you want to 
+      warning: permanently remove
+      the_location: the location
+      delete: Delete location
+      associated: It is associated with
+      remain: that will remain in the calendar without a location
+  event_page:
+    calendar: Calendar
+    more_pages: "%{start} to %{end} of"
+    more_pages_to:
+    events: Events
+    continuing_events_title: Continuing events
+    runs_until: runs until
+    sorry_no_events: "Sorry: there are no events"
+    sorry_no_upcoming_events: "Sorry: there are no events coming up"
+    stay_up_to_date: "stay up to date"
+    rss: "RSS"
+    calendar_feed: "calendar feed"
+    or: or
+    at: at
+    summarize_period_one_day: "all day on %{date}"
+    summarize_period_all_day: "from %{from_date} to %{to_date}"
+    summarize_period_within_day: "%{start_time} on %{date}"
+    summarize_period_within_day_with_end_time: "%{start_time} to %{end_time} on %{date}"
+    summarize_period_spanning_days: "%{start_time} on %{date} to %{end_time} on %{end_date}"
+    on_date:  "%{time} on %{date}"
+    from_date: "from %{date}"
+    all_day_on: "all day on %{date}"
+    all_day: "all day"
+    coming_up: "coming up"
+    showing: Showing
+    in_calendars: "in %{calendars}"
+    description: "Create a viewer for calendar data. "
+    number_events:
+      one: 1 event
+      other:  "%{count} events"
+    continuing_events:
+      one: 1 continuing event
+      other:  "%{count} continuing events"
+  calendar_period:
+    description_day: "on %{day} %{monthname} %{year}"
+    onwards: "from %{describe_start} onwards"
+    until: "until %{describe_finish}"
+    between: "between %{describe_start} and %{describe_finish}"
+    inspect: "%{describe_start} to %{describe_finish}"
+    to_s: "%{distance_of_time_in_words} from %{start}"
+
+

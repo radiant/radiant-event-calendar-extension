@@ -2,26 +2,19 @@
   - if events.any? || continuing_events.any?
 
     %p.list_summary
-      Showing
+      = t('event_page.showing')
       - if events.any?
         - paginated = true if events.respond_to? :total_entries
         - more_pages = true if paginated && events.total_pages >= 2
         - if paginated
           - if more_pages
-            = events.offset + 1
-            to
-            = events.offset + events.length
-            of
-          = events.total_entries
-          = pluralize(events.total_entries, "event") 
+            = t('event_page.more_pages', :start => events.offset + 1,:end => events.offset + events.length )
+          = t('event_page.number_events',:count => events.total_entries)
         - else
-          = events.count
-          = pluralize(events.count, "event") 
+          = t('event_page.number_events',:count => events.count)
         
       - elsif continuing_events.any?
-        = continuing_events.count
-        continuing
-        = pluralize(continuing_events.count, "event") 
-        
+        = t('event_page.continuing_events',:count => continuing_events.count)
+
       = render :partial => 'events/defacet'
       = render :partial => 'events/views'

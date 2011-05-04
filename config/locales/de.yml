@@ -1,0 +1,213 @@
+---
+de:
+  time:
+    formats:
+      calendar_period_description_week: "in der Kalenderwoche %U von %Y"
+      calendar_period_description_month: "im %B %Y"
+      calendar_period_description_year: "im Jahr %Y"
+      calendar_period_describe: "%d. %B"
+      calendar_period_describe_with_year: "%d. %B %Y"
+      calendar_period_describe_detailed: "%H:%M %d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d."
+      event_calendar_time_format: "%H:%M"
+      event_calendar_round_time_format: "%H"
+  date:
+    formats:
+      event_calendar_date_format: "%d. %B"
+      event_calendar_short_date_format: "%d/%m/%Y"
+      calendar_period_minicalendar_title: "%B %Y"
+      calendar_period_minicalendar_month: "%B"
+      calendar_month: "%B"
+      calendar_short_month: "%b"
+      calendar_day_name: "%A"
+      calendar_day_of_month: "%d."
+  refresh_calendar: "Kalender neu laden"
+  edit_calendar: "Kalender bearbeiten"
+  delete_calendar: "Kalender löschen"
+  really_delete_calendar: "Sind Sie sicher, dass Sie den Kalender %{name} löschen möchten?"
+  calendar: Kalender
+  calendars: Kalender
+  events: Ereignisse
+  locations: Orte
+  defaults:
+    cancel: Abbruch
+    or: oder
+    at: um
+    day: Tag
+    week: Woche
+    month: Monat
+    year: Jahr
+    forever: für immer
+    until: bis
+    for: Anzahl
+  calendar_admin:
+    defaults:
+      title: Kalender
+    index:
+      title: Kalender
+      new: Neuen Kalender anlegen
+      name: Name
+      url: URL (Kategorie/Slug)
+      last_refresh: Zuletzt neu geladen
+      auto_refresh: Automatisch neu laden?
+      yes: ja
+      no: nein
+      events: Ereignisse
+    new:
+      title: Neuer Kalender
+      header: Neuer Kalender
+    edit:
+      header: Kalender bearbeiten
+    show:
+      subscribe: diesen Kalender abonnieren
+      address: Adresse
+      username: Benutzername
+      password: Kennwort
+      detail_text: This may be part of a master calendar with several individual calendars. In that case there will be a different address that lets you access all the calendars at once. Wenn Sie unsicher sind, kontaktieren Sie bitte den Administrator.
+      no_events: Keine Ereignisse
+    actions:
+      refresh: Kalender neu laden
+      edit: Kalender bearbeiten
+      delete: Kalender löschen
+      confirm: Bitte bestätigen Sie das Löschen des Kalenders
+    form:
+      name: Name
+      subscription_url: Abonnement-URL (optional)
+      username: Benutzername
+      password: Kennwort
+      auto_refresh: Automatisch neu laden?
+      keywords: Stichwörter
+      more: mehr
+      description: Beschreibung
+      slug: Slug
+      category: Kategorie
+  event_admin:
+    defaults:
+      title: Ereignisse
+    index:
+      title: Ereignisse
+      new: Neues Ereignis anlegen
+      calendar: Kalender
+      time: Zeit
+      location: Ort
+      keywords: Stichwörter
+      modify: Bearbeiten
+      no_events: Keine Ereignisse gefunden
+      show_all: (alle anzeigen)
+      events: Ereignisse
+    new:
+      title: Neuer Kalender
+      header: Neuer Kalender
+    edit:
+      header: Ereignis bearbeiten
+    form:
+      new_location: neuen Ort hinzufügen
+      edit_location: Ort bearbeiten
+      choose_location: Einen Ort auswählen
+      description: Beschreibung
+      title: Bezeichnung
+      keywords: Stichwörter
+      calendar: Kalender
+      start: Beginn (Datum und Uhrzeit)
+      end: Ende (Datum und Uhrzeit)
+      event_url: Ereignis-URL
+      repeats: Wiederholt sich. 
+      repeat_note: (Erzeugt mehrere, getrennte Ereignisse. Für Ereignisse, die sich über mehrere Tage erstrecken, brauchen nur das Start- und Endedatum entsprechend gesetzt werden.)
+      calendar_note: Kann benutzt werden, um die Ereignisse passend abzulegen. (optional)
+      all_day: Ganztagesereignis (ohne Uhrzeit)?
+      repeats_every: Wiederholt sich jede(n)
+      many_times: so oft
+    remove:
+      title: Ereignis löschen
+      message: Bitte bestätigen Sie das
+      submit: Löschen
+      warning: dauerhafte Löschen
+      event: des Ereignisses
+  event_venues_admin:
+    defaults:
+      title: Kalender
+    index:
+      title: Orte
+      place: Ort
+      address: Adresse
+      website: Webseite
+      modify: Ändern
+      no_places: Es gibt noch keine Orte im System. Bitte fügen Sie hier (oder beim Anlegen eines Ereignisses) einen neuen Ort hinzu.
+      new: Neuen Veranstaltungsort anlegen
+      event: Ereignis
+      remove: entfernen
+    edit:
+      title: Ort bearbeiten
+      description: Bitte beachten Sie, dass eine Änderung des Ortes die Anzeige jedes Ereignisses für diesen Ort beeinflusst
+      update: Ort aktualisieren
+    new:
+      title: Einen neuen Veranstaltungsort hinzufügen
+      text: Sie können auch bei Anlegen eines Ereignisses neue Orte eingeben.
+      create: Ort anlegen
+    form:
+      title: Ortsbezeichnung
+      choose: wählen Sie einen bestehenden Ort
+      choose_note: Änderungen an dieser Stelle beeinflussen alle Ereignisse an diesem Ort.
+      choose_list: aus der Liste auswählen
+      choose_before: Wenn Sie den Ort zuvor bereits verwendet haben, bitte
+      choose_after: um ihn überall zu aktualisieren.
+      keywords: Stichwörter
+      location_tag: Orts Angabe (wird für Google Maps verwendet!)
+      location_tag_note: Wird im Kalender-feed angezeigt. Kann eine Postleitzahl, geografische Position oder eine eindeutige Zeichenkette sein.
+      address: Adresse 
+      postcode: Postleitzahl oder Koordinaten
+      postcode_note: Nur nötig, wenn die Adresse ungewöhnlich ist, oder sie das Ereignis an einer bestimmten Position in der Karte anzeigen wollen.
+      url: URL des Ortes
+    remove:
+      title: Entferne die Örtlichkeit
+      no_events: hat keine Ereignisse
+      event: Ereignis
+      confirm: Bitte bestätigen Sie das 
+      warning: dauerhafte Entfernen
+      the_location: des Ortes
+      delete: Ort entfernen
+      associated: Es ist mit 
+      remain: verknüpft, das im Kalender ohne Ort verbleibt.
+  event_page:
+    more_pages: "%{start}. bis %{end}. von"
+    events: Veranstaltungen
+    continuing_events_title: Wiederkehrende Veranstaltungen
+    runs_until: läuft bis
+    sorry_no_events: "Es gibt leider keine Veranstaltungen in diesem Zeitraum"
+    sorry_no_upcoming_events: "Es sind leider keine Veranstaltungen eingetragen"
+    stay_up_to_date: "am Laufenden bleiben mit"
+    rss: "RSS"
+    calendar_feed: "Kalender Feed"
+    or: or
+    at: "Ort: "
+    summarize_period_one_day: "den ganzen Tag, am %{date}"
+    summarize_period_all_day: "von %{from_date} bis %{to_date}"
+    summarize_period_within_day: "am %{date}, ab %{start_time} Uhr"
+    summarize_period_within_day_with_end_time: "am %{date}, von %{start_time} bis %{end_time} Uhr"
+    summarize_period_spanning_days: "vom %{date}, %{start_time} Uhr bis %{end_date} %{end_time} Uhr"
+    on_date:  "am %{date}, um %{time} Uhr."
+    from_date: "ab dem %{date}."
+    all_day_on: "den ganzen Tag, am %{date}."
+    all_day: "den ganzen Tag."
+    coming_up: ""
+    showing: ""
+    in_calendars: "im %{calendars}"
+    description: "Anzeige für Kalender Daten"
+    number_events:
+      one: eine Veranstaltung
+      other:  "%{count} Veranstaltungen"
+    continuing_events:
+      one: eine wiederkehrende Veranstaltung
+      other:  "%{count} wiederkehrende Veranstaltungen"
+  calendar_period:
+     description_day: "am %{day}. %{monthname} %{year}"
+     onwards: "ab %{describe_start}"
+     until: "bis %{describe_finish}"
+     between: "zwischen %{describe_start} und %{describe_finish}"
+     inspect: "%{describe_start} bis %{describe_finish}"
+     to_s: "%{distance_of_time_in_words} seit %{start}"

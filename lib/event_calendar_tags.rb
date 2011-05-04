@@ -558,7 +558,7 @@ module EventCalendarTags
     }
     tag "event:#{attribute}" do |tag|
       date = tag.locals.event.send("#{attribute}_date")
-      date.strftime(tag.attr['format'] || "%H:%M")
+      I18n.l date, :format => tag.attr['format'] || "%H:%M"
     end
     desc %{ 
       Renders the #{attribute} date (or time) of the current event as ordinal day, month.
@@ -568,7 +568,13 @@ module EventCalendarTags
     }
     tag "event:#{attribute}_date" do |tag|
       date = tag.locals.event.send("#{attribute}_date")
-      %{#{date.mday.ordinalize} #{Date::MONTHNAMES[date.month]}}
+      # checkout  for i18n http://info.michael-simons.eu/2009/02/12/localizing-dates-and-time-with-rails-i18n-using-procs/
+      case I18n.locale
+        when :en
+          %{#{date.mday.ordinalize} #{Date::MONTHNAMES[date.month]}}
+        default
+          I18n.l date, :format => "%d. %M"
+      end
     end
   end
 
@@ -588,7 +594,7 @@ module EventCalendarTags
     </code></pre> 
   }
   tag "event:date" do |tag|
-    tag.locals.event.start_date.strftime(tag.attr['format'] || "%m/%d/%Y")
+    I18n.l tag.locals.event.start_date, :format => tag.attr['format'] || "%m/%d/%Y"
   end
 
   desc %{ 
@@ -600,7 +606,7 @@ module EventCalendarTags
     <pre><code><r:event:weekday [short="true"] /></code></pre> 
   }
   tag "event:weekday" do |tag|
-    tag.attr['short'] == 'true' ? Date::ABBR_DAYNAMES[tag.locals.event.start_date.wday] : Date::DAYNAMES[tag.locals.event.start_date.wday]
+    tag.attr['short'] == 'true' ? (I18n.l tag.locals.event.start_date, :format => "%a") :  (I18n.l tag.locals.event.start_date, :format => "%A" )
   end
 
   desc %{ 
@@ -649,7 +655,7 @@ module EventCalendarTags
     <pre><code><r:event:month /></code></pre> 
   }
   tag "event:month" do |tag|
-    Date::MONTHNAMES[tag.locals.event.start_date.month]
+    I18n.l tag.locals.event.start_date, :format => "%B"
   end
 
   desc %{ 

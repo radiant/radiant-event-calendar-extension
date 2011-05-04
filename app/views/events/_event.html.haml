@@ -20,16 +20,19 @@
         = render :partial => 'events/keywords', :locals => {:event => event}
           
       %p.practicalities
-        = event.summarize_start
+        %span.date
+          = event.summarize_start
         - if event.event_venue
-          = t('at')
-          - if event.event_venue.url
-            = link_to event.event_venue.title, event.event_venue.url, :class => 'location'
-          - else
-            = event.event_venue.title
-          = event.event_venue.address
+          %span.location
+            = t('event_page.at')
+            - if event.event_venue.url
+              = link_to event.event_venue.title, event.event_venue.url, :class => 'location'
+            - else
+              = event.event_venue.title
+            = event.event_venue.address
         - elsif event.location
-          = event.location
+          %span.location
+            = event.location
       - unless repeating
         = event.description_paragraph
     

@@ -95,8 +95,8 @@ class EventsController < SiteController
   def list_description
     return @description if @description
     parts = []
-    parts << (period ? period.description : "coming up")
-    parts << "in #{calendars.to_sentence}" if calendars
+    parts << (period ? period.description : t('event_page.coming_up'))
+    parts << I18n.t('event_page.in_calendars', :calendars => calendars.to_sentence) if calendars
     @description = parts.join(' ')
   end
   
@@ -154,31 +154,31 @@ class EventsController < SiteController
     [:year, :month, :mday, :category, :slug, :calendar_id]
   end
   
-  def day_names
-    return @day_names if @day_names
-    @day_names ||= Date::DAYNAMES.dup
-    @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.  
-    @day_names
-  end
-
   def month_name(month)
     month_names[month]
   end
-
-  def month_names
-    @month_names ||= Date::MONTHNAMES.dup
-  end
-
+  
   def short_month_name(month)
     short_month_names[month]
   end
-
-  def short_month_names
-    @short_month_names ||= Date::ABBR_MONTHNAMES.dup
+  
+  def day_names
+    return @day_names if @day_names
+    @day_names ||= (I18n.t 'date.day_names').dup
+    @day_names.push(@day_names.shift) # Class::Date and ActiveSupport::CoreExtensions::Time::Calculations have different ideas of when is the start of the week. We've gone for the rails standard.  
+    @day_names
   end
-
-private
-
+  
+protected
+  
+  def short_month_names
+    @short_month_names ||= (I18n.t 'date.abbr_month_names').dup
+  end
+  
+  def month_names
+    @month_names ||= (I18n.t 'date.month_names').dup
+  end
+  
   # months can be passed around either as names or numbers
   # any date part can be 'now' or 'next' for ease of linking
   # and everything is converted to_i to save clutter later

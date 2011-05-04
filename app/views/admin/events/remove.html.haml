@@ -1,16 +1,15 @@
-%h1 Delete event
+%h1
+  = t('event_admin.remove.title')
 
 %p 
-  Are you sure you want to 
+  = t('event_admin.remove.message')
   %strong.warning 
-    remove permanently
-  the event 
+    = t('event_admin.remove.warning')
+  = t('event_admin.remove.event')
   = link_to(@event.title, edit_admin_event_url(@event)) + '?'
   
-
-
 - form_for [:admin, @event], :html => {:method => :delete} do
   %p.buttons
-    %input.button{:type=>"submit", :value=>"Delete event"}/
-    or
-    = link_to 'Cancel', admin_events_url
+    %input.button{:type=>"submit", :value=>t('event_admin.remove.submit')}/
+    = t('defaults.or')
+    = link_to t('defaults.cancel'), admin_events_url

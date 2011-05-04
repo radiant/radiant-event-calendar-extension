@@ -8,7 +8,7 @@
     - tbody.date_cell do
       %td.datemark
         %a{:href => admin_event_url(master_event), :class => event.occurrence? ? 'occurrence' : 'master'}
-          %span.month= Date::ABBR_MONTHNAMES[event.start_date.month]
+          %span.month= (I18n.t 'date.abbr_month_names')[event.start_date.month]
           %span.day= event.mday_padded
     - tbody.title_cell do
       %td.event

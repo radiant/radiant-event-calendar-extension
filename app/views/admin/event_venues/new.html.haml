@@ -1,5 +1,5 @@
 - @page_title = 'Add a location'
-- @page_title += ' - Calendar - ' + default_page_title
+- @page_title += ' - ' + t('event_venues_admin.defaults.title') + ' - ' + default_page_title
 
 - include_stylesheet "admin/event_calendar"
 - include_javascript "admin/event_calendar"
@@ -12,9 +12,9 @@
 - render_region :main do |main|
   - main.edit_header do
     %h1
-      Add an event location
+      = t('event_venues_admin.new.title')
     %p
-      You can also do this whenever you enter a new event.
+      = t('event_venues_admin.new.text')
 
   - main.edit_form do
     - form_for [:admin, @event_venue] do |f|
@@ -35,7 +35,7 @@
             = updated_stamp @event_venue
           - form_bottom.edit_buttons do
             %p.buttons
-              = f.submit "Create Venue", :name => "commit", :class => "button"
+              = f.submit t('event_venues_admin.new.create'), :name => "commit", :class => "button"
               = save_model_and_continue_editing_button(@event_venue)
-              or
-              = link_to 'Cancel', admin_event_venues_url
+              = t('defaults.or')
+              = link_to t('defaults.cancel'), admin_event_venues_url
