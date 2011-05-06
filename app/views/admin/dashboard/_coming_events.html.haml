@@ -1,0 +1,6 @@
+#coming_events.dashboard_module
+  %h2
+    = t('coming_events')
+  %table
+    = render :partial => 'admin/events/event', :collection => Event.future_and_current.limited_to(8)
+  
