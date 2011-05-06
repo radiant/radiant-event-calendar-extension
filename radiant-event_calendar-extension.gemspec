@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-event_calendar-extension}
-  s.version = "1.4.0"
+  s.version = "1.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2011-05-04}
+  s.date = %q{2011-05-06}
   s.description = %q{An event calendar extension that administers events locally or draws them from any ical or CalDAV publishers (Google Calendar, .Mac, Darwin Calendar Server, etc.)}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
      "app/views/admin/calendars/index.html.haml",
      "app/views/admin/calendars/new.html.haml",
      "app/views/admin/calendars/show.html.haml",
+     "app/views/admin/dashboard/_coming_events.html.haml",
      "app/views/admin/event_venues/_event_venue.html.haml",
      "app/views/admin/event_venues/_form.html.haml",
      "app/views/admin/event_venues/edit.html.haml",
