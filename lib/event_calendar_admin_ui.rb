@@ -20,7 +20,7 @@ module EventCalendarAdminUI
     protected
 
       def load_default_calendar_regions
-        returning OpenStruct.new do |calendar|
+        OpenStruct.new.tap do |calendar|
           calendar.edit = Radiant::AdminUI::RegionSet.new do |edit|
             edit.main.concat %w{edit_header edit_form}
             edit.form.concat %w{edit_name edit_ical edit_filing edit_description}
@@ -37,7 +37,7 @@ module EventCalendarAdminUI
       end
 
       def load_default_event_regions
-        returning OpenStruct.new do |event|
+        OpenStruct.new.tap do |event|
           event.edit = Radiant::AdminUI::RegionSet.new do |edit|
             edit.main.concat %w{edit_header edit_form}
             edit.form.concat %w{edit_event edit_date edit_description}
@@ -55,7 +55,7 @@ module EventCalendarAdminUI
       end
 
       def load_default_event_venue_regions
-        returning OpenStruct.new do |event_venue|
+        OpenStruct.new.tap do |event_venue|
           event_venue.edit = Radiant::AdminUI::RegionSet.new do |edit|
             edit.main.concat %w{edit_header edit_form}
             edit.form.concat %w{edit_event_venue}
