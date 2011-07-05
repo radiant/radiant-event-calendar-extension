@@ -24,7 +24,8 @@ class EventCalendarExtension < Radiant::Extension
     admin.calendar = Radiant::AdminUI.load_default_calendar_regions
     admin.event = Radiant::AdminUI.load_default_event_regions
     admin.event_venue = Radiant::AdminUI.load_default_event_venue_regions
-    admin.dashboard.index.add :main, "coming_events" if admin.respond_to? :dashboard
+
+    admin.dashboard.index.add(:main, "coming_events", :before => 'recent_assets') if admin.respond_to? :dashboard
     
     tab('calendar') do
       add_item('events', '/admin/event_calendar')
