@@ -16,6 +16,8 @@ This is compatible with `multi_site` and with the [sites](http://github.com/span
 
 There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
 
+This version includes some experiments in dashboard integration. If you're using dashboard you need the spanner fork.
+
 ## Installation
 
 Should be straightforward:

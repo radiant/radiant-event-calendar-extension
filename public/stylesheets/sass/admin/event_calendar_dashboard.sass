@@ -1,0 +1,48 @@
+@import admin/grid
+
+#dashboard
+  #coming_events
+    +grid(4)
+    height: 300px
+
+.blockcontent
+  position: relative
+  .event
+    position: relative
+    clear: left
+    margin-bottom: 1em
+    .datemark
+      float: left
+      text-align: center
+      line-height: 1.05
+      padding-top: 4px
+      color: #BBB8AC
+      .mon, .dow
+        display: block
+        font-weight: lighter
+        font-size: 80%
+        text-transform: uppercase
+      .day, .dom
+        display: block
+        font-weight: bold
+        font-size: 120%
+  .summary
+    float: left
+    margin-left: 10px
+    margin-bottom: 6px
+    overflow: hidden
+    h3
+      font-size: 1.3em
+      margin: 0
+      a
+        color: black
+        text-decoration: none
+        &:hover
+          color: #06c
+          text-decoration: underline
+    p 
+      :margin-top 0
+      :font-size 90%
+      :line-height 1.4
+    p.venue 
+      :font-style italic

@@ -1,8 +1,28 @@
 - include_stylesheet 'admin/event_calendar_dashboard'
 
 #coming_events.dashboard_module
-  %h2
-    = t('coming_events')
-  %table
-    = render :partial => 'admin/events/event', :collection => Event.future_and_current.limited_to(8)
+  - events = Event.future_and_current.limited_to(8)
+  .header
+    %h2
+      = t('event_admin.dashboard.coming_events')
+  .blockcontent
+    - if events.any?
+      - events.each do |event|
+        .event
+          .datemark
+            .mon= event.short_month
+            .dom= event.mday_padded
+          .summary
+            %h3
+              = link_to event.title, edit_admin_event_url(event), :class => 'title'
+            %p.minor
+              = event.summarize_start
+              - if event.event_venue
+                = t('event_page.at')
+                = link_to event.event_venue.title, edit_admin_event_venue_url(event.event_venue), :class => 'location'
+              - elsif event.location
+                = event.location
+    - else
+      %p.minor
+        =t('dashboard_extension.no_show')
   

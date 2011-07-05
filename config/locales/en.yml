@@ -87,6 +87,8 @@ en:
       slug: Slug
       category: Category
   event_admin:
+    dashboard:
+      coming_events: "Events coming up"
     defaults:
       title: Calendar
     index:
