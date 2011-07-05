@@ -66,7 +66,7 @@ class EventsController < SiteController
   end
   
   def event_finder
-    ef = Event.scoped
+    ef = Event.scoped({})
     if period
       if period.bounded?
         ef = ef.between(period.start, period.finish) 

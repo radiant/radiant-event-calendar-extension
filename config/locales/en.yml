@@ -30,7 +30,7 @@ en:
   edit_calendar: "edit calendar"
   delete_calendar: "delete calendar"
   really_delete_calendar: "Are you sure you want to delete the %{name} calendar?"
-  calendar: calendar
+  calendar: Calendar
   calendars: calendars
   events: events
   locations: locations
