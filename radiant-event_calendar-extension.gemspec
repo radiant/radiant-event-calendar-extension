@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ri_cal"
   s.add_dependency "chronic"
   s.add_dependency "uuidtools"
-  s.add_dependency "radiant", ">= 0.9.0"
   s.add_dependency "radiant-layouts-extension"
 
   ignores = if File.exist?('.gitignore')
