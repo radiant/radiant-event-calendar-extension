@@ -4,7 +4,7 @@ class Admin::EventsController < Admin::ResourceController
   
   def load_models
     pp = pagination_parameters
-    finder = @event_venue ? Event.at_venue(@event_venue) : Event.scoped
+    finder = @event_venue ? Event.at_venue(@event_venue) : Event.scoped({})
     unless params[:p]
       first_event = finder.future_and_current.first
       i = finder.index(first_event) || 0    # if there are no future events we revert to the first page
