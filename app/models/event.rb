@@ -361,21 +361,10 @@ class Event < ActiveRecord::Base
   def self.create_from(cal_event)
     event = new({
       :uuid => cal_event.uid,
-      :title => cal_event.summary,
-      :description => cal_event.description,
-      :url => cal_event.url,
-      :start_date => cal_event.dtstart,
-      :end_date => cal_event.dtend,
-      :all_day => !cal_event.dtstart.is_a?(DateTime),
-      :created_at => cal_event.dtstamp
+      :created_at => cal_event.dtstamp,
+      :status_id => Status[:imported]
     })
-    event.status = Status[:imported]
-    event.set_venue_from_location(cal_event.location)
-    cal_event.rrule.each { |rule| event.add_recurrence(rule) }
-    event
-  rescue => error
-    logger.error "Event import error: #{error}."
-    raise
+    event.update_from(cal_event)
   end
   
   def update_from(cal_event)
@@ -388,20 +377,15 @@ class Event < ActiveRecord::Base
       :end_date => cal_event.dtend,
       :all_day => !cal_event.dtstart.is_a?(DateTime)
     })
-    self.status = Status[:imported]
-    self.set_venue_from_location(cal_event.location)
+    unless self.event_venue = EventVenue.find_by_title(cal_event.location)
+      self.location = cal_event.location
+    end
     cal_event.rrule.each { |rule| self.add_recurrence(rule) }
     self.save!
     self
   rescue => error
-    logger.error "Event update error: #{error}."
+    Rails.logger.error "Event import error: #{error}."
     raise
-  end
-  
-  def set_venue_from_location(location='')
-    unless location.blank?
-      self.event_venue = EventVenue.find_by_title(location) || EventVenue.find_or_create_by_location(location)
-    end
   end
   
 protected

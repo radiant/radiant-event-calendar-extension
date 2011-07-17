@@ -31,6 +31,7 @@ $text: $coolgrey11
 $hover: $red
 $tag: $coolgrey8
 $input: $coolgrey11
+$link: $red
 
 =inputfonts
   font-family: Georgia, serif
@@ -43,73 +44,73 @@ $input: $coolgrey11
 =blurred($color: $paler)
   text-shadow: $color 0 0 2px
 
-/*** calendars and maps *******
+/** calendars and maps *******
 
 #events
   .event
-    :position relative
-    :margin-bottom 20px
+    position: relative
+    margin-bottom: 20px
     .dateholder
-      :position absolute
-      :left 15px
-      :top 2px
-      :padding 5px 5px 0 5px
-      :border 0
+      position: absolute
+      left: 15px
+      top: 2px
+      padding: 5px 5px 0 5px
+      border: 0
       +functionalfonts
-      :text-align center
-      :line-height 1.05
-      :background-color = !page
-      :border
-        :style solid
-        :width 1px
-        :color = !verypale
-      span.month, span.dow 
-        :display block
-        :font-weight lighter
-        :font-size 80%
-        :text-transform uppercase
+      text-align: center
+      line-height: 1.05
+      background-color: white
+      border:
+        style: solid
+        width: 1px
+        color: #d6d6d4
+      span.month, span.dow
+        display: block
+        font-weight: lighter
+        font-size: 80%
+        text-transform: uppercase
       span.day, span.dom
-        :display block
-        :font-weight bold
-        :font-size 160%
+        display: block
+        font-weight: bold
+        font-size: 160%
     .detail
       h3
-        :margin 0
-        :font-size 180%
-      p 
-        :margin-top 0
-        :font-size 90%
-        :line-height 1.4
-      p.venue 
-        :font-style italic
-        :margin-bottom 6px
-      p.description 
-        :margin-bottom 16px
+        margin: 0
+        font-size: 180%
+      p
+        margin-top: 0
+        font-size: 90%
+        line-height: 1.4
+      p.venue
+        font-style: italic
+        margin-bottom: 6px
+      p.description
+        margin-bottom: 16px
 
 #continuing
   h3
     +functionalfonts
-    :font-weight bold
-    :font-size 1.2em
-    :margin-bottom 0
+    font-weight: bold
+    font-size: 1.2em
+    margin-bottom: 0
   ul
     +functionalfonts
-    :font-size 90%
-    :line-height 1.2
-    :padding-left 0
+    font-size: 90%
+    line-height: 1.2
+    padding-left: 0
     li
-      :margin-top 10px
-      :font-style normal
+      margin-top: 10px
+      font-style: normal
       a.title
-        :font-weight bold
+        font-weight: bold
       span.detail
-        :font-size 80%
+        font-size: 80%
 
-#faceting  
+#faceting
   a.defilter
-    :padding-left 14px
-    :background transparent url(/images/furniture/detag.png) no-repeat top left
-    :color #c00
+    padding-left: 14px
+    background: transparent url(/images/furniture/detag.png) no-repeat top left
+    color: #cc0000
 
 table.minimonth
   font-style: normal
