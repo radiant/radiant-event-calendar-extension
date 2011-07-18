@@ -15,7 +15,7 @@ class EventsController < SiteController
     @seen_events = {}
     respond_to do |format|
       format.html {
-        timeout = Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 1.hour
+        timeout = (Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 3600).seconds
         expires_in timeout.to_i, :public => true, :private => false
       }
       format.js {
@@ -36,7 +36,7 @@ class EventsController < SiteController
   def show
     @event = Event.find(params[:id])
     format.html {
-      timeout = Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 1.hour
+      timeout = (Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 3600).seconds
       expires_in timeout.to_i, :public => true, :private => false
     }
     format.ics {

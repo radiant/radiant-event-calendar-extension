@@ -1,5 +1,10 @@
 ---
 en:
+  config:
+    event_calendar:
+      path: Calendar path
+      refresh_interval: Refresh subscriptions after
+      cache_duration: Cache duration
   time:
     formats:
       calendar_period_description_week: "in week %U of %Y"
@@ -36,9 +41,10 @@ en:
   delete_calendar: "delete calendar"
   really_delete_calendar: "Are you sure you want to delete the %{name} calendar?"
   calendar: Calendar
-  calendars: calendars
-  events: events
-  locations: locations
+  calendars: Calendars
+  events: Events
+  locations: Locations
+  event_venues: Locations
   defaults:
     cancel: Cancel
     or: or
