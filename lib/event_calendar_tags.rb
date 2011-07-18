@@ -523,7 +523,7 @@ module EventCalendarTags
     twitter_url = "https://twitter.com/intent/tweet?" + qs.join('&amp;')
     attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
     attributes = " #{attributes}" unless attributes.empty?
-    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.view_on_facebook')
+    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.tweet_this')
     %{<a href="#{twitter_url}"#{attributes}>#{text}</a>}
   end
 
