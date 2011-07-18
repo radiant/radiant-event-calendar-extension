@@ -3,6 +3,7 @@ en:
   config:
     event_calendar:
       path: Calendar path
+      layout: Layout
       refresh_interval: Refresh subscriptions after
       cache_duration: Cache duration
   time:
