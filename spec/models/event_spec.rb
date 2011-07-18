@@ -29,6 +29,13 @@ describe Event do
       @event.duration.should == 0
     end
   end
+  
+  describe "A facebook event" do
+    it "should return a facebook url" do
+      events(:facebooked).facebook_url.should == "http://www.facebook.com/event.php?eid=101"
+      events(:simple).facebook_url.should be_nil
+    end
+  end
 
   describe "A spanning event" do
     before do 

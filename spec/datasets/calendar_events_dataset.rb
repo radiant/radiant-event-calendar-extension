@@ -9,6 +9,7 @@ class CalendarEventsDataset < Dataset::Base
       end
       create_event 'spanning', :title => "Simple Event", :start_date => "2009-11-03 09:00:00", :end_date => "2009-11-04 17:00:00"
       create_event 'allday', :title => "All Day Event", :start_date => "2009-11-03 09:00:00", :end_date => "2009-11-04 17:00:00", :all_day => true
+      create_event 'facebooked', :title => "Facebook Event", :start_date => "2009-11-03 09:00:00", :end_date => "2009-11-04 17:00:00", :facebook_id => "101"
     end
   end
 

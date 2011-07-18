@@ -1,4 +1,5 @@
 require 'chronic'
+require 'uri'
 
 module EventCalendarTags
   include Radiant::Taggable
@@ -399,6 +400,7 @@ module EventCalendarTags
   #### display attributes of a single event 
 
   tag "event" do |tag|
+    tag.locals.event ||= get_event(tag)
     raise TagError, "can't have r:event without an event" unless tag.locals.event
     tag.expand
   end
@@ -472,7 +474,7 @@ module EventCalendarTags
     will become the link text.
 
     Usage:
-    <pre><code><r:facebook_link class="facebook event" /></code></pre> 
+    <pre><code><r:event:facebook_link class="facebook event" /></code></pre> 
   }
   tag "event:facebook_link" do |tag|
     if tag.locals.event.facebook_id
@@ -482,6 +484,47 @@ module EventCalendarTags
       text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.view_on_facebook')
       %{<a href="#{tag.render('facebook_url')}"#{attributes}>#{text}</a>}
     end
+  end
+
+  desc %{ 
+    Renders a twitter 'tweet this' link poopulated with information about this event.
+    This links to a twitter 'intent' to give you more control over the presentation. 
+    If you want the basic tweet-this button with a counter, you don't need any radius tags.
+    
+    Twitter-specific attributes:
+    
+    * **text** is the prepared text you may want to suggest to your twitterer.
+    * **via** is the name of the account referred to in the link (ie yours, probably)
+    * **hashtags** is the hashtag(s) that will be included in the suggested tweet. Omit the hash.
+    * **related** is the (comma-separated) list of accounts the twitterer will be invited to 
+      follow. A justification can be :appended to each name.
+      
+    These attributes will be URL-encoded for you and appended to the twitter url. All other link 
+    attributes are passed through in the usual way and if the tag is double its rendered contents 
+    will become the link text.
+
+    Usage:
+    <pre><code><r:event:tweet_link class="twitter" via="spanner_org" hashtag="radiant:smart cms for small teams" /></code></pre> 
+    
+    For this to work your page must also include the twitter widgets javascript call:
+      
+      <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    
+    For more information see https://dev.twitter.com/docs/intents#tweet-intent
+  }
+  tag "event:tweet_link" do |tag|
+    options = tag.attr.dup
+    event_url = "http://" + Radiant.config['site.host'] + tag.locals.page.url + "#event_" + tag.locals.event.id.to_s
+    qs = ["url=#{URI.escape(event_url)}"]
+    qs << "text=#{URI.escape(options.delete('text'))}" if options['text']
+    qs << "via=#{URI.escape(options.delete('via'))}" if options['via']
+    qs << "related=#{URI.escape(options.delete('related'))}" if options['related']
+    qs << "hashtags=#{URI.escape(options.delete('hashtags'))}" if options['hashtags']
+    twitter_url = "https://twitter.com/intent/tweet?" + qs.join('&amp;')
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    attributes = " #{attributes}" unless attributes.empty?
+    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.view_on_facebook')
+    %{<a href="#{twitter_url}"#{attributes}>#{text}</a>}
   end
 
   #todo: venues:* tags
@@ -1024,6 +1067,16 @@ private
     tag.attr[:by] ||= 'start_date'
     tag.attr[:order] ||= 'asc'
     ef.find(:all, standard_find_options(tag))
+  end
+  
+  # I don't suppose this is used much but it's useful in testing
+  
+  def get_event(tag)
+    if event_id = tag.attr.delete('id')
+      tag.locals.event = Event.find_by_id(event_id)
+    elsif event_title = tag.attr.delete('title')
+      tag.locals.event = Event.find_by_title(event_title)
+    end
   end
   
   # other extensions - eg taggable_events - will chain the event_finder to add more scopes
