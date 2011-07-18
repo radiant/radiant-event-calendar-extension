@@ -466,6 +466,24 @@ module EventCalendarTags
     tag.locals.event.facebook_url
   end
 
+  desc %{ 
+    Renders a link to the facebook version of this event, if any. Attributes are 
+    passed through in the usual way and if the tag is double its rendered contents
+    will become the link text.
+
+    Usage:
+    <pre><code><r:facebook_link class="facebook event" /></code></pre> 
+  }
+  tag "event:facebook_link" do |tag|
+    if tag.locals.event.facebook_id
+      options = tag.attr.dup
+      attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+      attributes = " #{attributes}" unless attributes.empty?
+      text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.view_on_facebook')
+      %{<a href="#{tag.render('facebook_url')}"#{attributes}>#{text}</a>}
+    end
+  end
+
   #todo: venues:* tags
   
   desc %{ 
