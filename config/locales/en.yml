@@ -26,6 +26,11 @@ en:
       calendar_short_month: "%b"
       calendar_day_name: "%A"
       calendar_day_of_month: "%d"
+  event_calendar_extension:
+    view_on_facebook: "view on facebook"
+    attend_on_facebook: "attend on facebook"
+    
+  # all this is going to be moved into the more conventional activerecord and event_calendar_extension namespaces when I get a chance.  
   refresh_calendar: "refresh calendar"
   edit_calendar: "edit calendar"
   delete_calendar: "delete calendar"
@@ -102,6 +107,7 @@ en:
       no_events: No events to display
       show_all: (show all)
       events: Events
+      many_times: many times
     new:
       title: New calendar
       header: New Calendar
@@ -118,6 +124,7 @@ en:
       start: Start date and time
       end: end date and time
       event_url: Event url
+      facebook_id: Facebook event id
       repeat_note: (this is for separate similar events. For events that span several days you only need to set the start and end.)
       calendar_note: This is optional but can be used to file your events or to mix local events into a subscribed calendar.
       all_day: All-day event?
@@ -154,13 +161,13 @@ en:
     form:
       title: Venue or location title
       choose: choose an existing place
-      choose_note: We remember these details for you, so changes here affect every event occurring in this place
-      choose_list: choose it from the list
-      choose_before: If you've used this place before, please
-      choose_after: so that you can update it globally
+      choose_note: "We remember these details for you, so changes here affect every event occurring in this place"
+      choose_list: "choose it from the list"
+      choose_before: "If you've used this place before, please"
+      choose_after: "so that you can update it globally"
       keywords: Keywords
       location_tag: Location tag
-      location_tag_note: This is used to recognise the venue in a calendar feed. It can be postcode, grid reference or any distinctive string.
+      location_tag_note: "If your address is very specific or difficult to locate, you can enter a postcode, grid reference or lat/long pair here."
       address: Address or directions
       postcode: Postcode or grid reference
       postcode_note: This is only required if your address is unusual or you want these events to show on a map in a particular place.

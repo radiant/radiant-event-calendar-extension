@@ -97,7 +97,7 @@ class EventCalendarPage < Page
 
   desc %{
     Renders a trail of breadcrumbs to the current page. On an event calendar page this tag is 
-    overridden to show the filters applied to calendar data (including category, slug and date rage) 
+    overridden to show the filters applied to calendar data (including category, slug and date range) 
     as well as the path to this page.
 
     *Usage:*

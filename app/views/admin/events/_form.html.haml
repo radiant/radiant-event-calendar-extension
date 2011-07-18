@@ -85,6 +85,10 @@
           = f.label :url, t('event_admin.form.event_url')
           = f.text_field :url, :class => 'textbox', :disabled => imported
 
+        %p.facebook
+          = f.label :facebook_id, t('event_admin.form.facebook_id')
+          = f.text_field :facebook_id, :class => 'textbox', :disabled => imported
+
     - form_bottom.edit_venue do
       - toggle_precedence = %w{venue new_venue}
       - toggle_precedence.reverse! if @venues.empty?

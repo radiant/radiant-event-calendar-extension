@@ -281,6 +281,10 @@ class Event < ActiveRecord::Base
     end
   end
   
+  def facebook_url
+    %{}
+  end
+  
   def one_day?
     all_day? && within_day?
   end

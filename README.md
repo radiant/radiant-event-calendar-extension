@@ -1,14 +1,14 @@
 # Event Calendar Extension for Radiant
 
-This extension lets your radiant site present calendar events in various useful ways. The events can be administered directly or retrieved by subscription to ical and caldav services including Google Calendar, and can be served as RSS, Ical or JSON feeds as well as through a broad set of radius tags on your normal pages. This extension supports a wide range of uses from a basic display of forthcoming events through to a full calendar aggregation and mapping service.
+This extension lets your radiant site present calendar events in various useful ways. The events can be administered directly or retrieved by subscription to ical and caldav services including Google Calendar, and can be served as RSS, Ical or JSON feeds as well as through a broad set of radius tags on your normal pages. This extension supports a wide range of uses from a single-tag display of forthcoming events through to a full calendar aggregation and mapping service.
 
 The calendaring functionality comes from [ri_cal](http://github.com/rubyredrick/ri_cal) and supports proper recurrence and duration. We also recognise all-day events and pass through notes and urls: the ical subscription and redistribution should be fully RFC2445 compliant. It is not yet a full CalDAV client, and we don't have proper support for principals, groups or availability. 
 
-See the [event_map](http://github.com/spanner/radiant-event_map-extension) extension for googlemapping of events and [taggable_events](http://github.com/spanner/radiant-taggable_events-extension) for more fine-grained tagging and retrieval options. A `reader_events` extension is also in the works for reader-submitted calendar events, but [reader](http://github.com/spanner/radiant-reader-extension) will need to be updated for 0.9 first.
+See the [event_map](http://github.com/spanner/radiant-event_map-extension) extension for googlemapping of events and [taggable_events](http://github.com/spanner/radiant-taggable_events-extension) for more fine-grained tagging and retrieval options. A `reader_events` extension is also in the works for public submission of calendar events.
 
 ## Requirements
 
-Radiant 0.9, `layouts` or `share_layouts` and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
+Radiant 0.9 or 1, `layouts` or `share_layouts` and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
 
 	sudo rake gems:install
 	
@@ -16,7 +16,7 @@ This is compatible with `multi_site` and with the [sites](http://github.com/span
 
 There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
 
-This version includes some experiments in dashboard integration. If you're using dashboard you need the spanner fork.
+This version includes some optional experiments in dashboard integration. If you're using dashboard you need the spanner fork.
 
 ## Installation
 
@@ -137,13 +137,11 @@ If you have another column in your layout, try adding this:
 
 For clickable thumbnails of coming months.
 
-## Notes
-
-This is developing quite quickly at the moment but it's in production use on one big and several small sites. If there are bugs they will be fixed immediately.
-
 ### Compatibility
 
 I've tested this with Darwin Calendar Server (on Ubuntu), with Google Calendar and with feeds published from iCal on a mac. It should work just as well with iCal server on OS X Server, and in theory any other CalDav-compliant back end. See http://caldav.calconnect.org/ for more possibilities.
+
+It should in theory be possible to display a feed from facebook, but I haven't tried it. The 'export events' url is supposed to give an ical-compatible feed that is updated each time you accept or decline an invitation.
 
 ### Connecting to Google Calendar
 

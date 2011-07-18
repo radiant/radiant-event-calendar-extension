@@ -424,7 +424,7 @@ module EventCalendarTags
     end
   end
 
-  [:id, :title, :description, :short_description, :location, :url].each do |attribute|
+  [:id, :title, :description, :short_description, :location, :url, :facebook_id].each do |attribute|
     desc %{ 
       Renders the #{attribute} attribute of the current event.
 
@@ -455,8 +455,18 @@ module EventCalendarTags
       tag.expand unless tag.locals.event.send(attribute)
     end
   end
+  
+  desc %{ 
+    Renders the url of the facebook event corresponding to this event, if there is one.
 
-  #todo: venue:* tags
+    Usage:
+    <pre><code><r:facebook_url /></code></pre> 
+  }
+  tag "event:facebook_url" do |tag|
+    tag.locals.event.facebook_url
+  end
+
+  #todo: venues:* tags
   
   desc %{ 
     Renders a sensible location string, based on whatever venue information is available.

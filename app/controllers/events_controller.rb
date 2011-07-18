@@ -25,11 +25,27 @@ class EventsController < SiteController
         render :layout => false
       }
       format.ics {
-        headers["Content-disposition"] = %{attachment; filename="#{filename}.ics"}
-        render :layout => false
+        ical = RiCal.Calendar do |cal| 
+          events.each { |event| cal.add_subcomponent(event.to_ri_cal) } 
+        end
+        send_data ical, :filename => "#{filename}.ics"	
       }
     end
   end
+  
+  def show
+    @event = Event.find(params[:id])
+    format.html {
+      timeout = Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 1.hour
+      expires_in timeout.to_i, :public => true, :private => false
+    }
+    format.ics {
+      ical = RiCal.Calendar { |cal| cal.add_subcomponent(@event.to_ri_cal) }
+      send_data ical, :filename => "#{@event.title.slugify}.ics"	
+    }
+  end
+  
+  ### helper methods
   
   def period
     return @period if @period

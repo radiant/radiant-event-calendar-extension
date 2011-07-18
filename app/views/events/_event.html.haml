@@ -33,6 +33,8 @@
         - elsif event.location
           %span.location
             = event.location
+        - if event.facebook_id
+          = link_to t('event_calendar_extension.view_on_facebook'), event.facebook_url, :class => 'facebook event'
       - unless repeating
         = event.description_paragraph
     

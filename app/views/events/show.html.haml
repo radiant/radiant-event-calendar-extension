@@ -1,0 +1,21 @@
+- content_for :events do
+  = render :partial => 'event', :collection => events
+
+- content_for :calendar do
+  #calendar
+    = render :partial => "events/minicalendar", :locals => {:date => period ? period.start : Date.today}
+
+- content_for :title do
+  = @event.title
+  
+- content_for :event do
+  = render :partial => 'event', :object => @event
+
+- content_for :facebook_id do
+  = @event.facebook_id
+
+- content_for :facebook_url do
+  = event.facebook_url
+
+#events
+  = yield :event

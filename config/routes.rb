@@ -6,6 +6,8 @@ ActionController::Routing::Routes.draw do |map|
     cal.resources :event_venues, :member => {:remove => :get}, :has_many => :events
     cal.calendars_home '/', :controller => 'events', :action => 'index'
   end
+  
+  map.calendar "/calendar/events/:id.:format", :controller => 'events', :action => 'show'
   map.calendar "/calendar.:format", :controller => 'events', :action => 'index'
   map.calendar_year "/calendar/:year", :controller => 'events', :action => 'index'
   map.calendar_month "/calendar/:year/:month", :controller => 'events', :action => 'index'
