@@ -33,6 +33,7 @@ en:
       calendar_day_name: "%A"
       calendar_day_of_month: "%d"
   event_calendar_extension:
+    download_event: "Download event"
     view_on_facebook: "view on facebook"
     attend_on_facebook: "attend on facebook"
     tweet_this: "Tweet this"

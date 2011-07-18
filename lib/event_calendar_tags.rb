@@ -469,6 +469,24 @@ module EventCalendarTags
   end
 
   desc %{ 
+    Renders a link to the ical file for this single event. This is not a subscription link,
+    and updates to the event will not be propagated: for that you need the webcal link to 
+    a calendar or set of events. This is just a quick way to get an event in someone's diary.
+
+    Usage:
+    <pre><code><r:event:ical_link class="ical" /></code></pre> 
+  }
+  tag "event:ical_link" do |tag|
+    options = tag.attr.dup
+    options['title'] ||= I18n.t('event_calendar_extension.download_event')
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    attributes = " #{attributes}" unless attributes.empty?
+    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.download_event')
+    url = File.join(Radiant.config['event_calendar.path'], 'events', "#{tag.locals.event.id}.ics")
+    %{<a href="#{url}"#{attributes}>#{text}</a>}
+  end
+
+  desc %{ 
     Renders a link to the facebook version of this event, if any. Attributes are 
     passed through in the usual way and if the tag is double its rendered contents
     will become the link text.
@@ -479,6 +497,7 @@ module EventCalendarTags
   tag "event:facebook_link" do |tag|
     if tag.locals.event.facebook_id
       options = tag.attr.dup
+      options['title'] ||= I18n.t('event_calendar_extension.view_on_facebook')
       attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
       attributes = " #{attributes}" unless attributes.empty?
       text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.view_on_facebook')
@@ -514,6 +533,7 @@ module EventCalendarTags
   }
   tag "event:tweet_link" do |tag|
     options = tag.attr.dup
+    options['title'] ||= I18n.t('event_calendar_extension.tweet_this')
     event_url = "http://" + Radiant.config['site.host'] + tag.locals.page.url + "#event_" + tag.locals.event.id.to_s
     qs = ["url=#{URI.escape(event_url)}"]
     qs << "text=#{URI.escape(options.delete('text'))}" if options['text']
