@@ -28,21 +28,23 @@ class EventsController < SiteController
         ical = RiCal.Calendar do |cal| 
           events.each { |event| cal.add_subcomponent(event.to_ri_cal) } 
         end
-        send_data ical, :filename => "#{filename}.ics"	
+        send_data ical, :filename => "#{filename}.ics", :type => "text/calendar"
       }
     end
   end
   
   def show
     @event = Event.find(params[:id])
-    format.html {
-      timeout = (Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 3600).seconds
-      expires_in timeout.to_i, :public => true, :private => false
-    }
-    format.ics {
-      ical = RiCal.Calendar { |cal| cal.add_subcomponent(@event.to_ri_cal) }
-      send_data ical, :filename => "#{@event.title.slugify}.ics"	
-    }
+    respond_to do |format|
+      format.html {
+        timeout = (Radiant::Config['event_calendar:cache_duration'] || self.class.cache_timeout || 3600).seconds
+        expires_in timeout.to_i, :public => true, :private => false
+      }
+      format.ics {
+        ical = RiCal.Calendar { |cal| cal.add_subcomponent(@event.to_ri_cal) }
+        send_data ical.to_s, :filename => "#{@event.title.slugify}.ics", :type => "text/calendar"
+      }
+    end
   end
   
   ### helper methods
