@@ -36,10 +36,10 @@ with this in your environment.rb:
 
 There are a few optional config settings:
 
-* `event_calendar.icals_path` is the directory (under /public/) holding the calendar subscription files. Default is `icals`.
-* `event_calendar.default_refresh_interval` is the period, in seconds, after which the calendar subscriptions are refreshed. Default is one hour. Set to zero to refresh only in the admin interface. 
+* `event_calendar.path` is the stem of all EventsController addresses. It defaults to `/calendar`, which gives you addresses like `/calendar/2011/June`. You can change the stem to any value you like provided it is not also a page address.
 * `event_calendar.layout` is the name of the layout that EventsController will use (see below)
-* `event_calendar.filename_prefix` is an optional prefix for ics filenames
+* `event_calendar.icals_path` is the directory (under /public/) holding the calendar subscription files. Default is `icals`.
+* `event_calendar.refresh_interval` is the period, in seconds, after which the calendar subscriptions are refreshed. Default is one hour. Set to zero to refresh only in the admin interface.
 * `event_calendar.cached?` determines whether the EventsController pages are cached by Rack::Cache. EventCalendarPages are always cached like other pages.
 * `event_calendar.cache_duration` determines for how long.
 
@@ -74,7 +74,7 @@ The events controller uses `share_layouts` to define various page parts that you
 * `pagination` is the usual will_paginate block.
 * `faceting` here only gives the option to remove any date filters that have been applied. If you add the `taggable_events` extension it gets more useful.
 
-Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got.
+Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got. 
 
 Here's a basic sample layout that should just work:
 
