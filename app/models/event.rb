@@ -282,7 +282,7 @@ class Event < ActiveRecord::Base
   end
   
   def facebook_url
-    %{}
+    %{http://www.facebook.com/event.php?eid=#{facebook_id}} if facebook_id
   end
   
   def one_day?
