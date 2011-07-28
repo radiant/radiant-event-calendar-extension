@@ -8,14 +8,17 @@ module EventCalendarAdminUI
       alias_method :events, :event
       alias_method :event_venues, :event_venue
 
-      def load_default_regions_with_event_calendar
-        load_default_regions_without_event_calendar
+      def load_event_calendar_regions
         @calendar = load_default_calendar_regions
         @event = load_default_event_regions
         @event_venue = load_default_event_venue_regions
       end
 
-      alias_method_chain :load_default_regions, :event_calendar
+      # def load_default_regions_with_event_calendar
+      #   load_default_regions_without_event_calendar
+      #   load_event_calendar_regions
+      # end
+      # alias_method_chain :load_default_regions, :event_calendar
 
     protected
 

@@ -5,7 +5,7 @@
         %h3.title
           = link_to event_venue.title, edit_admin_event_venue_url(event_venue)
         %p.description
-          = link_to "#{event_venue.events.count} #{pluralize(event_venue.events.count, t('event_venues_admin.index.event'))}", admin_event_venue_events_url(event_venue)
+          = link_to pluralize(event_venue.events.count, t('event_venues_admin.index.event')), admin_event_venue_events_url(event_venue)
     - tbody.location_cell do
       %td.location
         = event_venue.address

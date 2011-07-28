@@ -20,10 +20,7 @@ class EventCalendarExtension < Radiant::Extension
     UserActionObserver.instance.send :add_observer!, Calendar               # adds ownership and update hooks to the calendar data
     UserActionObserver.instance.send :add_observer!, Event                  # adds ownership and update hooks to the event data
     Radiant::AdminUI.send :include, EventCalendarAdminUI                    # defines shards for further extension of the calendar admin pages
-
-    admin.calendar = Radiant::AdminUI.load_default_calendar_regions
-    admin.event = Radiant::AdminUI.load_default_event_regions
-    admin.event_venue = Radiant::AdminUI.load_default_event_venue_regions
+    Radiant::AdminUI.load_event_calendar_regions
     admin.configuration.show.add :config, 'admin/configuration/calendar_show', :after => 'defaults'
     admin.configuration.edit.add :form,   'admin/configuration/calendar_edit', :after => 'edit_defaults'
 
