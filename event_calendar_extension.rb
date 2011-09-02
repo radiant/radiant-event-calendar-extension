@@ -8,12 +8,6 @@ class EventCalendarExtension < Radiant::Extension
   description RadiantEventCalendarExtension::DESCRIPTION
   url RadiantEventCalendarExtension::URL
 
-  extension_config do |config|
-    config.gem "ri_cal"
-    config.gem "chronic"
-    config.gem "uuidtools"
-  end
-
   def activate
     Page.send :include, EventCalendarTags                                   # defines a wide range of events: tags for use on normal and calendar pages
     Status.send :include, EventStatuses                                     # adds support for draft and submitted events

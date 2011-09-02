@@ -59,11 +59,11 @@ $link: $red
       +functionalfonts
       text-align: center
       line-height: 1.05
-      background-color: white
+      background-color: $page
       border:
         style: solid
         width: 1px
-        color: #d6d6d4
+        color: $verypale
       span.month, span.dow
         display: block
         font-weight: lighter
@@ -81,6 +81,19 @@ $link: $red
         margin-top: 0
         font-size: 90%
         line-height: 1.4
+      a.facebook, a.twitter, a.ical
+        display: inline-block
+        width: 11px
+        height: 12px
+        margin: 6px 0
+        overflow: hidden
+        text-indent: -500px
+      a.ical
+        background: transparent url(/images/event_calendar/ical_small.png) no-repeat top left
+      a.facebook
+        background: transparent url(/images/event_calendar/facebook_small.png) no-repeat top left
+      a.twitter
+        background: transparent url(/images/event_calendar/twitter_small.png) no-repeat top left
       p.venue
         font-style: italic
         margin-bottom: 6px

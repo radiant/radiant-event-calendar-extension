@@ -8,13 +8,15 @@ See the [event_map](http://github.com/spanner/radiant-event_map-extension) exten
 
 ## Requirements
 
-Radiant 0.9 or 1, `layouts` or `share_layouts` and the `ri_cal` gem to handle iCal data. It's declared in the extension so this should do it:
+From v1.5 onward event_calendar is only compatible with Radiant 1 and should be installed as a gem. Its dependencies will be brought in automatically.
 
-	sudo rake gems:install
-	
-This is compatible with `multi_site` and with the [sites](http://github.com/spanner/radiant-sites-extension) extension. With the latter everything will be site-scoped.
+	sudo gem install radiant-event_calendar-extension
 
-There is a 0.81 tag in the repository for the last version good with radiant 0.8.1 and `scoped_admin`.
+and then in your radiant application's Gemfile:
+
+	gem "radiant-event_calendar-extennsion", "~>1.5.0"
+
+There is a 0.91 and 0.81 tags in the repository for the last versions good with those versions of radiant.
 
 This version includes some optional experiments in dashboard integration. If you're using dashboard you need the spanner fork.
 

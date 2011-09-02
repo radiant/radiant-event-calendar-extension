@@ -7,10 +7,10 @@ ActionController::Routing::Routes.draw do |map|
     cal.calendars_home '/', :controller => 'events', :action => 'index'
   end
   
-  prefix = Radiant.config['event_calendar.path'] || "/calendar"
-  map.calendar "#{prefix}/events/:id.:format", :controller => 'events', :action => 'show'
-  map.calendar "#{prefix}.:format", :controller => 'events', :action => 'index'
-  map.calendar_year "#{prefix}/:year", :controller => 'events', :action => 'index'
-  map.calendar_month "#{prefix}/:year/:month", :controller => 'events', :action => 'index'
-  map.calendar_day "#{prefix}/:year/:month/:mday", :controller => 'events', :action => 'index'
+  calendar_prefix = Radiant.config['event_calendar.path'] || "/calendar"
+  map.resources :events, :path_prefix => calendar_prefix, :only => [:index, :show]
+  map.calendar "#{calendar_prefix}.:format", :controller => 'events', :action => 'index'
+  map.calendar_year "#{calendar_prefix}/:year", :controller => 'events', :action => 'index'
+  map.calendar_month "#{calendar_prefix}/:year/:month", :controller => 'events', :action => 'index'
+  map.calendar_day "#{calendar_prefix}/:year/:month/:mday", :controller => 'events', :action => 'index'
 end

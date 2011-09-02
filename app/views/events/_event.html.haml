@@ -18,6 +18,7 @@
           = link_to event.title, event.url, :class => 'title'
         - else
           = event.title
+        = link_to t('event_calendar_extension.download_event'), event_url(event, :format => :ics), :class => 'ical download'
         - unless event.facebook_id.blank?
           = link_to t('event_calendar_extension.view_on_facebook'), event.facebook_url, :class => 'facebook event'
         = render :partial => 'events/keywords', :locals => {:event => event}
