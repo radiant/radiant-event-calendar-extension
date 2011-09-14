@@ -11,14 +11,14 @@ class EventCalendarPage < Page
     true
   end
 
-  def find_by_url(url, live = true, clean = false)
-    url = clean_url(url) if clean
-    my_url = self.url_without_parts
-    if url =~ /^#{Regexp.quote(my_url)}(.*)/
+  def find_by_path(path, live = true, clean = true)
+    path = clean_path(path) if clean
+    my_path = self.path_without_parts
+    if path =~ /^#{Regexp.quote(my_path)}(.*)/
       read_parameters($1)
       self
     else
-      super
+      nil
     end
   end
   
@@ -62,9 +62,9 @@ class EventCalendarPage < Page
     end
   end
   
-  def url_parts
+  def path_parts
     {
-      :path => url_without_parts,
+      :path => path_without_parts,
       :day => @calendar_day,
       :month => @calendar_month,
       :year => @calendar_year,
@@ -73,14 +73,14 @@ class EventCalendarPage < Page
     }
   end
   
-  def url_with_parts(overrides={})
-    parts = url_parts.merge(overrides)
+  def path_with_parts(overrides={})
+    parts = path_parts.merge(overrides)
     page = parts.delete(:page)
     path = parts.delete(:path)
     parts[:month] = month_names[parts[:month]].downcase unless parts[:month].blank? || parts[:month] =~ /[a-zA-Z]/
-    clean_url([path, parts.values, page].select{|p| !p.blank?}.join('/'))
+    clean_path([path, parts.values, page].select{|p| !p.blank?}.join('/'))
   end
-  alias_method_chain :url, :parts
+  alias_method_chain :path, :parts
 
   def month_names
     @month_names ||= (I18n.t 'date.month_names').dup
@@ -109,7 +109,7 @@ class EventCalendarPage < Page
     nolinks = (tag.attr['nolinks'] == 'true')
     
     if calendar_category
-      crumbs = nolinks ? [page.breadcrumb] : [%{<a href="#{url}">#{tag.render('breadcrumb')}</a>}]
+      crumbs = nolinks ? [page.breadcrumb] : [%{<a href="#{path}">#{tag.render('breadcrumb')}</a>}]
       if calendar_slug
         crumbs << (nolinks ? calendar_category : %{<a href="#{url}/#{calendar_category}">#{calendar_category}</a>})
         crumbs << calendar_slug
