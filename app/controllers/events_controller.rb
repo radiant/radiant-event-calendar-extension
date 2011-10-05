@@ -29,7 +29,7 @@ class EventsController < SiteController
         ical = RiCal.Calendar do |cal| 
           events.each { |event| cal.add_subcomponent(event.to_ri_cal) } 
         end
-        send_data ical, :filename => "#{filename}.ics", :type => "text/calendar"
+        send_data ical.to_s, :filename => "#{filename}.ics", :type => "text/calendar"
       }
     end
   end
