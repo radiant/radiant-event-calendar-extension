@@ -461,7 +461,7 @@ module EventCalendarTags
     <pre><code><r:event:facebook_link class="facebook event" /></code></pre> 
   }
   tag "event:facebook_link" do |tag|
-    if tag.locals.event.facebook_id
+    if tag.locals.event.facebook_url
       options = tag.attr.dup
       options['class'] ||= 'facebook event'
       options['title'] ||= I18n.t('event_calendar_extension.view_on_facebook')

@@ -286,7 +286,7 @@ class Event < ActiveRecord::Base
   end
   
   def facebook_url
-    %{http://www.facebook.com/event.php?eid=#{facebook_id}} if facebook_id
+    %{http://www.facebook.com/event.php?eid=#{facebook_id}} unless facebook_id.blank?
   end
   
   def one_day?
