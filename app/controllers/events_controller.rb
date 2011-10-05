@@ -1,5 +1,6 @@
 class EventsController < SiteController
   require "uri"
+  require "ri_cal"
   include Radiant::Pagination::Controller
   
   helper_method :events, :all_events, :continuing_events, :period, :calendars, :list_description

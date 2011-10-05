@@ -359,43 +359,6 @@ module EventCalendarTags
     %{<a href="#{tag.render('calendar:url')}#{anchor}"#{attributes}>#{text}</a>}
   end
 
-  desc %{
-    Renders the path to the local .ics file for this calendar, suitable for read-only subscription in iCal or other calendar programs.
-    
-    Usage:
-    <pre><code><r:calendar:ical_url /></code></pre> 
-  }
-  tag "calendar:ical_url" do |tag|
-    tag.locals.calendar.to_ics
-  end
-
-  desc %{
-    Renders a link to the local .ics file for this calendar, suitable for read-only subscription in iCal or other calendar programs.
-    Link attributes are passed through as usual.
-    
-    Usage:
-    <pre><code><r:calendar:ical_link /></code></pre> 
-  }
-  tag "calendar:ical_link" do |tag|
-    options = tag.attr.dup
-    anchor = options['anchor'] ? "##{options.delete('anchor')}" : ''
-    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    attributes = " #{attributes}" unless attributes.empty?
-    text = tag.double? ? tag.expand : tag.render('calendar:name')
-    %{<a href="#{tag.render('calendar:ical_url')}#{anchor}"#{attributes}>#{text}</a>}
-  end
-
-  desc %{
-    Renders a small graphical link to the local .ics file for this calendar.
-    
-    Usage:
-    <pre><code><r:calendar:ical_icon /></code></pre> 
-  }
-  tag "calendar:ical_icon" do |tag|
-    text = tag.attr['text'] || ''
-    %{<a href="#{tag.render('calendar:ical_url')}" class="ical"><img src="/images/event_calendar/ical16.png" alt="subscribe to #{tag.render('calendar:name')}" width="16" height="16" /> #{text}</a>}
-  end
-
   #### Event:* tags
   #### display attributes of a single event 
 
@@ -426,7 +389,7 @@ module EventCalendarTags
     end
   end
 
-  [:id, :title, :description, :short_description, :location, :url, :facebook_id].each do |attribute|
+  [:id, :title, :description, :short_description, :location, :url, :facebook_id, :facebook_url].each do |attribute|
     desc %{ 
       Renders the #{attribute} attribute of the current event.
 
@@ -459,13 +422,16 @@ module EventCalendarTags
   end
   
   desc %{ 
-    Renders the url of the facebook event corresponding to this event, if there is one.
-
-    Usage:
-    <pre><code><r:facebook_url /></code></pre> 
+    Sets the active calendar to that of the present event, if any.
   }
-  tag "event:facebook_url" do |tag|
-    tag.locals.event.facebook_url
+  tag "event:calendar" do |tag|
+    if tag.locals.calendar = tag.locals.event.calendar
+      if tag.double?
+        tag.expand
+      else
+        tag.locals.calendar.name
+      end
+    end
   end
 
   desc %{ 
@@ -497,6 +463,7 @@ module EventCalendarTags
   tag "event:facebook_link" do |tag|
     if tag.locals.event.facebook_id
       options = tag.attr.dup
+      options['class'] ||= 'facebook event'
       options['title'] ||= I18n.t('event_calendar_extension.view_on_facebook')
       attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
       attributes = " #{attributes}" unless attributes.empty?
@@ -546,8 +513,34 @@ module EventCalendarTags
     text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.tweet_this')
     %{<a href="#{twitter_url}"#{attributes}>#{text}</a>}
   end
+  
+  desc %{
+    Renders the path to the local .ics file for this calendar, suitable for read-only subscription in iCal or other calendar programs.
+    
+    Usage:
+    <pre><code><r:calendar:ical_url /></code></pre> 
+  }
+  tag "calendar:ical_url" do |tag|
+    tag.locals.calendar.to_ics
+  end
 
-  #todo: venues:* tags
+  desc %{ 
+    Renders a link to the ical representation of this event, which should drop the event into
+    a user's desktop calendar. Link attributes are passed through as usual.
+
+    Usage:
+    <pre><code><r:event:ical_link class="ical event" /></code></pre> 
+  }
+  tag "event:ical_link" do |tag|
+    options = tag.attr.dup
+    options['title'] ||= I18n.t('event_calendar_extension.download_event')
+    options['class'] ||= 'ical download'
+    attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
+    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.tweet_this')
+    %{<a href="#{event_path(tag.locals.event, :format => 'ics')}" #{attributes}>#{text}</a>}
+  end
+
+  #TODO: venues:* tags
   
   desc %{ 
     Renders a sensible location string, based on whatever venue information is available.
@@ -800,15 +793,12 @@ module EventCalendarTags
     <pre><code><r:event:datemark /></code></pre>
   }
   tag "event:datemark" do |tag|
-    html = ""
-    html << _datemark(tag.locals.event.start_date)
-    html
-  end
-  
-  def _datemark(date=Time.now)
     %{
-      <div class="datemark"><span class="mon">#{Date::ABBR_MONTHNAMES[date.month]}</span><span class="dom">#{"%02d" % date.mday}</span></div>
-    }
+<div class="datemark">
+  <span class="dow">#{tag.locals.event.short_day}</span>
+  <span class="dom">#{tag.locals.event.mday}</span>
+</div>
+}
   end
   
   desc %{ 
@@ -818,7 +808,6 @@ module EventCalendarTags
     
     Usage:
     <pre><code><r:events:minimonth [year=""] [month=""] /></code></pre> 
-    
   }
   tag "events:minimonth" do |tag|
     attr = parse_boolean_attributes(tag)

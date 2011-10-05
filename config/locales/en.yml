@@ -17,6 +17,7 @@ en:
       calendar_period_minicalendar_title: "%B %Y"
       calendar_period_minicalendar_month: "%B"
       calendar_month: "%B"
+      calendar_short_day: "%a"
       calendar_short_month: "%b"
       calendar_day_name: "%A"
       calendar_day_of_month: "%d"

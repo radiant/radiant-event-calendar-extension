@@ -191,6 +191,10 @@ class Event < ActiveRecord::Base
     I18n.l start_date, :format => :calendar_day_name
   end
 
+  def short_day
+    I18n.l start_date, :format => :calendar_short_day
+  end
+
   def mday
     I18n.l start_date, :format => :calendar_day_of_month
   end

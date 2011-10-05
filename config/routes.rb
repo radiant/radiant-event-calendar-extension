@@ -7,7 +7,8 @@ ActionController::Routing::Routes.draw do |map|
     cal.calendars_home '/', :controller => 'events', :action => 'index'
   end
   
-  calendar_prefix = Radiant.config['event_calendar.path'] || "/calendar"
+  calendar_prefix = Radiant.config['event_calendar.path'] || "cal"
+  calendar_prefix = nil if calendar_prefix.blank?
   map.resources :events, :path_prefix => calendar_prefix, :only => [:index, :show]
   map.calendar "#{calendar_prefix}.:format", :controller => 'events', :action => 'index'
   map.calendar_year "#{calendar_prefix}/:year", :controller => 'events', :action => 'index'

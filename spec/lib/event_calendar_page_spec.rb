@@ -12,12 +12,12 @@ describe EventCalendarPage do
   end
   
   describe ".find_by_url" do
-    it "should return self to our own url" do
-      pages(:calendar).find_by_url("/#{pages(:calendar).slug}/").should == pages(:calendar)
+    it "should return self to our own path" do
+      pages(:calendar).find_by_path("/#{pages(:calendar).slug}/").should == pages(:calendar)
     end
   
-    it "should return self to any child url" do
-      pages(:calendar).find_by_url("/#{pages(:calendar).slug}/something").should == pages(:calendar)
+    it "should return self to any child path" do
+      pages(:calendar).find_by_path("/#{pages(:calendar).slug}/something").should == pages(:calendar)
     end
   end
 

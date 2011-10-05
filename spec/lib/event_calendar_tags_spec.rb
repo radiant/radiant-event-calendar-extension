@@ -9,10 +9,9 @@ describe EventCalendarTags do
   context "rendering event: tags" do
     before do
       Radiant.config['site.host'] = "test.host"
-      Radiant.config['event_calendar.path'] = "/test_calendar"
     end
     
-    [:id, :title, :description, :short_description, :location, :url, :facebook_id].each do |tag|
+    [:id, :title, :description, :short_description, :location, :url, :facebook_id, :facebook_url].each do |tag|
       it "event:#{tag}" do
         page.should render(%{<r:event id="#{event.id}"><r:event:#{tag} /></r:event>}).as( event.send(tag.to_sym).to_s )
       end
@@ -20,7 +19,7 @@ describe EventCalendarTags do
     
     it "event:ical_link" do
       page.should render(%{<r:event id="#{event.id}"><r:event:ical_link class="ical">I</r:event:ical_link></r:event>}).as( 
-        %{<a href="/test_calendar/events/#{event.id}.ics" title="Download event" class="ical">I</a>} 
+        %{<a href="/cal/events/#{event.id}.ics" title="Download event" class="ical">I</a>} 
       )
     end
 

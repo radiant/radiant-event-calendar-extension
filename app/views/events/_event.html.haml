@@ -5,9 +5,12 @@
   - event_master_id = event.master_id || event.id
   - repeating = true if @seen_events[event_master_id]
   - @seen_events[event_master_id] = true;
-  - cssclass = event.calendar ? "event #{event.calendar.slug}" : "event"
+  - cssclasses = ['event']
+  - cssclasses << 'repeat' if repeating
+  - cssclasses << event.calendar.slug if event.calendar
 
-  %div{:class => cssclass}
+
+  %div{:class => cssclasses.join(' ')}
     - unless no_date
       .datemark
         .mon= event.short_month

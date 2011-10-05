@@ -65,44 +65,9 @@ Should be obvious. There are a few points to remember:
 * Recurrence is for the repetition of identical separate events. A single event that spans several days only needs to have the right start and end times.
 * End times are optional: an event with just a start time is just listed where it begins.
 
-### Displaying events with the EventsController
-
-The events controller uses `share_layouts` to define various page parts that your layout can bring in. To use it, create a layout with any or all of these parts:
-
-* `title` is the page title and can also be shown with `r:title`
-* `events` is a formatted list of events with date stamps and descriptions
-* `continuing_events` is a compact list of events that have already begun but which continue into the period being shown
-* `calendar` is a usual calendar block with links to months and days. Days without events are not linked.
-* `pagination` is the usual will_paginate block.
-* `faceting` here only gives the option to remove any date filters that have been applied. If you add the `taggable_events` extension it gets more useful.
-
-Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got. 
-
-Here's a basic sample layout that should just work:
-
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-	<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-	  <head>
-	    <title><r:title /></title>
-		<link rel="stylesheet" href="/stylesheets/event_calendar.css" />
-	  </head>
-	  <body>
-        <h1 id="pagetitle"><r:title /></h1>
-		<r:content part="faceting" />
-        <r:content part="calendar" />
-        <r:content part="events" />
-        <r:content part="continuing_events" />
-		<r:content part="pagination" />
-	  </body>
-	</html>
-
-One quirk that might go away: at the moment if there are few new events then the continuing events are moved into the events page part. Most layouts work better that way.
-
 ### Displaying events with an EventCalendar page
 
-Set up a new page at /events/ with the type 'EventCalendar'. To show a pageable calendar view of the current month, all you need is this:
+This is the preferred method. Set up a new page at /events/ with the type 'EventCalendar'. To show a pageable calendar view of the current month, all you need is this:
 
 	<r:events:as_calendar month="now" month_links="true" />
 	
@@ -138,6 +103,43 @@ If you have another column in your layout, try adding this:
 	<r:events:as_calendar calendar_months="6" date_links="true" compact="true" />
 
 For clickable thumbnails of coming months.
+
+### Displaying events with the EventsController
+
+I think I'm going to deprecate this use some time soon: it's too hard to adapt to local circumstances. For now it still works:
+
+The events controller uses `share_layouts` to define various page parts that your layout can bring in. To use it, create a layout with any or all of these parts.
+
+* `title` is the page title and can also be shown with `r:title`
+* `events` is a formatted list of events with date stamps and descriptions
+* `continuing_events` is a compact list of events that have already begun but which continue into the period being shown
+* `calendar` is a usual calendar block with links to months and days. Days without events are not linked.
+* `pagination` is the usual will_paginate block.
+* `faceting` here only gives the option to remove any date filters that have been applied. If you add the `taggable_events` extension it gets more useful.
+
+Set the config entry `event_calendar.layout` to the name of your layout and point a browser at /calendar to see what you've got. 
+
+Here's a basic sample layout that should just work:
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+	<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	  <head>
+	    <title><r:title /></title>
+		<link rel="stylesheet" href="/stylesheets/event_calendar.css" />
+	  </head>
+	  <body>
+        <h1 id="pagetitle"><r:title /></h1>
+		<r:content part="faceting" />
+        <r:content part="calendar" />
+        <r:content part="events" />
+        <r:content part="continuing_events" />
+		<r:content part="pagination" />
+	  </body>
+	</html>
+
+One quirk that might go away: at the moment if there are few new events then the continuing events are moved into the events page part. Most layouts work better that way.
 
 ### Compatibility
 
