@@ -536,7 +536,7 @@ module EventCalendarTags
     options['title'] ||= I18n.t('event_calendar_extension.download_event')
     options['class'] ||= 'ical download'
     attributes = options.inject('') { |s, (k, v)| s << %{#{k.downcase}="#{v}" } }.strip
-    text = tag.double? ? tag.expand : I18n.t('event_calendar_extension.tweet_this')
+    text = tag.double? ? tag.expand : '&nbsp;'
     %{<a href="#{event_path(tag.locals.event, :format => 'ics')}" #{attributes}>#{text}</a>}
   end
 
