@@ -14,7 +14,7 @@ From v1.5 onward event_calendar is only compatible with Radiant 1 and should be 
 
 and then in your radiant application's Gemfile:
 
-	gem "radiant-event_calendar-extennsion", "~>1.5.0"
+	gem "radiant-event_calendar-extension", "~>1.5.0"
 
 There is a 0.91 and 0.81 tags in the repository for the last versions good with those versions of radiant.
 
