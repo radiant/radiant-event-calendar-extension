@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency "chronic"
   s.add_dependency "uuidtools"
   s.add_dependency 'radiant-layouts-extension', "~> 1.1.3"
+  s.add_dependency 'compass-960-plugin'
 
   ignores = if File.exist?('.gitignore')
     File.read('.gitignore').split("\n").inject([]) {|a,p| a + Dir[p] }
